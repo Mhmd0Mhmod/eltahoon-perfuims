@@ -1,4 +1,3 @@
-import { getCookies } from "@/app/actions";
 import AddProductForm from "@/components/admin/products/AddProductForm";
 import { ProductActionsMenu } from "@/components/admin/products/ProductActionsMenu";
 import { VariantsPopover } from "@/components/admin/products/VariantsPopover";
@@ -8,7 +7,13 @@ import StatsSkeleton from "@/components/shared/stats-skeleton";
 import TableSkeleton from "@/components/shared/table-skeleton";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import {
   Dialog,
   DialogClose,
@@ -66,7 +71,11 @@ async function AddProductFormButton() {
     </Dialog>
   );
 }
-async function ProductsPage({ searchParams }: { searchParams: Promise<ProdcutSearchParams> }) {
+async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<ProdcutSearchParams>;
+}) {
   const params = await searchParams;
   return (
     <div className="container mx-auto space-y-6 p-6">
@@ -89,14 +98,17 @@ async function ProductsPage({ searchParams }: { searchParams: Promise<ProdcutSea
         <CardHeader>
           <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
             <div className="text-right">
-              <CardTitle className="text-2xl font-bold">قائمة المنتجات</CardTitle>
+              <CardTitle className="text-2xl font-bold">
+                قائمة المنتجات
+              </CardTitle>
               <CardDescription>عرض وإدارة جميع المنتجات</CardDescription>
             </div>
             <SearchInput />
           </div>
         </CardHeader>
         <CardContent>
-          <Suspense fallback={<TableSkeleton columns={6} rows={8} />}
+          <Suspense
+            fallback={<TableSkeleton columns={6} rows={8} />}
             key={Object.values(params).toString()}
           >
             <ProductsTable searchParams={params} />
@@ -111,7 +123,9 @@ async function ProductStatsCards() {
   const data = (await ProductAPI.getAdminProducts()) as Pageable<Product>;
   const products = data.content;
   const totalProducts = data.totalElements;
-  const availableProducts = products.filter((p) => p.variants?.some((v) => v.isAvailable)).length;
+  const availableProducts = products.filter((p) =>
+    p.variants?.some((v) => v.isAvailable),
+  ).length;
   const unavailableProducts = totalProducts - availableProducts;
 
   return (
@@ -123,12 +137,16 @@ async function ProductStatsCards() {
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{totalProducts}</div>
-          <p className="text-muted-foreground text-xs">جميع المنتجات والباقات</p>
+          <p className="text-muted-foreground text-xs">
+            جميع المنتجات والباقات
+          </p>
         </CardContent>
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">المنتجات المتوفرة</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            المنتجات المتوفرة
+          </CardTitle>
           <PackageCheck className="h-4 w-4 text-green-600" />
         </CardHeader>
         <CardContent>
@@ -138,19 +156,27 @@ async function ProductStatsCards() {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">منتجات غير متوفرة</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            منتجات غير متوفرة
+          </CardTitle>
           <PackageX className="text-muted-foreground h-4 w-4" />
         </CardHeader>
         <CardContent>
           <div className="text-2xl font-bold">{unavailableProducts}</div>
-          <p className="text-muted-foreground text-xs">منتجات غير متاحة حالياً</p>
+          <p className="text-muted-foreground text-xs">
+            منتجات غير متاحة حالياً
+          </p>
         </CardContent>
       </Card>
     </div>
   );
 }
 
-async function ProductsTable({ searchParams }: { searchParams: ProdcutSearchParams }) {
+async function ProductsTable({
+  searchParams,
+}: {
+  searchParams: ProdcutSearchParams;
+}) {
   const data = (await ProductAPI.getAdminProducts({
     categoryIds: searchParams.categoryIds?.split(",") || [],
     offerIds: searchParams.offerIds?.split(",") || [],
@@ -233,7 +259,9 @@ function ProductTableRow({
           </div>
           <div className="min-w-0 flex-1 text-right">
             <p className="truncate font-medium">{product.name}</p>
-            <p className="text-muted-foreground truncate text-xs">{product.description}</p>
+            <p className="text-muted-foreground truncate text-xs">
+              {product.description}
+            </p>
           </div>
         </div>
       </TableCell>
@@ -259,7 +287,10 @@ function ProductTableRow({
       </TableCell>
       <TableCell className="text-right">
         {product.variants && product.variants.length > 0 ? (
-          <VariantsPopover countryCode={product.countryCode} variants={product.variants} />
+          <VariantsPopover
+            countryCode={product.countryCode}
+            variants={product.variants}
+          />
         ) : (
           <Badge variant="secondary">لا يوجد أحجام</Badge>
         )}
@@ -296,7 +327,11 @@ function ProductTableRow({
       </TableCell>
       <TableCell>
         <div className="flex items-center justify-center gap-2">
-          <ProductActionsMenu product={product} categories={categories} sizes={sizes} />
+          <ProductActionsMenu
+            product={product}
+            categories={categories}
+            sizes={sizes}
+          />
         </div>
       </TableCell>
     </TableRow>

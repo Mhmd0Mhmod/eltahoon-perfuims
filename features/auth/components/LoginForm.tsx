@@ -10,13 +10,17 @@ import {
 import { Input } from "@/components/ui/input";
 import { toast } from "@/components/ui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useTransition } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { SignInSchema, signInSchema } from "../schema";
-import Link from "next/link";
+import { useAuth } from "../hooks/useAuth";
+
 function LoginForm() {
   const router = useRouter();
+  const { login } = useAuth();
   const form = useForm({
     resolver: zodResolver(signInSchema),
     defaultValues: {
@@ -25,33 +29,26 @@ function LoginForm() {
     },
   });
   const handleSubmit = useCallback(
-    async (data: SignInSchema) => {
-      const id = toast.add({
-        title: "جاري تسجيل الدخول",
-        description: "يرجى الانتظار...",
-        type: "loading",
-      });
-      const respone = {
-        success: true,
-        message: "تم تسجيل الدخول بنجاح",
-      };
-      if (!respone?.success) {
-        form.setError("root", { type: "server", message: respone?.message });
+    async (credentials: SignInSchema) => {
+      const response = await login(credentials);
+      if (!response.success) {
+        form.setError("root", {
+          type: "manual",
+          message: response.message || "حدث خطأ غير معروف",
+        });
         toast.add({
-          title: "فشل تسجيل الدخول",
-          description: respone?.message,
+          title: "خطأ",
+          description: response.message || "حدث خطأ غير معروف",
           type: "error",
-          id,
         });
         return;
       }
       toast.add({
-        title: "تم تسجيل الدخول بنجاح!",
-        description: "أهلاً بك!",
+        title: "تم تسجيل الدخول بنجاح",
+        description: "تم تسجيل الدخول بنجاح",
         type: "success",
-        id,
       });
-      router.replace("/");
+      router.push("/");
     },
     [router, form],
   );

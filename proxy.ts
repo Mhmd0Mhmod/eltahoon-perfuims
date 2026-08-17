@@ -15,9 +15,7 @@ const GLOBAL_ROUTES = ["account", "dashboard"];
 function isValidMarket(value: string | undefined): boolean {
   return (
     !!value &&
-    Object.entries(markets).some(
-      ([key, market]) => market.code === value.toUpperCase(),
-    )
+    Object.values(markets).some((market) => market.code === value.toUpperCase())
   );
 }
 
@@ -33,7 +31,7 @@ export function proxy(request: NextRequest) {
   }
   if (isValidMarket(firstSegment)) {
     const response = NextResponse.next();
-    response.cookies.set("country_code", firstSegment, {
+    response.cookies.set("country_code", firstSegment.toUpperCase(), {
       path: "/",
       maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
@@ -45,7 +43,7 @@ export function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   url.pathname = `/${market.toLowerCase()}${pathname === "/" ? "" : pathname}`;
   const response = NextResponse.redirect(url);
-  response.cookies.set("country_code", market, {
+  response.cookies.set("country_code", market.toUpperCase(), {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
