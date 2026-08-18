@@ -27,7 +27,7 @@ function VariantsPopover({ variants }: { variants: IProductVariant[] }) {
         <Package className="h-3 w-3" />
         {variants.length} أحجام
       </PopoverTrigger>
-      <PopoverContent className="w-80" align="end">
+      <PopoverContent className="w-80">
         <div className="space-y-3">
           <div className="space-y-1">
             <h4 className="text-sm font-semibold">الأحجام المتوفرة</h4>

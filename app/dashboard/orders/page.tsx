@@ -1,106 +1,132 @@
-import FilterOrders from "@/components/admin/orders/FilterOrders";
-import OrdersTable from "@/components/admin/orders/OrdersTable";
-import StatsSkeleton from "@/components/shared/stats-skeleton";
-import TableSkeleton from "@/components/shared/table-skeleton";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { OrderAPI } from "@/lib/api/order";
-import { OrderSearchParams } from "@/types/order";
-import { Clock, Package, Search, ShoppingCart, Truck } from "lucide-react";
-import { Suspense } from "react";
+"use client";
 
-async function OrdersPage({ searchParams }: { searchParams: Promise<OrderSearchParams> }) {
-  const params = await searchParams;
+import { formatDate } from "date-fns";
+import { Clock, Package, ShoppingCart, Truck } from "lucide-react";
+
+import FormatCurrency from "@/components/FormatCurrency";
+import { Badge } from "@/components/ui/badge";
+
+import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import { fetchAdminOrders } from "@/features/orders/services";
+import {
+  ORDER_STATUS_CONFIG,
+  type IOrder,
+  type IOrderSearchParams,
+} from "@/features/orders/types";
+
+import type { Column } from "@/types";
+
+const columns: Column<IOrder>[] = [
+  {
+    header: "orderId",
+    title: "رقم الطلب",
+    render(row) {
+      return (
+        <span className="font-mono text-xs font-bold">#{row.orderId}</span>
+      );
+    },
+  },
+
+  {
+    title: "العميل",
+    render(row) {
+      return <span className="font-medium">{row.user.name}</span>;
+    },
+  },
+
+  {
+    header: "totalAmount",
+    title: "الإجمالي",
+    render(row) {
+      return (
+        <span className="font-bold">
+          <FormatCurrency value={row.totalAmount} />
+        </span>
+      );
+    },
+  },
+
+  {
+    header: "status",
+    title: "الحالة",
+    render(row) {
+      const status = ORDER_STATUS_CONFIG[row.status];
+      return <Badge variant={status.variant}>{status.label}</Badge>;
+    },
+  },
+  {
+    header: "createdAt",
+    title: "تاريخ الطلب",
+    render(row) {
+      return (
+        <span className="text-sm text-muted-foreground">
+          {formatDate(new Date(row.createdAt), "dd/MM/yyyy - hh:mm a")}
+        </span>
+      );
+    },
+  },
+];
+
+interface OrdersClientPageProps {
+  searchParams: IOrderSearchParams;
+}
+
+function OrdersClientPage() {
+  const statsCards = [
+    {
+      title: "إجمالي الطلبات",
+      value: 0,
+      description: "جميع الطلبات المستلمة",
+      icon: <ShoppingCart />,
+    },
+    {
+      title: "قيد الانتظار",
+      value: 0,
+      description: "طلبات تحتاج معالجة",
+      icon: <Clock />,
+    },
+    {
+      title: "تم الشحن",
+      value: 0,
+      description: "طلبات في الطريق",
+      icon: <Truck />,
+    },
+    {
+      title: "تم التسليم",
+      value: 0,
+      description: "طلبات مكتملة",
+      icon: <Package />,
+    },
+  ];
+
   return (
-    <div className="container mx-auto space-y-6 p-6">
-      {/* Stats Cards */}
-      <Suspense fallback={<StatsSkeleton length={4} />}>
-        <div className="grid gap-4 md:grid-cols-4">
-          <OrderStatsCard />
+    <TableDashboardPage<IOrder>
+      title="الطلبات"
+      description="متابعة وإدارة جميع طلبات العملاء وحالات الشحن"
+      table={{
+        title: "إدارة الطلبات",
+        description: "عرض جميع طلبات العملاء وحالات الشحن والتسليم",
+      }}
+      columns={columns}
+      params={{}}
+      queryKey="admin-orders"
+      queryFn={fetchAdminOrders}
+      stats={statsCards}
+      showSearch={false}
+      isPaginated
+      emptyState={
+        <div className="flex flex-col items-center justify-center py-12 text-center">
+          <ShoppingCart className="mb-4 h-12 w-12 text-muted-foreground" />
+
+          <h3 className="text-lg font-semibold">لا توجد طلبات مسجلة</h3>
+
+          <p className="text-sm text-muted-foreground">
+            لم يستقبل النظام أي طلبات تطابق الفلترة الحالية
+          </p>
         </div>
-      </Suspense>
-
-      {/* Main Table Card */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
-            <div className="text-right">
-              <CardTitle className="text-2xl font-bold">إدارة الطلبات</CardTitle>
-              <CardDescription>عرض وإدارة جميع طلبات العملاء</CardDescription>
-            </div>
-            <div className="flex w-full gap-2 md:w-auto">
-              <div className="relative flex-1 md:w-80">
-                <Search className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
-                <Input placeholder="ابحث عن طلب..." className="pr-10" />
-              </div>
-              <FilterOrders />
-            </div>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <Suspense
-            fallback={
-              <div className="rounded-md border">
-                <TableSkeleton rows={5} columns={7} />
-              </div>
-            }
-            key={Object.values(params).toString()}
-          >
-            <OrdersTable searchParams={params} />
-          </Suspense>
-        </CardContent>
-      </Card>
-    </div>
+      }
+    />
   );
 }
 
-async function OrderStatsCard() {
-  const orders = await OrderAPI.getAdminOrderStatus();
-  const { deliveredOrders, pendingOrders, shippedOrders, totalOrders } = orders;
-  return (
-    <>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">إجمالي الطلبات</CardTitle>
-          <ShoppingCart className="text-muted-foreground h-4 w-4" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{totalOrders || 0}</div>
-          <p className="text-muted-foreground text-xs">جميع الطلبات المستلمة</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">قيد الانتظار</CardTitle>
-          <Clock className="text-muted-foreground h-4 w-4" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{pendingOrders}</div>
-          <p className="text-muted-foreground text-xs">طلبات تحتاج معالجة</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">تم الشحن</CardTitle>
-          <Truck className="text-muted-foreground h-4 w-4" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{shippedOrders}</div>
-          <p className="text-muted-foreground text-xs">طلبات في الطريق</p>
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">تم التسليم</CardTitle>
-          <Package className="text-muted-foreground h-4 w-4" />
-        </CardHeader>
-        <CardContent>
-          <div className="text-2xl font-bold">{deliveredOrders}</div>
-          <p className="text-muted-foreground text-xs">طلبات مكتملة</p>
-        </CardContent>
-      </Card>
-    </>
-  );
-}
-
-export default OrdersPage;
+export default OrdersClientPage;

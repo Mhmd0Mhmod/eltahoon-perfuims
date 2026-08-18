@@ -4,13 +4,14 @@ import { getAdminProducts } from "@/features/products/services";
 import { IProduct } from "@/features/products/types";
 import { Column } from "@/types";
 import Image from "next/image";
-import { Package, PackageCheck, PackageX } from "lucide-react";
+import { Package, PackageCheck, PackageX, Pencil } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import VariantsPopover from "@/features/products/components/VariantsPopover";
 import FormatCurrency from "@/components/FormatCurrency";
 import { format } from "date-fns";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import AlertDialog from "@/components/AlertDialog";
 
 const columns: Column<IProduct>[] = [
   {
@@ -120,12 +121,18 @@ const columns: Column<IProduct>[] = [
     render(row) {
       return (
         <div className="flex items-center gap-2">
-          <Badge variant="secondary" className="text-xs">
-            تعديل
-          </Badge>
-          <Badge variant="destructive" className="text-xs">
-            حذف
-          </Badge>
+          <Button variant={"outline"}>
+            <Link href={`products/${row.id}`} className="text-xs">
+              <Pencil />
+            </Link>
+          </Button>
+          <AlertDialog
+            title={`حذف المنتج ${row.name}`}
+            description="هل أنت متأكد من حذف هذا المنتج؟"
+            onConfirm={() => {}}
+            triggerVariant="destructive"
+            actionButtonText="حذف"
+          />
         </div>
       );
     },
@@ -141,7 +148,6 @@ function ProductsPage() {
         description: "عرض وإدارة جميع المنتجات",
       }}
       columns={columns}
-      params={{}}
       queryKey="products"
       queryFn={getAdminProducts}
       stats={[
@@ -149,19 +155,19 @@ function ProductsPage() {
           title: "إجمالي المنتجات",
           value: 0,
           description: "جميع المنتجات والباقات",
-          icon: Package,
+          icon: <Package />,
         },
         {
           title: "المنتجات المتوفرة",
           value: 0,
           description: "منتجات متاحة للشراء",
-          icon: PackageCheck,
+          icon: <PackageCheck />,
         },
         {
           title: "منتجات غير متوفرة",
           value: 0,
           description: "منتجات غير متاحة حالياً",
-          icon: PackageX,
+          icon: <PackageX />,
         },
       ]}
       form={{
@@ -175,7 +181,6 @@ function ProductsPage() {
           <p className="text-muted-foreground text-sm">ابدأ بإضافة منتج جديد</p>
         </div>
       }
-      showSearch
     />
   );
 }

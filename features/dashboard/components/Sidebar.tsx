@@ -1,3 +1,4 @@
+import ActiveLink from "@/components/ActiveLink";
 import {
   Sidebar,
   SidebarContent,
@@ -14,7 +15,6 @@ import {
   BadgePercent,
   CreditCard,
   FolderTree,
-  Globe,
   LayoutDashboard,
   Package,
   Ruler,
@@ -73,11 +73,6 @@ const menuItems = [
     icon: Users,
   },
   {
-    title: "النطاقات",
-    url: "/dashboard/countries",
-    icon: Globe,
-  },
-  {
     title: "الإعدادات",
     url: "/dashboard/settings",
     icon: Settings,
@@ -121,12 +116,18 @@ function DashboardSidebar() {
             <SidebarMenu>
               {menuItems.map((item) => (
                 <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton tooltip={item.title}>
-                    <Link href={item.url} className="flex items-center gap-3">
+                  <ActiveLink
+                    href={item.url}
+                    className="flex items-center gap-3 w-full"
+                  >
+                    <SidebarMenuButton
+                      tooltip={item.title}
+                      className="flex items-center gap-3 cursor-pointer"
+                    >
                       <item.icon className="h-5 w-5" />
                       <span>{item.title}</span>
-                    </Link>
-                  </SidebarMenuButton>
+                    </SidebarMenuButton>
+                  </ActiveLink>
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>

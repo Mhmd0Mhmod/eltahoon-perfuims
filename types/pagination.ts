@@ -7,3 +7,6 @@ export interface IPagination<T> {
   last: boolean;
   first: boolean;
 }
+export type TPaginationParams = {
+  page: number;
+};

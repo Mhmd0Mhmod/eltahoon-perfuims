@@ -1,5 +1,5 @@
 import { DirectionProvider } from "@/components/ui/direction";
-import { Toaster } from "@/components/ui/toast";
+import { Toaster } from "@/components/ui/sonner";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { Metadata } from "next";
 import { Cairo, Playfair_Display } from "next/font/google";

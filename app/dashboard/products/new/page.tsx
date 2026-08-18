@@ -1,4 +1,7 @@
-function page() {
-  return <div>page</div>;
+import ProductPage from "@/features/products/components/ProductPage";
+
+function NewProductPage() {
+  return <ProductPage />;
 }
-export default page;
+
+export default NewProductPage;

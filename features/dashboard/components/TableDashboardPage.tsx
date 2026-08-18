@@ -1,13 +1,12 @@
 "use client";
 
-import { useEffect, useState, type ReactNode } from "react";
-import Link from "next/link";
-import { Plus, Loader2 } from "lucide-react";
 import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
 import type { AxiosResponse } from "axios";
-import Cookies from "js-cookie";
+import { Loader2, Plus } from "lucide-react";
+import Link from "next/link";
+import { type ReactNode } from "react";
 
-import FormDialog from "@/components/FormDialog";
+import Dialog from "@/components/Dialog";
 import StatsCard from "@/components/StatsCard";
 import TableSkeleton from "@/components/TableSkeleton";
 
@@ -29,6 +28,8 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import useCookies from "@/hooks/useCookies";
+import { idGenerator } from "@/lib/utils";
 import type { Column, Description, StatsCardData, Title } from "@/types";
 import type { IPagination } from "@/types/pagination";
 
@@ -51,18 +52,23 @@ type QueryResponse<T> = PaginatedResponse<T> | NonPaginatedResponse<T>;
 interface DashboardPageContentProps<T, P = Record<string, unknown>> {
   title: string;
   description: string;
-  params: P;
+  params?: P;
   stats?: StatsCardData[];
   columns: Column<T>[];
   table: TableConfig;
   form?: FormConfig;
-  showSearch?: boolean;
   emptyState?: ReactNode;
   queryKey: string;
   isPaginated?: boolean;
-  queryFn: (params: P, page: number) => Promise<QueryResponse<T>>;
+  queryFn: ({
+    params,
+    pageParam,
+  }: {
+    params?: P;
+    pageParam?: number;
+  }) => Promise<QueryResponse<T>>;
 }
-
+const generateId = idGenerator();
 function TableDashboardPage<T, P = Record<string, unknown>>({
   title,
   description,
@@ -72,37 +78,30 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
   stats,
   columns,
   queryFn,
-  showSearch = true,
   emptyState,
   queryKey,
   isPaginated = true,
 }: DashboardPageContentProps<T, P>) {
-  const [countryCode, setCountryCode] = useState<string | undefined>(undefined);
-
-  useEffect(() => {
-    const code = Cookies.get("country_code");
-    if (code) {
-      setCountryCode(code);
-    }
-  }, []);
+  const { getCookie } = useCookies();
+  const countryCode = getCookie("country_code");
 
   const infiniteQuery = useInfiniteQuery({
     queryKey: ["infinite", countryCode, queryKey, params],
     initialPageParam: 0,
-    queryFn: ({ pageParam }) => queryFn(params, pageParam),
+    queryFn: ({ pageParam }) => queryFn({ params, pageParam }),
     getNextPageParam: (lastPage) => {
       if (!isPaginated || !isPaginatedResponse(lastPage.data)) {
         return undefined;
       }
       return lastPage.data.last ? undefined : lastPage.data.page + 1;
     },
-    enabled: !!countryCode && !!queryKey && !!params && isPaginated,
+    enabled: !!countryCode && !!queryKey && isPaginated,
   });
 
   const query = useQuery({
     queryKey: ["Query", countryCode, queryKey, params],
-    queryFn: () => queryFn(params, 0),
-    enabled: !!countryCode && !!queryKey && !!params && !isPaginated,
+    queryFn: () => queryFn({ params }),
+    enabled: !!countryCode && !!queryKey && !isPaginated,
   });
 
   const isLoading = isPaginated ? infiniteQuery.isLoading : query.isLoading;
@@ -165,9 +164,9 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
         )}
 
         {form && "component" in form && (
-          <FormDialog title={form.title} description={form.description}>
+          <Dialog title={form.title} description={form.description}>
             {form.component}
-          </FormDialog>
+          </Dialog>
         )}
       </div>
 
@@ -196,7 +195,7 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
               </CardTitle>
               <CardDescription>{table.description}</CardDescription>
             </div>
-            {showSearch && null}
+            {/* {showSearch && null} */}
           </div>
         </CardHeader>
 
@@ -220,7 +219,7 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
                     <TableRow>
                       {columns.map((column, index) => (
                         <TableHead
-                          key={column.header?.toString() || index}
+                          key={generateId()}
                           className="whitespace-nowrap text-right"
                         >
                           {column.title}
@@ -231,10 +230,10 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
 
                   <TableBody>
                     {rows.map((row, rowIndex) => (
-                      <TableRow key={getRowKey(row, rowIndex)}>
+                      <TableRow key={rowIndex}>
                         {columns.map((column, colIndex) => (
                           <TableCell
-                            key={column.header?.toString() || colIndex}
+                            key={colIndex}
                             className="whitespace-nowrap text-right"
                           >
                             {renderCell(row, column)}
@@ -280,18 +279,6 @@ function isPaginatedResponse<T>(
     "page" in data &&
     "last" in data
   );
-}
-
-function getRowKey<T>(row: T, index: number): string | number {
-  if (
-    typeof row === "object" &&
-    row !== null &&
-    "id" in row &&
-    (typeof row.id === "string" || typeof row.id === "number")
-  ) {
-    return row.id;
-  }
-  return index;
 }
 
 export default TableDashboardPage;

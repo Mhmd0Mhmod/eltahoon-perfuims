@@ -1,6 +1,6 @@
 // import { ICategory } from "./Icategory";
 
-import { ICategory } from "@/features/categoy/types";
+import { ICategory } from "@/features/category/types";
 
 interface IProduct {
   id: number;

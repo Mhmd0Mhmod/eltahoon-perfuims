@@ -1,6 +1,6 @@
 import z from "zod";
 
-export const addProductVariantSchema = z
+export const productVariantSchema = z
   .object({
     id: z.number().optional(),
     sizeId: z.string().optional().nullable(),
@@ -23,14 +23,14 @@ export const addProductVariantSchema = z
       message: "يجب اختيار حجم من القائمة أو إدخال حجم ووحدة مخصصة",
     },
   );
-export type AddProductVariantSchema = z.infer<typeof addProductVariantSchema>;
-export const addProductSchema = z.object({
+export type ProductVariantSchema = z.infer<typeof productVariantSchema>;
+export const productSchema = z.object({
   name: z.string({ message: "اسم المنتج مطلوب" }).min(3, {
     message: "اسم المنتج يجب ان يكون 3 احرف علي الاقل",
   }),
   description: z.string().optional(),
-  variants: z.array(addProductVariantSchema).optional(),
+  variants: z.array(productVariantSchema).optional(),
   categoryIds: z.array(z.string()).optional(),
   image: z.instanceof(File).optional(),
 });
-export type AddProductSchema = z.infer<typeof addProductSchema>;
+export type ProductSchema = z.infer<typeof productSchema>;
