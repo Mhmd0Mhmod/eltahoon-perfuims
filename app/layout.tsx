@@ -30,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ar" dir="rtl">
+    <html lang="ar" dir="rtl" suppressHydrationWarning>
       <body
         className={`${playfairDisplay.variable} ${cairo.variable} ${cairo.className} ${playfairDisplay.className} antialiased`}
       >

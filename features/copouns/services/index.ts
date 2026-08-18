@@ -1,10 +1,10 @@
 import { nextAPI } from "@/lib/nextAPI";
 
-export function getAdminProducts(
+export async function getAdminOfferCoupons(
   params: Record<string, unknown>,
   pageParams: number,
 ) {
-  return nextAPI.get("admin/products", {
+  return nextAPI.get("/admin/coupons", {
     params: {
       ...params,
       page: pageParams,

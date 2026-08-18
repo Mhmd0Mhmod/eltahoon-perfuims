@@ -1,6 +1,5 @@
-import StatsSkeleton from "@/components/shared/stats-skeleton";
-import TableSkeleton from "@/components/shared/table-skeleton";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import TableSkeleton from "@/components/TableSkeleton";
+import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 
 export default function Loading() {
@@ -16,7 +15,7 @@ export default function Loading() {
       </div>
 
       {/* Stats Cards */}
-      <StatsSkeleton length={4} />
+      {/* <StatsSkeleton length={4} /> */}
 
       {/* Main Table Card */}
       <Card>

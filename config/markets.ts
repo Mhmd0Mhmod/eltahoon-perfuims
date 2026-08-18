@@ -6,7 +6,6 @@ export const markets = {
     locale: "ar-EG",
     flag: "🇪🇬",
   },
-
   sa: {
     code: "SA",
     name: "Saudi Arabia",

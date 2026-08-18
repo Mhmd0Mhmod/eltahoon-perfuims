@@ -1,20 +1,20 @@
-import { Category } from "./category";
-import { Offer } from "./offer";
-import { PaginationParams } from "./pageable";
+// import { ICategory } from "./Icategory";
 
-interface Product {
+import { ICategory } from "@/features/categoy/types";
+
+interface IProduct {
   id: number;
   name: string;
   description: string;
   imageUrl: string;
-  categories: Pick<Category, "id" | "name">[];
+  categories: Pick<ICategory, "id" | "name">[];
   createdAt: string;
   updatedAt: string;
   countryCode: string;
-  variants: ProductVariant[];
+  variants: IProductVariant[];
 }
 
-interface ProductVariant {
+interface IProductVariant {
   id: number;
   name: string;
   imageUrl: string;
@@ -31,4 +31,4 @@ interface ProductVariant {
   updatedAt: string;
 }
 
-export type { Product, ProductVariant };
+export type { IProduct, IProductVariant };

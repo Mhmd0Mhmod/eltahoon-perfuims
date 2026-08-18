@@ -6,7 +6,7 @@ import {
   ResetPasswordSchema,
   SignInSchema,
 } from "@/features/auth/schema";
-import { api } from "@/lib/api";
+import { api } from "@/lib/springAPI";
 import { APIResponse, IAPIResponse } from "@/types/api";
 import { User } from "@/types/user";
 import { cookies } from "next/headers";

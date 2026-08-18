@@ -1,7 +1,6 @@
 import { fetchUserProfile, loginAction } from "@/app/(auth)/actions";
-import { Session } from "@/types/user";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 function useAuth() {
   const {
