@@ -5,7 +5,7 @@ import type { Metadata } from "next";
 import { Cairo, Playfair_Display } from "next/font/google";
 import "./globals.css";
 import { MarketProvider, QueryProvider } from "./providers";
-
+export const revalidate = 0;
 const playfairDisplay = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],

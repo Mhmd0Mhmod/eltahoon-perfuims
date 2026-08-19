@@ -6,6 +6,7 @@ import {
   ResetPasswordSchema,
   SignInSchema,
 } from "@/features/auth/schema";
+import { nextServerAPI } from "@/lib/nextServerAPI";
 import { api } from "@/lib/springAPI";
 import { APIResponse, IAPIResponse } from "@/types/api";
 import { User } from "@/types/user";
@@ -13,10 +14,11 @@ import { cookies } from "next/headers";
 
 export async function loginAction(
   credentials: SignInSchema,
-): Promise<IAPIResponse<{ token: string; uesrProfile: User }>> {
+): Promise<IAPIResponse<{ token: string; userProfile: User }>> {
   try {
     const response = await api.post("auth/login", credentials);
-    const { token, uesrProfile } = response.data;
+    const { token, userProfile } = response.data;
+
     const cookiesStore = await cookies();
     cookiesStore.set("token", token, {
       httpOnly: false,
@@ -24,21 +26,9 @@ export async function loginAction(
       sameSite: "strict",
       expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     });
-    return APIResponse.success({ token, uesrProfile });
+    return APIResponse.success({ token, userProfile });
   } catch (error) {
     return APIResponse.error(error);
-  }
-}
-
-export async function fetchUserProfile() {
-  try {
-    const response = await api.get<User>("users/me");
-    const { data } = response;
-    return APIResponse.success({
-      data,
-    });
-  } catch (e) {
-    return APIResponse.error(e);
   }
 }
 
@@ -84,4 +74,13 @@ export async function resetPassword(data: ResetPasswordSchema) {
       message: "An unknown error occurred",
     };
   }
+}
+export async function logoutAction() {
+  const cookieStore = await cookies();
+
+  cookieStore.delete("token");
+
+  return {
+    success: true,
+  };
 }

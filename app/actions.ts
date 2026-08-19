@@ -1,9 +1,14 @@
 "use server";
 
-import { cookies } from "next/headers";
+import { nextServerAPI } from "@/lib/nextServerAPI";
+import { User } from "@/types/user";
 
-export async function getCookies(key?: string) {
-  const cookiesStore = await cookies();
-  if (key) return cookiesStore.get(key);
-  return cookiesStore.getAll();
+export async function getCurrentUser() {
+  try {
+    const response = await nextServerAPI.get<User>("users/me");
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching user profile:", error);
+    return null;
+  }
 }

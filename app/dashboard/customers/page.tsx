@@ -102,7 +102,6 @@ function UsersPage() {
           <p className="text-muted-foreground text-sm">لا توجد نتائج لعرضها</p>
         </div>
       }
-      showSearch
       isPaginated
     />
   );

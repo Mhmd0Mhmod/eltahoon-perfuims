@@ -21,11 +21,6 @@ interface ErrorProps {
 
 export default function Error({ error, reset }: ErrorProps) {
   const pathname = usePathname();
-
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
-
   const homeRoute = "/";
 
   return (

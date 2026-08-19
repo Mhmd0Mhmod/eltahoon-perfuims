@@ -112,7 +112,6 @@ function OrdersClientPage() {
       queryKey="admin-orders"
       queryFn={fetchAdminOrders}
       stats={statsCards}
-      showSearch={false}
       isPaginated
       emptyState={
         <div className="flex flex-col items-center justify-center py-12 text-center">

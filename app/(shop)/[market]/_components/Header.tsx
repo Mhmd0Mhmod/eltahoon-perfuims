@@ -1,6 +1,6 @@
 import Logo from "@/components/Logo";
 import MarketLink from "@/components/MarketLink";
-import { Search, ShoppingBag, User } from "lucide-react";
+import HeaderActions from "./HeaderActions";
 
 function Header() {
   return (
@@ -31,24 +31,7 @@ function Header() {
           </nav>
 
           <Logo />
-
-          <div className="flex items-center gap-2">
-            <button className="flex size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70">
-              <Search className="size-4.5" />
-            </button>
-
-            <button className="hidden size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:flex">
-              <User className="size-4.5" />
-            </button>
-
-            <button className="relative flex size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70">
-              <ShoppingBag className="size-4.5" />
-
-              <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-none bg-primary text-[10px] text-primary-foreground">
-                0
-              </span>
-            </button>
-          </div>
+          <HeaderActions />
         </div>
       </div>
     </header>

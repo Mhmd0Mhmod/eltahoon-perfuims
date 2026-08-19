@@ -127,7 +127,6 @@ function PaymentsPage() {
       queryKey="admin-payments"
       queryFn={getAdminPayments}
       stats={statsCards}
-      showSearch={true}
       emptyState={
         <div className="flex flex-col items-center justify-center py-12">
           <Wallet className="mb-4 h-12 w-12 text-muted-foreground" />

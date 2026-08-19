@@ -1,56 +1,52 @@
-import { fetchUserProfile, loginAction } from "@/app/(auth)/actions";
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+"use client";
+
+import { loginAction, logoutAction } from "@/app/(auth)/actions";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { fetchUserProfile } from "../services";
 
 function useAuth() {
+  const queryClient = useQueryClient();
+
   const {
     data: userProfile,
-    refetch,
     isLoading,
-    isPending,
+    isFetching,
+    refetch,
   } = useQuery({
     queryKey: ["me"],
     queryFn: fetchUserProfile,
-    select: (data) => (data.success ? data.data : null),
+    retry: false,
   });
-  const { mutateAsync: login } = useMutation({
+  const { mutateAsync: login, isPending: isLoginPending } = useMutation({
     mutationKey: ["login"],
     mutationFn: loginAction,
-    onSuccess: (data, _, __, context) => {
-      if (data.success) {
-        const { uesrProfile } = data.data;
-        context.client.setQueryData(["me"], uesrProfile);
-      }
+    onSuccess: (data) => {
+      if (!data.success) return;
+
+      queryClient.setQueryData(["me"], data.data.userProfile);
     },
   });
-  const { mutateAsync: logout } = useMutation({
+
+  const { mutateAsync: logout, isPending: isLogoutPending } = useMutation({
     mutationKey: ["logout"],
-    mutationFn: async () => {
-      cookieStore.delete("token");
-      return { success: true };
-    },
-    onSuccess: (data, _, __, context) => {
-      context.client.removeQueries({
+    mutationFn: logoutAction,
+
+    onSuccess: () => {
+      queryClient.removeQueries({
         queryKey: ["me"],
       });
     },
   });
-
-  useEffect(() => {
-    cookieStore.get("token").then((token) => {
-      if (token) {
-        refetch();
-      }
-    });
-  }, []);
-
   return {
     userProfile,
-    refetch,
     isLoading,
-    isPending,
+    isFetching,
+    isLoginPending,
+    isLogoutPending,
+    refetch,
     login,
     logout,
+    isAuthenticated: !!userProfile,
   };
 }
 

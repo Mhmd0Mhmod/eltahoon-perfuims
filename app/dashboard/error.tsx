@@ -22,10 +22,6 @@ interface ErrorProps {
 export default function Error({ error, reset }: ErrorProps) {
   const pathname = usePathname();
 
-  useEffect(() => {
-    console.error(error);
-  }, [error]);
-
   // Determine home route based on current path
   const getHomeRoute = () => {
     if (pathname.startsWith("/admin")) return "/admin";
