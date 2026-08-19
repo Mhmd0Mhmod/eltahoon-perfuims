@@ -1,6 +1,12 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { OrderAPI } from "@/lib/api/order";
 import { formatCurrency } from "@/lib/utils";
 import { ORDER_STATUS, OrderStatus } from "@/types/order";
@@ -65,9 +71,18 @@ const ORDER_STATUS_CONFIG: Record<
 };
 
 // Order status timeline steps
-const ORDER_STEPS: OrderStatus[] = ["PENDING", "CONFIRMED", "SHIPPED", "DELIVERED"];
+const ORDER_STEPS: OrderStatus[] = [
+  "PENDING",
+  "CONFIRMED",
+  "SHIPPED",
+  "DELIVERED",
+];
 
-async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+async function OrderDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   if (!id) notFound();
 
@@ -86,7 +101,7 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
     <div className="space-y-6">
       {/* Header */}
       <div className="flex items-center gap-4">
-        <Button variant="ghost" size="icon" asChild>
+        <Button variant="ghost" size="icon">
           <Link href="/account/orders">
             <ArrowRight className="h-5 w-5" />
           </Link>
@@ -109,12 +124,16 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
           {isCancelled ? (
             // Cancelled Order Display
             <div className="border-destructive/20 bg-destructive/5 flex items-center gap-4 rounded-lg border p-4">
-              <div className={`rounded-full p-3 ${statusConfig.color}`}>{statusConfig.icon}</div>
+              <div className={`rounded-full p-3 ${statusConfig.color}`}>
+                {statusConfig.icon}
+              </div>
               <div>
                 <Badge variant="destructive" className="mb-1">
                   {statusConfig.label}
                 </Badge>
-                <p className="text-muted-foreground text-sm">{statusConfig.description}</p>
+                <p className="text-muted-foreground text-sm">
+                  {statusConfig.description}
+                </p>
               </div>
             </div>
           ) : (
@@ -127,7 +146,10 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
                   const isCurrent = index === currentStepIndex;
 
                   return (
-                    <div key={step} className="relative flex flex-1 flex-col items-center">
+                    <div
+                      key={step}
+                      className="relative flex flex-1 flex-col items-center"
+                    >
                       {/* Connector Line */}
                       {index < ORDER_STEPS.length - 1 && (
                         <div
@@ -163,7 +185,9 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
 
               {/* Current Status Description */}
               <div className="mt-6 rounded-lg border p-4 text-center">
-                <p className="text-muted-foreground">{statusConfig.description}</p>
+                <p className="text-muted-foreground">
+                  {statusConfig.description}
+                </p>
               </div>
             </div>
           )}
@@ -178,7 +202,9 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
               <Package className="h-5 w-5" />
               المنتجات
             </CardTitle>
-            <CardDescription>{order.items.length} منتج في هذا الطلب</CardDescription>
+            <CardDescription>
+              {order.items.length} منتج في هذا الطلب
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
@@ -199,7 +225,9 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
                     </div>
                   </div>
                   <div className="text-left">
-                    <span className="text-lg font-semibold">{item.subtotal.toFixed(2)}</span>
+                    <span className="text-lg font-semibold">
+                      {item.subtotal.toFixed(2)}
+                    </span>
                   </div>
                 </div>
               ))}
@@ -252,7 +280,7 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
 
       {/* Back to Orders Button */}
       <div className="flex justify-center">
-        <Button asChild variant="outline">
+        <Button variant="outline">
           <Link href="/account/orders" className="flex items-center gap-2">
             <ArrowRight className="h-4 w-4" />
             العودة إلى طلباتي

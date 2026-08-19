@@ -1,5 +1,8 @@
 import { markets } from "@/config/markets";
+import { IAPIResponse } from "@/types/api";
+import { MutationFunctionContext } from "@tanstack/react-query";
 import { clsx, type ClassValue } from "clsx";
+import { toast } from "sonner";
 import { twMerge } from "tailwind-merge";
 
 export function cn(...inputs: ClassValue[]) {
@@ -23,3 +26,28 @@ export const idGenerator = () => {
     return i;
   };
 };
+
+export function onSuccessMutation<T>({
+  data,
+  context,
+  successMessage,
+  key,
+}: {
+  data: IAPIResponse<T>;
+  context: MutationFunctionContext;
+  successMessage: string;
+  key?: string;
+}) {
+  if (data.success) {
+    toast.success(data.message || successMessage);
+    if (key) {
+      context.client.invalidateQueries({
+        predicate: (query) =>
+          query.queryKey.some(
+            (key) => typeof key === "string" && key.toLowerCase().includes(key),
+          ),
+        type: "active",
+      });
+    }
+  }
+}

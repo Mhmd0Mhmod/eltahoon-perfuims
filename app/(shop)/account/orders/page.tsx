@@ -75,7 +75,11 @@ const ORDER_STATUS_CONFIG: Record<
   },
 };
 
-async function OrdersPage({ searchParams }: { searchParams: Promise<OrderSearchParams> }) {
+async function OrdersPage({
+  searchParams,
+}: {
+  searchParams: Promise<OrderSearchParams>;
+}) {
   const params = await searchParams;
 
   return (
@@ -86,7 +90,7 @@ async function OrdersPage({ searchParams }: { searchParams: Promise<OrderSearchP
           <h1 className="text-2xl font-bold">طلباتي</h1>
           <p className="text-muted-foreground">تتبع جميع طلباتك وحالتها</p>
         </div>
-        <Button asChild variant="outline">
+        <Button variant="outline">
           <Link href="/products" className="flex items-center gap-2">
             <ShoppingBag className="h-4 w-4" />
             تسوق الآن
@@ -95,7 +99,10 @@ async function OrdersPage({ searchParams }: { searchParams: Promise<OrderSearchP
       </div>
 
       {/* Orders List */}
-      <Suspense fallback={<OrdersSkeleton />} key={Object.values(params).toString()}>
+      <Suspense
+        fallback={<OrdersSkeleton />}
+        key={Object.values(params).toString()}
+      >
         <OrdersList searchParams={params} />
       </Suspense>
     </div>
@@ -112,7 +119,11 @@ function OrdersSkeleton() {
   );
 }
 
-async function OrdersList({ searchParams }: { searchParams: OrderSearchParams }) {
+async function OrdersList({
+  searchParams,
+}: {
+  searchParams: OrderSearchParams;
+}) {
   const orders = await OrderAPI.getUserOrders(searchParams);
   if (orders.content.length === 0) {
     return <EmptyOrders />;
@@ -140,12 +151,24 @@ async function OrdersList({ searchParams }: { searchParams: OrderSearchParams })
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead className="text-right font-semibold">رقم الطلب</TableHead>
-                  <TableHead className="text-right font-semibold">المنتجات</TableHead>
-                  <TableHead className="text-right font-semibold">المبلغ</TableHead>
-                  <TableHead className="text-right font-semibold">تاريخ الطلب</TableHead>
-                  <TableHead className="text-right font-semibold">الحالة</TableHead>
-                  <TableHead className="text-center font-semibold">التفاصيل</TableHead>
+                  <TableHead className="text-right font-semibold">
+                    رقم الطلب
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    المنتجات
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    المبلغ
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    تاريخ الطلب
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    الحالة
+                  </TableHead>
+                  <TableHead className="text-center font-semibold">
+                    التفاصيل
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -156,7 +179,10 @@ async function OrdersList({ searchParams }: { searchParams: OrderSearchParams })
                   return (
                     <TableRow
                       key={order.orderNumber}
-                      className={cn("hover:bg-muted/50", isCancelled && "opacity-60")}
+                      className={cn(
+                        "hover:bg-muted/50",
+                        isCancelled && "opacity-60",
+                      )}
                     >
                       <TableCell>
                         <div className="font-medium">#{order.orderNumber}</div>
@@ -191,7 +217,7 @@ async function OrdersList({ searchParams }: { searchParams: OrderSearchParams })
                         </Badge>
                       </TableCell>
                       <TableCell className="text-center">
-                        <Button variant="ghost" size="sm" asChild>
+                        <Button variant="ghost" size="sm">
                           <Link
                             href={`/account/orders/${order.orderId}`}
                             className="flex items-center gap-1"
@@ -242,13 +268,18 @@ function OrderCard({ order }: { order: Order }) {
         {/* Products Preview */}
         <div className="space-y-1">
           {order.items.slice(0, 2).map((item, index) => (
-            <div key={index} className="text-muted-foreground flex justify-between text-sm">
+            <div
+              key={index}
+              className="text-muted-foreground flex justify-between text-sm"
+            >
               <span className="truncate">{item.productName}</span>
               <span>× {item.quantity}</span>
             </div>
           ))}
           {order.items.length > 2 && (
-            <div className="text-muted-foreground text-xs">+{order.items.length - 2} منتج آخر</div>
+            <div className="text-muted-foreground text-xs">
+              +{order.items.length - 2} منتج آخر
+            </div>
           )}
         </div>
 
@@ -258,8 +289,11 @@ function OrderCard({ order }: { order: Order }) {
             <span className="text-muted-foreground text-sm">المجموع: </span>
             <span className="font-bold">{order.totalAmount.toFixed(2)}</span>
           </div>
-          <Button variant="outline" size="sm" asChild>
-            <Link href={`/account/orders/${order.orderNumber}`} className="flex items-center gap-1">
+          <Button variant="outline" size="sm">
+            <Link
+              href={`/account/orders/${order.orderNumber}`}
+              className="flex items-center gap-1"
+            >
               التفاصيل
               <ArrowLeft className="h-3 w-3" />
             </Link>
@@ -279,9 +313,10 @@ function EmptyOrders() {
         </div>
         <h3 className="mb-2 text-xl font-semibold">لا توجد طلبات بعد</h3>
         <p className="text-muted-foreground mb-6 max-w-sm">
-          لم تقم بأي طلبات حتى الآن. ابدأ بتصفح منتجاتنا واستمتع بتجربة تسوق مميزة.
+          لم تقم بأي طلبات حتى الآن. ابدأ بتصفح منتجاتنا واستمتع بتجربة تسوق
+          مميزة.
         </p>
-        <Button asChild className="gap-2">
+        <Button className="gap-2">
           <Link href="/products">
             <ShoppingBag className="h-4 w-4" />
             تصفح المنتجات

@@ -20,7 +20,9 @@ import { Suspense } from "react";
 async function StatsCards() {
   const countries = await CountryAPI.getAdminCountriesServer();
   const activeCountries = countries.filter((c: Country) => c.isActive).length;
-  const inactiveCountries = countries.filter((c: Country) => !c.isActive).length;
+  const inactiveCountries = countries.filter(
+    (c: Country) => !c.isActive,
+  ).length;
 
   return (
     <div className="grid gap-4 md:grid-cols-3">
@@ -46,7 +48,9 @@ async function StatsCards() {
       </Card>
       <Card>
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-          <CardTitle className="text-sm font-medium">الدول غير النشطة</CardTitle>
+          <CardTitle className="text-sm font-medium">
+            الدول غير النشطة
+          </CardTitle>
           <XCircle className="text-muted-foreground h-4 w-4" />
         </CardHeader>
         <CardContent>
@@ -109,7 +113,9 @@ async function CountriesList() {
             <Globe className="text-muted-foreground h-16 w-16" />
             <div className="text-center">
               <h3 className="text-lg font-semibold">لا توجد دول مسجلة</h3>
-              <p className="text-muted-foreground mt-1 text-sm">ابدأ بإضافة دولة جديدة</p>
+              <p className="text-muted-foreground mt-1 text-sm">
+                ابدأ بإضافة دولة جديدة
+              </p>
             </div>
             <Button className="mt-2 gap-2">
               <Plus className="h-4 w-4" />
@@ -134,7 +140,9 @@ function page() {
       <div className="flex flex-col items-start justify-between gap-4 md:flex-row md:items-center">
         <div className="text-right">
           <h1 className="text-2xl font-bold">قائمة الدول</h1>
-          <p className="text-muted-foreground text-sm">إدارة وعرض جميع الدول المتاحة للشحن</p>
+          <p className="text-muted-foreground text-sm">
+            إدارة وعرض جميع الدول المتاحة للشحن
+          </p>
         </div>
         <div className="flex w-full gap-2 md:w-auto">
           <div className="relative flex-1 md:w-80">
@@ -142,7 +150,7 @@ function page() {
             <Input placeholder="ابحث عن دولة..." className="pr-10" />
           </div>
           <Dialog>
-            <DialogTrigger asChild>
+            <DialogTrigger>
               <Button className="gap-2">
                 <Plus className="h-4 w-4" />
                 إضافة دولة
@@ -150,7 +158,9 @@ function page() {
             </DialogTrigger>
             <DialogContent>
               <DialogHeader>
-                <DialogTitle>إضافة دولة جديدة إلى قائمة الدول المتاحة للشحن</DialogTitle>
+                <DialogTitle>
+                  إضافة دولة جديدة إلى قائمة الدول المتاحة للشحن
+                </DialogTitle>
               </DialogHeader>
               <AddCountryForm />
             </DialogContent>

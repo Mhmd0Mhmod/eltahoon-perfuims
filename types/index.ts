@@ -9,6 +9,7 @@ export type Description = {
   description: string;
 };
 export type Column<T> = Title & {
+  id?: string;
   header?: keyof T;
   render?: (row: T) => React.ReactNode;
   valueFormatter?: (row: T) => string | number | boolean | null | undefined;

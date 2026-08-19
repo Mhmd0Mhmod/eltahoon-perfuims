@@ -1,14 +1,24 @@
 "use client";
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
 import { getAdminOffers } from "@/features/offers/services";
-import { DiscountType, Offer } from "@/features/offers/types";
+import { DiscountType, IOffer } from "@/features/offers/types";
 import { Column } from "@/types";
 import { formatDate, isBefore } from "date-fns";
-import { CalendarCheck, CalendarX, Percent, Tag } from "lucide-react";
+import {
+  CalendarCheck,
+  CalendarX,
+  Pencil,
+  Percent,
+  Power,
+  PowerOff,
+  Tag,
+  Trash,
+} from "lucide-react";
 
-const columns: Column<Offer>[] = [
+const columns: Column<IOffer>[] = [
   {
     header: "title",
     title: "العرض",
@@ -89,7 +99,19 @@ const columns: Column<Offer>[] = [
     render(row) {
       return (
         <div className="flex items-center justify-center">
-          {/* <OfferActionsMenu offer={row} /> */}
+          <Button variant="outline" size="sm">
+            <Pencil className="h-4 w-4" />
+          </Button>
+          <Button variant="secondary" size="sm" className="mr-2">
+            {row.isActive ? (
+              <Power className="h-4 w-4" />
+            ) : (
+              <PowerOff className="h-4 w-4" />
+            )}
+          </Button>
+          <Button variant="destructive" size="sm" className="mr-2">
+            <Trash />
+          </Button>
         </div>
       );
     },
@@ -98,7 +120,7 @@ const columns: Column<Offer>[] = [
 
 function OffersPage() {
   return (
-    <TableDashboardPage<Offer>
+    <TableDashboardPage<IOffer>
       title="العروض"
       description="إدارة جميع العروض والخصومات"
       table={{
@@ -146,7 +168,6 @@ function OffersPage() {
           <p className="text-sm text-muted-foreground">ابدأ بإضافة عرض جديد</p>
         </div>
       }
-      showSearch
       isPaginated={false}
     />
   );

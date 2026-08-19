@@ -1,4 +1,3 @@
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -6,19 +5,36 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
 import { formatDate } from "date-fns";
-import { Package, Pencil } from "lucide-react";
+import { Package, Pencil, Trash } from "lucide-react";
 import { ISize } from "../types";
+import Dialog from "@/components/Dialog";
+import SizeForm from "./SizeForm";
+import AlertDialog from "@/components/AlertDialog";
+import { useMutation } from "@tanstack/react-query";
+import { deleteSize } from "@/app/dashboard/actions";
+import { toast } from "sonner";
 
 export default function SizeCard({ size }: { size: ISize }) {
+  const { mutate } = useMutation({
+    mutationKey: ["delete-size"],
+    mutationFn: deleteSize,
+    onSuccess: (data, _, __, context) => {
+      if (data.success) {
+        context.client.invalidateQueries({
+          predicate: (query) =>
+            query.queryKey.some(
+              (key) =>
+                typeof key === "string" && key.toLowerCase().includes("size"),
+            ),
+          type: "active",
+        });
+        toast.success(data.message || "تم حذف الحجم بنجاح");
+      } else {
+        toast.error(data.message || "حدث خطأ أثناء حذف الحجم");
+      }
+    },
+  });
   return (
     <Card className="transition-shadow hover:shadow-md">
       <CardHeader>
@@ -48,21 +64,22 @@ export default function SizeCard({ size }: { size: ISize }) {
         </div>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        <Dialog>
-          <DialogTrigger render={<Button variant="outline" size="sm" />}>
-            <Pencil className="h-4 w-4" />
-          </DialogTrigger>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>تعديل الحجم</DialogTitle>
-              <DialogDescription>
-                عدل بيانات الحجم هنا. انقر حفظ عند الانتهاء.
-              </DialogDescription>
-            </DialogHeader>
-            {/* <AddSizeDialog size={size} /> */}
-          </DialogContent>
+        <Dialog
+          title="تعديل الحجم"
+          description="قم بتعديل بيانات الحجم هنا. انقر حفظ عند الانتهاء."
+          triggerRender={<Pencil className="h-4 w-4" />}
+          variant="outline"
+        >
+          <SizeForm size={size} />
         </Dialog>
-        {/* <DeleteSizeButton size={size} /> */}
+        <AlertDialog
+          title="حذف الحجم"
+          description="هل أنت متأكد أنك تريد حذف هذا الحجم؟ لا يمكن التراجع عن هذا الإجراء."
+          triggerRender={<Trash className="h-4 w-4" />}
+          onConfirm={() => mutate(size.id)}
+          actionButtonText="حذف"
+          triggerVariant="destructive"
+        />
       </CardFooter>
     </Card>
   );

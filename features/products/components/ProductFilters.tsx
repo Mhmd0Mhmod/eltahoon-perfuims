@@ -15,14 +15,14 @@ interface Category {
   name: string;
 }
 
-interface Offer {
+interface IOffer {
   id: number | string;
   title: string;
 }
 
 interface ProductFiltersProps {
   categories?: Category[];
-  offers?: Offer[];
+  offers?: IOffer[];
 }
 
 function ProductFilters({ categories = [], offers = [] }: ProductFiltersProps) {

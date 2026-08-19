@@ -1,7 +1,14 @@
 import { OrderStatusSelect } from "@/components/admin/orders/OrderStatusSelect";
+import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   Table,
@@ -11,7 +18,12 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ORDER_STATUS, OrderStatus, PAYMENT_STATUS_CONFIG } from "@/types/order";
+import { OrderAPI } from "@/lib/api/order";
+import {
+  ORDER_STATUS,
+  OrderStatus,
+  PAYMENT_STATUS_CONFIG,
+} from "@/types/order";
 import {
   ArrowRight,
   Calendar,
@@ -30,8 +42,6 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { formatCurrency } from "@/lib/utils";
-import { OrderAPI } from "@/lib/api/order";
 
 const ORDER_STATUS_CONFIG: Record<
   OrderStatus,
@@ -74,7 +84,11 @@ const ORDER_STATUS_CONFIG: Record<
   },
 };
 
-async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> }) {
+async function OrderDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   if (!id) notFound();
 
@@ -86,7 +100,8 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
   }
 
   const statusConfig = ORDER_STATUS_CONFIG[order.status];
-  const paymentStatusConfig = PAYMENT_STATUS_CONFIG[order.payment.paymentStatus];
+  const paymentStatusConfig =
+    PAYMENT_STATUS_CONFIG[order.payment.paymentStatus];
   const isCancelled = order.status === ORDER_STATUS.CANCELLED;
   const isDelivered = order.status === ORDER_STATUS.DELIVERED;
 
@@ -107,7 +122,7 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
       {/* Header */}
       <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" asChild>
+          <Button variant="ghost" size="icon">
             <Link href="/admin/orders">
               <ArrowRight className="h-5 w-5" />
             </Link>
@@ -118,7 +133,10 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <OrderStatusSelect orderId={order.orderId} currentStatus={order.status} />
+          <OrderStatusSelect
+            orderId={order.orderId}
+            currentStatus={order.status}
+          />
         </div>
       </div>
 
@@ -148,7 +166,9 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
                 <Badge variant={statusConfig.variant} className="text-sm">
                   {statusConfig.label}
                 </Badge>
-                <p className="text-muted-foreground mt-1 text-sm">{statusConfig.description}</p>
+                <p className="text-muted-foreground mt-1 text-sm">
+                  {statusConfig.description}
+                </p>
               </div>
             </div>
 
@@ -161,14 +181,20 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
                 <span className="font-medium">#{order.orderNumber}</span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">تاريخ الطلب</span>
+                <span className="text-muted-foreground text-sm">
+                  تاريخ الطلب
+                </span>
                 <div className="flex items-center gap-1">
                   <Calendar className="text-muted-foreground h-4 w-4" />
-                  <span className="text-sm font-medium">{formatDate(order.createdAt)}</span>
+                  <span className="text-sm font-medium">
+                    {formatDate(order.createdAt)}
+                  </span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">عدد المنتجات</span>
+                <span className="text-muted-foreground text-sm">
+                  عدد المنتجات
+                </span>
                 <span className="font-medium">{order.items.length} منتج</span>
               </div>
               <div className="flex items-center justify-between">
@@ -186,10 +212,7 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
             <div className="flex items-center justify-between">
               <span className="text-lg font-semibold">المجموع الكلي</span>
               <span className="text-primary text-xl font-bold">
-                {formatCurrency({
-                  amount: order.totalAmount,
-                  code: order.countryCode,
-                })}
+                <FormatCurrency value={order.totalAmount} />
               </span>
             </div>
           </CardContent>
@@ -215,7 +238,9 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
               <div className="flex items-start gap-3">
                 <Mail className="text-muted-foreground mt-0.5 h-5 w-5" />
                 <div>
-                  <p className="text-muted-foreground text-sm">البريد الإلكتروني</p>
+                  <p className="text-muted-foreground text-sm">
+                    البريد الإلكتروني
+                  </p>
                   <p className="font-medium">{order.user.email}</p>
                 </div>
               </div>
@@ -234,7 +259,9 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
                 <div>
                   <p className="text-muted-foreground text-sm">عنوان الشحن</p>
                   <p className="font-medium">
-                    {order.shippingAddress || order.user.shippingAddress || "غير محدد"}
+                    {order.shippingAddress ||
+                      order.user.shippingAddress ||
+                      "غير محدد"}
                   </p>
                 </div>
               </div>
@@ -253,17 +280,29 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
           <CardContent className="space-y-4">
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">طريقة الدفع</span>
-                <span className="font-medium">{order.payment.paymentMethodName}</span>
+                <span className="text-muted-foreground text-sm">
+                  طريقة الدفع
+                </span>
+                <span className="font-medium">
+                  {order.payment.paymentMethodName}
+                </span>
               </div>
               <div className="flex items-center justify-between">
-                <span className="text-muted-foreground text-sm">حالة الدفع</span>
-                <Badge variant={paymentStatusConfig.variant}>{paymentStatusConfig.label}</Badge>
+                <span className="text-muted-foreground text-sm">
+                  حالة الدفع
+                </span>
+                <Badge variant={paymentStatusConfig.variant}>
+                  {paymentStatusConfig.label}
+                </Badge>
               </div>
               {order.payment.transactionId && (
                 <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground text-sm">رقم المعاملة</span>
-                  <span className="font-mono text-sm">{order.payment.transactionId}</span>
+                  <span className="text-muted-foreground text-sm">
+                    رقم المعاملة
+                  </span>
+                  <span className="font-mono text-sm">
+                    {order.payment.transactionId}
+                  </span>
                 </div>
               )}
             </div>
@@ -274,10 +313,12 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
               <div className="flex items-center justify-between text-sm">
                 <span className="text-muted-foreground">المجموع الفرعي</span>
                 <span>
-                  {formatCurrency({
-                    amount: order.items.reduce((sum, item) => sum + item.subtotal, 0),
-                    code: order.countryCode,
-                  })}
+                  <FormatCurrency
+                    value={order.items.reduce(
+                      (sum, item) => sum + item.subtotal,
+                      0,
+                    )}
+                  />
                 </span>
               </div>
               <div className="flex items-center justify-between text-sm">
@@ -288,10 +329,7 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
               <div className="flex items-center justify-between">
                 <span className="font-semibold">الإجمالي</span>
                 <span className="text-primary font-bold">
-                  {formatCurrency({
-                    amount: order.totalAmount,
-                    code: order.countryCode,
-                  })}
+                  <FormatCurrency value={order.totalAmount} />
                 </span>
               </div>
             </div>
@@ -313,10 +351,18 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
             <Table>
               <TableHeader>
                 <TableRow className="bg-muted/50">
-                  <TableHead className="text-right font-semibold">المنتج</TableHead>
-                  <TableHead className="text-center font-semibold">الكمية</TableHead>
-                  <TableHead className="text-right font-semibold">سعر الوحدة</TableHead>
-                  <TableHead className="text-right font-semibold">المجموع</TableHead>
+                  <TableHead className="text-right font-semibold">
+                    المنتج
+                  </TableHead>
+                  <TableHead className="text-center font-semibold">
+                    الكمية
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    سعر الوحدة
+                  </TableHead>
+                  <TableHead className="text-right font-semibold">
+                    المجموع
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -339,16 +385,10 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
                       <Badge variant="secondary">{item.quantity}</Badge>
                     </TableCell>
                     <TableCell className="text-right">
-                      {formatCurrency({
-                        amount: item.unitPrice,
-                        code: order.countryCode,
-                      })}
+                      <FormatCurrency value={item.unitPrice} />
                     </TableCell>
                     <TableCell className="text-right font-semibold">
-                      {formatCurrency({
-                        amount: item.subtotal,
-                        code: order.countryCode,
-                      })}
+                      <FormatCurrency value={item.subtotal} />
                     </TableCell>
                   </TableRow>
                 ))}
@@ -361,10 +401,12 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
             <div className="flex items-center justify-between text-sm">
               <span className="text-muted-foreground">المجموع الفرعي</span>
               <span>
-                {formatCurrency({
-                  amount: order.items.reduce((sum, item) => sum + item.subtotal, 0),
-                  code: order.countryCode,
-                })}
+                <FormatCurrency
+                  value={order.items.reduce(
+                    (sum, item) => sum + item.subtotal,
+                    0,
+                  )}
+                />
               </span>
             </div>
             <div className="flex items-center justify-between text-sm">
@@ -375,10 +417,7 @@ async function OrderDetailsPage({ params }: { params: Promise<{ id: string }> })
             <div className="flex items-center justify-between">
               <span className="font-semibold">المجموع الكلي</span>
               <span className="text-primary text-lg font-bold">
-                {formatCurrency({
-                  amount: order.totalAmount,
-                  code: order.countryCode,
-                })}
+                <FormatCurrency value={order.totalAmount} />
               </span>
             </div>
           </div>

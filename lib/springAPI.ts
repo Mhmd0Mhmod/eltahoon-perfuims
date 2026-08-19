@@ -17,3 +17,10 @@ export const getSpringAPI = function (request: NextRequest) {
   });
   return api;
 };
+
+export const api = axios.create({
+  baseURL,
+  headers: {
+    "Content-Type": "application/json",
+  },
+});

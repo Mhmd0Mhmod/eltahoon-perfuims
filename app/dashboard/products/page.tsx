@@ -1,144 +1,165 @@
 "use client";
+import AlertDialog from "@/components/AlertDialog";
+import FormatCurrency from "@/components/FormatCurrency";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import VariantsPopover from "@/features/products/components/VariantsPopover";
 import { getAdminProducts } from "@/features/products/services";
 import { IProduct } from "@/features/products/types";
 import { Column } from "@/types";
-import Image from "next/image";
-import { Package, PackageCheck, PackageX, Pencil } from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import VariantsPopover from "@/features/products/components/VariantsPopover";
-import FormatCurrency from "@/components/FormatCurrency";
+import { useMutation } from "@tanstack/react-query";
 import { format } from "date-fns";
-import { Button } from "@/components/ui/button";
+import { Package, PackageCheck, PackageX, Pencil } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
-import AlertDialog from "@/components/AlertDialog";
+import { useMemo } from "react";
+import { toast } from "sonner";
+import { deleteProduct } from "../actions";
 
-const columns: Column<IProduct>[] = [
-  {
-    title: "#",
-    render(row) {
-      return (
-        <div className="relative h-12 w-12 overflow-hidden rounded-md">
-          <Image
-            src={row.imageUrl || "/assets/logo.png"}
-            alt={row.name}
-            fill
-            sizes="48px"
-            className="object-cover"
-          />
-        </div>
-      );
+function ProductsPage() {
+  const { mutate } = useMutation({
+    mutationKey: ["delete-product"],
+    mutationFn: deleteProduct,
+    onSuccess: (data, _, __, context) => {
+      if (data.success) {
+        toast.success(data.message || "تم حذف المنتج بنجاح");
+        context.client.invalidateQueries({
+          queryKey: ["products"],
+        });
+      } else {
+        toast.error(data.message || "حدث خطأ أثناء حذف المنتج");
+      }
     },
-  },
-  {
-    header: "name",
-    title: "المنتج",
-    render(row) {
-      return (
-        <Button variant="link" className="p-0 text-left">
-          <Link href={row.id.toString()}>{row.name}</Link>
-        </Button>
-      );
-    },
-  },
-  {
-    header: "categories",
-    title: "التصنيف",
-    render(row) {
-      return (
-        <div className="flex max-w-50 flex-wrap gap-1">
-          {row.categories && row.categories.length > 0 ? (
-            row.categories.slice(0, 2).map((cat) => (
-              <Badge variant="outline" key={cat.id} className="text-xs">
-                {cat.name}
-              </Badge>
-            ))
+  });
+  const columns: Column<IProduct>[] = useMemo(
+    () => [
+      {
+        title: "#",
+        render(row) {
+          return (
+            <div className="relative h-12 w-12 overflow-hidden rounded-md">
+              <Image
+                src={row.imageUrl || "/assets/logo.png"}
+                alt={row.name}
+                fill
+                sizes="48px"
+                className="object-cover"
+              />
+            </div>
+          );
+        },
+      },
+      {
+        header: "name",
+        title: "المنتج",
+        render(row) {
+          return (
+            <Button variant="link" className="p-0 text-left">
+              <Link href={row.id.toString()}>{row.name}</Link>
+            </Button>
+          );
+        },
+      },
+      {
+        header: "categories",
+        title: "التصنيف",
+        render(row) {
+          return (
+            <div className="flex max-w-50 flex-wrap gap-1">
+              {row.categories && row.categories.length > 0 ? (
+                row.categories.slice(0, 2).map((cat) => (
+                  <Badge variant="outline" key={cat.id} className="text-xs">
+                    {cat.name}
+                  </Badge>
+                ))
+              ) : (
+                <Badge variant="secondary" className="text-xs">
+                  بدون تصنيف
+                </Badge>
+              )}
+              {row.categories && row.categories.length > 2 && (
+                <Badge variant="secondary" className="text-xs">
+                  +{row.categories.length - 2}
+                </Badge>
+              )}
+            </div>
+          );
+        },
+      },
+      {
+        header: "variants",
+        title: "النوع",
+        render(row) {
+          return row.variants && row.variants.length > 0 ? (
+            <VariantsPopover variants={row.variants} />
           ) : (
-            <Badge variant="secondary" className="text-xs">
-              بدون تصنيف
-            </Badge>
-          )}
-          {row.categories && row.categories.length > 2 && (
-            <Badge variant="secondary" className="text-xs">
-              +{row.categories.length - 2}
-            </Badge>
-          )}
-        </div>
-      );
-    },
-  },
-  {
-    header: "variants",
-    title: "النوع",
-    render(row) {
-      return row.variants && row.variants.length > 0 ? (
-        <VariantsPopover variants={row.variants} />
-      ) : (
-        <Badge variant="secondary">لا يوجد أحجام</Badge>
-      );
-    },
-  },
-  {
-    header: "variants",
-    title: "السعر",
-    render(row) {
-      const minPrice = Math.min(...row.variants.map((v) => v.newPrice));
-      const maxPrice = Math.max(...row.variants.map((v) => v.newPrice));
-      return row.variants && row.variants.length > 0 ? (
-        <div className="flex items-center gap-1 font-medium">
-          <span>
-            <FormatCurrency
-              value={Math.min(...row.variants.map((v) => v.newPrice))}
-            />
-          </span>
-          {minPrice !== maxPrice && (
-            <>
-              <span className="text-muted-foreground">-</span>
+            <Badge variant="secondary">لا يوجد أحجام</Badge>
+          );
+        },
+      },
+      {
+        header: "variants",
+        title: "السعر",
+        render(row) {
+          const minPrice = Math.min(...row.variants.map((v) => v.newPrice));
+          const maxPrice = Math.max(...row.variants.map((v) => v.newPrice));
+          return row.variants && row.variants.length > 0 ? (
+            <div className="flex items-center gap-1 font-medium">
               <span>
                 <FormatCurrency
-                  value={Math.max(...row.variants.map((v) => v.newPrice))}
+                  value={Math.min(...row.variants.map((v) => v.newPrice))}
                 />
               </span>
-            </>
-          )}
-        </div>
-      ) : (
-        <Badge variant="secondary" className="text-xs">
-          غير محدد
-        </Badge>
-      );
-    },
-  },
-  {
-    header: "createdAt",
-    title: "تاريخ الإضافة",
-    valueFormatter(value) {
-      return format(value.createdAt, "dd/MM/yyyy");
-    },
-  },
-  {
-    title: "الإجراءات",
-    render(row) {
-      return (
-        <div className="flex items-center gap-2">
-          <Button variant={"outline"}>
-            <Link href={`products/${row.id}`} className="text-xs">
-              <Pencil />
-            </Link>
-          </Button>
-          <AlertDialog
-            title={`حذف المنتج ${row.name}`}
-            description="هل أنت متأكد من حذف هذا المنتج؟"
-            onConfirm={() => {}}
-            triggerVariant="destructive"
-            actionButtonText="حذف"
-          />
-        </div>
-      );
-    },
-  },
-];
-function ProductsPage() {
+              {minPrice !== maxPrice && (
+                <>
+                  <span className="text-muted-foreground">-</span>
+                  <span>
+                    <FormatCurrency
+                      value={Math.max(...row.variants.map((v) => v.newPrice))}
+                    />
+                  </span>
+                </>
+              )}
+            </div>
+          ) : (
+            <Badge variant="secondary" className="text-xs">
+              غير محدد
+            </Badge>
+          );
+        },
+      },
+      {
+        header: "createdAt",
+        title: "تاريخ الإضافة",
+        valueFormatter(value) {
+          return format(value.createdAt, "dd/MM/yyyy");
+        },
+      },
+      {
+        title: "الإجراءات",
+        render(row) {
+          return (
+            <div className="flex items-center gap-2">
+              <Link href={`products/${row.id}`} className="text-xs">
+                <Button variant={"outline"}>
+                  <Pencil />
+                </Button>
+              </Link>
+              <AlertDialog
+                title={`حذف المنتج ${row.name}`}
+                description="هل أنت متأكد من حذف هذا المنتج؟"
+                onConfirm={() => mutate(row.id)}
+                triggerVariant="destructive"
+                actionButtonText="حذف"
+              />
+            </div>
+          );
+        },
+      },
+    ],
+    [],
+  );
   return (
     <TableDashboardPage<IProduct>
       title="المنتجات"

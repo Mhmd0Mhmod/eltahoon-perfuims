@@ -10,6 +10,7 @@ import { ProductCategories } from "./ProductCategories";
 import { ProductImage } from "./ProductImage";
 import { ProductSubmitButton } from "./ProductSubmitButton";
 // import ProductVariants from "./ProductVariants";
+import { addProduct, updateProduct } from "@/app/dashboard/actions";
 import { IProduct } from "../../types";
 import ProductVariants from "./ProductVarients/ProductVarients";
 interface ProductFormProps {
@@ -49,10 +50,9 @@ function ProductForm({ product }: ProductFormProps) {
       );
 
       try {
-        // const response = isEditMode
-        //   ? await updateProduct(product!.id, data)
-        //   : await addProduct(data);
-        const response = { success: true, message: "تمت العملية بنجاح" };
+        const response = isEditMode
+          ? await updateProduct(product!.id, data)
+          : await addProduct(data);
         if (!response.success) {
           toast.error(
             response.message ||

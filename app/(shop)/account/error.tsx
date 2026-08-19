@@ -3,7 +3,13 @@
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle, RefreshCcw, Home } from "lucide-react";
 import Link from "next/link";
@@ -37,7 +43,9 @@ export default function Error({ error, reset }: ErrorProps) {
             <AlertCircle className="text-destructive h-8 w-8" />
           </div>
           <CardTitle className="text-2xl">حدث خطأ ما!</CardTitle>
-          <CardDescription>عذراً، حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.</CardDescription>
+          <CardDescription>
+            عذراً، حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           {error.message && (
@@ -53,7 +61,7 @@ export default function Error({ error, reset }: ErrorProps) {
               <RefreshCcw className="ml-2 h-4 w-4" />
               حاول مرة أخرى
             </Button>
-            <Button asChild variant="outline" className="flex-1">
+            <Button variant="outline" className="flex-1">
               <Link href={homeRoute}>
                 <Home className="ml-2 h-4 w-4" />
                 الصفحة الرئيسية

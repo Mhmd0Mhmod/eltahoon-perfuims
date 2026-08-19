@@ -18,6 +18,7 @@ interface FormDialogProps {
   children: ReactNode;
   icon?: ReactNode;
   triggerRender?: ReactNode;
+  variant?: "default" | "outline" | "ghost" | "link" | "destructive";
 }
 
 function Dialog({
@@ -26,10 +27,11 @@ function Dialog({
   children,
   icon,
   triggerRender,
+  variant = "default",
 }: FormDialogProps) {
   return (
     <DialogComponent modal>
-      <DialogTrigger render={<Button />}>
+      <DialogTrigger render={<Button variant={variant} />}>
         {triggerRender ? (
           triggerRender
         ) : (

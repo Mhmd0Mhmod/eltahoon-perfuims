@@ -15,8 +15,25 @@ import AlertDialog from "@/components/AlertDialog";
 import Dialog from "@/components/Dialog";
 import { ICategory } from "../types";
 import { CategoryForm } from "./CategoryForm/CategoryForm";
+import { useMutation } from "@tanstack/react-query";
+import { deleteCategory } from "@/app/dashboard/actions";
+import { toast } from "sonner";
 
 export function CategoryCard({ category }: { category: ICategory }) {
+  const { mutate } = useMutation({
+    mutationKey: ["delete-category"],
+    mutationFn: deleteCategory,
+    onSuccess: (data, _, __, context) => {
+      if (data.success) {
+        toast.success(data.message || "تم حذف التصنيف بنجاح");
+        context.client.invalidateQueries({
+          queryKey: ["categories"],
+        });
+      } else {
+        toast.error(data.message || "حدث خطأ أثناء حذف التصنيف");
+      }
+    },
+  });
   return (
     <Card className="gap-2 h-full">
       <CardHeader>
@@ -69,36 +86,11 @@ export function CategoryCard({ category }: { category: ICategory }) {
           <CategoryForm category={category} />
         </Dialog>
 
-        {/* <AlertDialog>
-          <AlertDialogTrigger
-            render={<Button variant="destructive" size="sm" />}
-          >
-            <Trash2 className="h-4 w-4" />
-          </AlertDialogTrigger>
-
-          <AlertDialogContent className="min-w-md border-2">
-            <AlertDialogHeader>
-              <AlertDialogTitle>هل أنت متأكد؟</AlertDialogTitle>
-
-              <AlertDialogDescription>
-                هذا الإجراء لا يمكن التراجع عنه. سيتم حذف التصنيف &quot;
-                {category.name}
-                &quot; نهائياً.
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-
-            <AlertDialogFooter>
-              <AlertDialogCancel>إلغاء</AlertDialogCancel>
-
-              <AlertDialogAction>حذف</AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog> */}
         <AlertDialog
           title={`حذف التصنيف: ${category.name}`}
           description={`هل أنت متأكد من حذف التصنيف: ${category.name}؟ هذا الإجراء لا يمكن التراجع عنه.`}
           onConfirm={() => {
-            // Handle delete action here
+            mutate(category.id);
           }}
           triggerVariant="destructive"
           actionButtonText="حذف"

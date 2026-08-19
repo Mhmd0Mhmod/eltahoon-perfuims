@@ -22,6 +22,7 @@ export async function loginAction(
       httpOnly: false,
       secure: process.env.NODE_ENV === "production",
       sameSite: "strict",
+      expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000), // 7 days
     });
     return APIResponse.success({ token, uesrProfile });
   } catch (error) {

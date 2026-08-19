@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
 interface IProps {
   title: string;
   description: string;
@@ -29,17 +30,22 @@ interface IProps {
 function AlertDialog({
   title,
   description,
-  onConfirm,
   triggerRender,
   triggerVariant,
   actionButtonText,
   onConfirm: handleConfirm,
 }: IProps) {
+  const [open, setOpen] = useState(false);
+  function handleOpenChange(isOpen: boolean) {
+    setOpen(isOpen);
+  }
+  function handleConfirmClick() {
+    handleConfirm();
+    setOpen(false);
+  }
   return (
-    <AlertDialogComponent>
-      <AlertDialogTrigger
-        render={<Button variant={triggerVariant} size="sm" />}
-      >
+    <AlertDialogComponent open={open} onOpenChange={handleOpenChange}>
+      <AlertDialogTrigger render={<Button variant={triggerVariant} />}>
         {triggerRender ? triggerRender : <Trash2 className="h-4 w-4" />}
       </AlertDialogTrigger>
 
@@ -53,7 +59,7 @@ function AlertDialog({
 
         <AlertDialogFooter>
           <AlertDialogCancel>إلغاء</AlertDialogCancel>
-          <AlertDialogAction onClick={handleConfirm}>
+          <AlertDialogAction onClick={handleConfirmClick}>
             {actionButtonText}
           </AlertDialogAction>
         </AlertDialogFooter>

@@ -1,47 +1,24 @@
-// import AddOfferForm from "@/components/admin/offers/AddOfferForm";
-// import { Button } from "@/components/ui/button";
-// import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-// import { ProductAPI } from "@/lib/api/product";
-// import { Product } from "@/types/product";
-// import { ArrowRight } from "lucide-react";
-// import Link from "next/link";
+import { getProducts } from "@/app/dashboard/actions";
+import OfferForm from "@/features/offers/components/OfferForm";
 
-// async function NewOfferPage() {
-//   const products = (await ProductAPI.getAdminProducts({
-//     displayAll: true,
-//   })) as Product[];
+export default async function NewOfferPage() {
+  const response = await getProducts({ getAll: true });
 
-//   return (
-//     <div className="container mx-auto space-y-6 p-6">
-//       {/* Header */}
-//       <div className="flex items-center gap-4">
-//         <Button variant="ghost" size="icon" asChild>
-//           <Link href="/admin/offers">
-//             <ArrowRight className="h-5 w-5" />
-//           </Link>
-//         </Button>
-//         <div>
-//           <h1 className="text-3xl font-bold tracking-tight">إضافة عرض جديد</h1>
-//           <p className="text-muted-foreground">أدخل بيانات العرض الجديد</p>
-//         </div>
-//       </div>
+  if (!response.success) {
+    throw new Error("حدث خطأ أثناء جلب المنتجات");
+  }
+  const products = response.data.data;
+  return (
+    <div className="container mx-auto max-w-5xl space-y-6 py-6">
+      <div>
+        <h1 className="text-2xl font-bold">إنشاء عرض جديد</h1>
 
-//       {/* Form Card */}
-//       <Card>
-//         <CardHeader>
-//           <CardTitle>بيانات العرض</CardTitle>
-//           <CardDescription>أدخل جميع المعلومات المطلوبة لإنشاء عرض جديد</CardDescription>
-//         </CardHeader>
-//         <CardContent>
-//           <AddOfferForm products={products} />
-//         </CardContent>
-//       </Card>
-//     </div>
-//   );
-// }
+        <p className="text-muted-foreground">
+          أضف عرضاً جديداً واختر المنتجات التي سيشملها.
+        </p>
+      </div>
 
-// export default NewOfferPage;
-function page() {
-  return <div>page</div>;
+      <OfferForm products={products} />
+    </div>
+  );
 }
-export default page;

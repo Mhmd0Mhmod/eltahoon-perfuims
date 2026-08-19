@@ -1,24 +1,23 @@
 "use client";
 
-import { useCallback, useState } from "react";
-import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/navigation";
+import { useCallback } from "react";
+import { FormProvider, useForm } from "react-hook-form";
 
 import { Button } from "@/components/ui/button";
 
-import { AddCategorySchema, addCategorySchema } from "../../schema";
-import { ICategory } from "../../types";
 import { addCategory, updateCategory } from "@/app/dashboard/actions";
 import { toast } from "sonner";
+import { AddCategorySchema, addCategorySchema } from "../../schema";
+import { ICategory } from "../../types";
 
 import CategoryBasicFields from "./CategoryBasicFields";
-import CategoryProductsSelector from "./CategoryProductsSelector";
 import CategoryChildrenFields from "./CategoryChildrenFields";
+import CategoryProductsSelector from "./CategoryProductsSelector";
 
 export function CategoryForm({ category }: { category?: ICategory }) {
   const router = useRouter();
-
   const form = useForm<AddCategorySchema>({
     resolver: zodResolver(addCategorySchema),
     defaultValues: category
@@ -50,13 +49,9 @@ export function CategoryForm({ category }: { category?: ICategory }) {
     async (data: AddCategorySchema) => {
       const isEdit = Boolean(category);
 
-      // const response = isEdit
-      //   ? await updateCategory(category!.id, data)
-      //   : await addCategory(data);
-      const response = {
-        success: true,
-        message: isEdit ? "تم تعديل التصنيف بنجاح" : "تم إضافة التصنيف بنجاح",
-      };
+      const response = isEdit
+        ? await updateCategory(category!.id, data)
+        : await addCategory(data);
       if (!response.success) {
         const message =
           response.message ||
@@ -79,19 +74,15 @@ export function CategoryForm({ category }: { category?: ICategory }) {
       const message =
         response.message ||
         (isEdit ? "تم تعديل التصنيف بنجاح" : "تم إضافة التصنيف بنجاح");
-
       toast.success(
         isEdit ? "تم تعديل التصنيف بنجاح" : "تم إضافة التصنيف بنجاح",
         {
           description: message,
         },
       );
-
       if (!isEdit) {
         form.reset();
       }
-
-      router.push("/admin/categories");
     },
     [category, form, router],
   );

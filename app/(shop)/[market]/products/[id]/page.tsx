@@ -1,7 +1,13 @@
 import AddToCartButton from "@/components/products/AddToCartButton";
 import ProductOffer from "@/components/products/ProductOffer";
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ProductProvider } from "@/context/ProductContext";
 import { CountryAPI } from "@/lib/api/country";
@@ -20,7 +26,11 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 
-export default async function ProductPage({ params }: { params: Promise<{ id: string }> }) {
+export default async function ProductPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
   const product = await ProductAPI.getProductById(id);
   const minPrice = Math.min(...product.variants.map((v) => v.newPrice));
@@ -29,7 +39,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
   const offers = new Set<string>();
   product.variants.forEach((v) => {
     if (v.offerResponseDTO) {
-      offers.add(`${v.offerResponseDTO.title}: ${v.offerResponseDTO.description}`);
+      offers.add(
+        `${v.offerResponseDTO.title}: ${v.offerResponseDTO.description}`,
+      );
     }
   });
 
@@ -48,7 +60,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                 className="object-cover"
                 priority
               />
-              {/* Offer badge on image */}
+              {/* IOffer badge on image */}
               {hasDiscount && (
                 <div className="absolute top-0 left-0">
                   <ProductOffer />
@@ -60,15 +72,21 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
             <div className="grid grid-cols-3 gap-3">
               <div className="bg-muted/50 flex flex-col items-center gap-1.5 rounded-xl p-3">
                 <Star className="text-yellow-500" size={22} />
-                <span className="text-muted-foreground text-xs font-medium">جودة عالية</span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  جودة عالية
+                </span>
               </div>
               <div className="bg-muted/50 flex flex-col items-center gap-1.5 rounded-xl p-3">
                 <ShieldCheck className="text-green-500" size={22} />
-                <span className="text-muted-foreground text-xs font-medium">ضمان أصلي</span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  ضمان أصلي
+                </span>
               </div>
               <div className="bg-muted/50 flex flex-col items-center gap-1.5 rounded-xl p-3">
                 <Truck className="text-blue-500" size={22} />
-                <span className="text-muted-foreground text-xs font-medium">توصيل سريع</span>
+                <span className="text-muted-foreground text-xs font-medium">
+                  توصيل سريع
+                </span>
               </div>
             </div>
           </div>
@@ -84,7 +102,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   </Badge>
                 ))}
               </div>
-              <h1 className="text-3xl leading-tight font-bold md:text-4xl">{product.name}</h1>
+              <h1 className="text-3xl leading-tight font-bold md:text-4xl">
+                {product.name}
+              </h1>
               {product.description && (
                 <p className="text-muted-foreground text-base leading-relaxed">
                   {product.description}
@@ -96,24 +116,30 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
             {/* Price Section */}
             <div className="flex flex-col gap-2">
-              <span className="text-muted-foreground text-sm font-medium">السعر</span>
+              <span className="text-muted-foreground text-sm font-medium">
+                السعر
+              </span>
               <div className="flex items-baseline gap-3">
                 {minPrice !== Number.POSITIVE_INFINITY && (
                   <span className="text-primary text-3xl font-bold">
-                    {formatCurrency({ amount: minPrice, code: product.countryCode })}
+                    {formatCurrency({
+                      amount: minPrice,
+                      code: product.countryCode,
+                    })}
                   </span>
                 )}
-                {minPrice !== maxPrice && maxPrice !== Number.NEGATIVE_INFINITY && (
-                  <>
-                    <span className="text-muted-foreground text-xl">—</span>
-                    <span className="text-primary text-3xl font-bold">
-                      {formatCurrency({
-                        amount: maxPrice,
-                        code: product.countryCode,
-                      })}
-                    </span>
-                  </>
-                )}
+                {minPrice !== maxPrice &&
+                  maxPrice !== Number.NEGATIVE_INFINITY && (
+                    <>
+                      <span className="text-muted-foreground text-xl">—</span>
+                      <span className="text-primary text-3xl font-bold">
+                        {formatCurrency({
+                          amount: maxPrice,
+                          code: product.countryCode,
+                        })}
+                      </span>
+                    </>
+                  )}
               </div>
             </div>
 
@@ -121,7 +147,9 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
 
             {/* Add to Cart */}
             <div className="flex flex-col gap-3">
-              <span className="text-muted-foreground text-sm font-medium">اختر الحجم والكمية</span>
+              <span className="text-muted-foreground text-sm font-medium">
+                اختر الحجم والكمية
+              </span>
               <AddToCartButton product={product} />
             </div>
 
@@ -159,14 +187,15 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                       )}
                     </div>
                     <div className="flex items-center gap-2">
-                      {variant.oldPrice && variant.oldPrice > variant.newPrice && (
-                        <span className="text-muted-foreground text-sm line-through">
-                          {formatCurrency({
-                            amount: variant.oldPrice,
-                            code: product.countryCode,
-                          })}
-                        </span>
-                      )}
+                      {variant.oldPrice &&
+                        variant.oldPrice > variant.newPrice && (
+                          <span className="text-muted-foreground text-sm line-through">
+                            {formatCurrency({
+                              amount: variant.oldPrice,
+                              code: product.countryCode,
+                            })}
+                          </span>
+                        )}
                       <span className="text-primary text-sm font-bold">
                         {formatCurrency({
                           amount: variant.newPrice,
@@ -179,7 +208,7 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
               </div>
             </div>
 
-            {/* Offer Details (if any) */}
+            {/* IOffer Details (if any) */}
             {product.variants.some((v) => v.offerResponseDTO) && (
               <>
                 <Separator />
@@ -191,7 +220,10 @@ export default async function ProductPage({ params }: { params: Promise<{ id: st
                   <Card className="border-yellow-200 bg-yellow-50/50">
                     <CardContent className="p-4">
                       {Array.from(offers).map((offer, index) => (
-                        <p key={index} className="text-sm leading-relaxed text-yellow-900">
+                        <p
+                          key={index}
+                          className="text-sm leading-relaxed text-yellow-900"
+                        >
                           {offer}
                         </p>
                       ))}

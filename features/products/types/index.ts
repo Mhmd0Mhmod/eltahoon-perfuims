@@ -24,7 +24,7 @@ interface IProductVariant {
   newPrice: number;
   isAvailable: true;
   //   offerResponseDTO: Pick<
-  //     Offer,
+  //     IOffer,
   //     "id" | "title" | "description" | "discountType" | "discountValue"
   //   > | null;
   createdAt: string;

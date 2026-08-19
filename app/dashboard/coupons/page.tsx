@@ -1,14 +1,23 @@
 "use client";
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import { getAdminOfferCoupons } from "@/features/copouns/services";
 import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
-import { DiscountType, OfferCoupon } from "@/features/offers/types";
+import { DiscountType, IOfferCoupon } from "@/features/offers/types";
 import { Column } from "@/types";
 import { formatDate, isBefore } from "date-fns";
-import { CalendarCheck, CalendarX, Percent, Tag } from "lucide-react";
-
-const columns: Column<OfferCoupon>[] = [
+import {
+  CalendarCheck,
+  CalendarX,
+  Pencil,
+  Percent,
+  Power,
+  PowerOff,
+  Tag,
+  Trash,
+} from "lucide-react";
+const columns: Column<IOfferCoupon>[] = [
   {
     header: "code",
     title: "الكود",
@@ -97,7 +106,21 @@ const columns: Column<OfferCoupon>[] = [
     render(row) {
       return (
         <div className="flex items-center justify-center">
-          {/* <CouponActionsMenu coupon={row} /> */}
+          <div className="flex items-center justify-center">
+            <Button variant="outline" size="sm">
+              <Pencil className="h-4 w-4" />
+            </Button>
+            <Button variant="secondary" size="sm" className="mr-2">
+              {row.isActive ? (
+                <Power className="h-4 w-4" />
+              ) : (
+                <PowerOff className="h-4 w-4" />
+              )}
+            </Button>
+            <Button variant="destructive" size="sm" className="mr-2">
+              <Trash />
+            </Button>
+          </div>{" "}
         </div>
       );
     },
@@ -106,7 +129,7 @@ const columns: Column<OfferCoupon>[] = [
 
 function CouponsPage() {
   return (
-    <TableDashboardPage<OfferCoupon>
+    <TableDashboardPage<IOfferCoupon>
       title="الكوبونات"
       description="إدارة جميع الكوبونات وأكواد الخصم"
       table={{
@@ -157,7 +180,6 @@ function CouponsPage() {
           </p>
         </div>
       }
-      showSearch
       isPaginated={false}
     />
   );

@@ -1,4 +1,4 @@
-export interface Offer {
+export interface IOffer {
   id: number;
   title: string;
   description: string;
@@ -18,7 +18,7 @@ export const DiscountType = {
   FIXED_AMOUNT: "FIXED_AMOUNT",
 } as const;
 
-export interface OfferCoupon {
+export interface IOfferCoupon {
   id: number;
   code: string;
   discountType: (typeof DiscountType)[keyof typeof DiscountType];
@@ -31,7 +31,7 @@ export interface OfferCoupon {
   createdAt: string;
   updatedAt: string;
 }
-export interface AppliedCouponResponse {
+export interface IAppliedCouponResponse {
   cartTotal: number;
   couponCode: string;
   discountAmount: number;

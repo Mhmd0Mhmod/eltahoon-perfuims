@@ -31,18 +31,14 @@ type FormConfig =
 interface CardsDashboardPageProps<T, P = Record<string, unknown>> {
   title: string;
   description: string;
-  params: P;
+  params?: P;
   queryKey: string;
-
-  queryFn: (params: P) => Promise<{
+  queryFn: (params?: P) => Promise<{
     data: T[];
   }>;
-
   renderCard: (item: T) => ReactNode;
-
   form?: FormConfig;
   emptyState?: ReactNode;
-
   gridColumns?: 1 | 2 | 3 | 4;
 }
 

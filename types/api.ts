@@ -1,9 +1,9 @@
 import { AxiosError } from "axios";
-import { NextResponse } from "next/server";
 
 export interface IAPISuccess<T> {
   success: true;
   data: T;
+  message?: string;
 }
 export interface IAPIError {
   success: false;
@@ -12,10 +12,11 @@ export interface IAPIError {
 }
 export type IAPIResponse<T> = IAPISuccess<T> | IAPIError;
 export class APIResponse {
-  static success<T>(data: T): IAPISuccess<T> {
+  static success<T>(data: T, message?: string): IAPISuccess<T> {
     return {
       success: true,
       data,
+      message,
     };
   }
   static error(error: AxiosError | Error | unknown): IAPIError {

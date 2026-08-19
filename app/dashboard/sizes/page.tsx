@@ -2,6 +2,7 @@
 
 import CardsDashboardPage from "@/features/dashboard/components/CardsDashboardPage";
 import SizeCard from "@/features/size/components/SizeCard";
+import SizeForm from "@/features/size/components/SizeForm";
 import { getAdminSizes } from "@/features/size/services";
 import { ISize } from "@/features/size/types";
 import { Package } from "lucide-react";
@@ -12,13 +13,12 @@ function SizesPage() {
       title="أحجام الزجاجات"
       description="إدارة أحجام زجاجات العطور"
       queryKey="sizes"
-      params={{}}
       queryFn={getAdminSizes}
       renderCard={(size) => <SizeCard size={size} />}
       form={{
         title: "إضافة حجم جديد",
         description: "أدخل بيانات الحجم الجديد هنا. انقر حفظ عند الانتهاء.",
-        component: <></>,
+        component: <SizeForm />,
       }}
       emptyState={
         <div className="flex flex-col items-center justify-center py-12">

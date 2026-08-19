@@ -29,8 +29,6 @@ function ResetPasswordForm({ email }: { email: string }) {
     },
   });
   const onSubmit = async (data: ResetPasswordSchema) => {
-    console.log(data);
-
     const id = toast.add({
       title: "جاري إعادة تعيين كلمة المرور",
       description: "يرجى الانتظار...",

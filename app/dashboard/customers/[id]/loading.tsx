@@ -1,3 +1,4 @@
+import TableSkeleton from "@/components/TableSkeleton";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -94,48 +95,7 @@ export default function CustomerDetailsLoading() {
           </CardHeader>
           <CardContent>
             <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead className="text-right">
-                      <Skeleton className="h-4 w-20" />
-                    </TableHead>
-                    <TableHead className="text-right">
-                      <Skeleton className="h-4 w-16" />
-                    </TableHead>
-                    <TableHead className="text-right">
-                      <Skeleton className="h-4 w-16" />
-                    </TableHead>
-                    <TableHead className="text-right">
-                      <Skeleton className="h-4 w-16" />
-                    </TableHead>
-                    <TableHead className="text-right">
-                      <Skeleton className="h-4 w-16" />
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {[1, 2, 3, 4, 5].map((i) => (
-                    <TableRow key={i}>
-                      <TableCell>
-                        <Skeleton className="h-4 w-20" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-24" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-5 w-16 rounded-full" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-4 w-20" />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton className="h-8 w-16 rounded-md" />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
+              <TableSkeleton rows={5} columns={5} />
             </div>
           </CardContent>
         </Card>
@@ -152,48 +112,7 @@ export default function CustomerDetailsLoading() {
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="text-right">
-                    <Skeleton className="h-4 w-20" />
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <Skeleton className="h-4 w-16" />
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <Skeleton className="h-4 w-16" />
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <Skeleton className="h-4 w-20" />
-                  </TableHead>
-                  <TableHead className="text-right">
-                    <Skeleton className="h-4 w-16" />
-                  </TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {[1, 2, 3].map((i) => (
-                  <TableRow key={i}>
-                    <TableCell>
-                      <Skeleton className="h-4 w-20" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-24" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-20" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-4 w-24" />
-                    </TableCell>
-                    <TableCell>
-                      <Skeleton className="h-5 w-16 rounded-full" />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+            <TableSkeleton rows={3} columns={5} />
           </div>
         </CardContent>
       </Card>

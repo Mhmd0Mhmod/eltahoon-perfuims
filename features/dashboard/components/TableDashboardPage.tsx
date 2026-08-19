@@ -19,19 +19,11 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-
 import useCookies from "@/hooks/useCookies";
 import { idGenerator } from "@/lib/utils";
 import type { Column, Description, StatsCardData, Title } from "@/types";
 import type { IPagination } from "@/types/pagination";
+import Table from "@/components/Table";
 
 type TableConfig = Title & Description;
 
@@ -122,25 +114,6 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
       ? query.data.data
       : [];
 
-  const renderCell = (row: T, column: Column<T>): ReactNode => {
-    if (column.render) {
-      return column.render(row);
-    }
-    if (column.valueFormatter) {
-      return column.valueFormatter(row);
-    }
-
-    if (column.header) {
-      const value = row[column.header];
-      if (value === null || value === undefined) {
-        return "-";
-      }
-      return String(value);
-    }
-
-    return "-";
-  };
-
   return (
     <div dir="rtl" className="container mx-auto w-full space-y-6 p-4 sm:p-6">
       {/* Page Header */}
@@ -214,35 +187,7 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
           ) : (
             <div className="space-y-4">
               <div className="w-full overflow-x-auto rounded-md border">
-                <Table className="min-w-200">
-                  <TableHeader>
-                    <TableRow>
-                      {columns.map((column, index) => (
-                        <TableHead
-                          key={generateId()}
-                          className="whitespace-nowrap text-right"
-                        >
-                          {column.title}
-                        </TableHead>
-                      ))}
-                    </TableRow>
-                  </TableHeader>
-
-                  <TableBody>
-                    {rows.map((row, rowIndex) => (
-                      <TableRow key={rowIndex}>
-                        {columns.map((column, colIndex) => (
-                          <TableCell
-                            key={colIndex}
-                            className="whitespace-nowrap text-right"
-                          >
-                            {renderCell(row, column)}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <Table columns={columns} rows={rows} />
               </div>
 
               {/* Pagination */}
