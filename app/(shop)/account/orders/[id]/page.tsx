@@ -1,298 +1,315 @@
-// import { Badge } from "@/components/ui/badge";
-// import { Button } from "@/components/ui/button";
-// import {
-//   Card,
-//   CardContent,
-//   CardDescription,
-//   CardHeader,
-//   CardTitle,
-// } from "@/components/ui/card";
-// import { OrderAPI } from "@/lib/api/order";
-// import { formatCurrency } from "@/lib/utils";
-// import { ORDER_STATUS, OrderStatus } from "@/types/order";
-// import {
-//   ArrowRight,
-//   CheckCircle,
-//   Clock,
-//   Globe,
-//   Package,
-//   ShoppingBag,
-//   Truck,
-//   XCircle,
-// } from "lucide-react";
-// import Link from "next/link";
-// import { notFound } from "next/navigation";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ArrowRight,
+  CalendarDays,
+  CheckCircle2,
+  Circle,
+  Clock3,
+  Package,
+  ShoppingBag,
+} from "lucide-react";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
-// const ORDER_STATUS_CONFIG: Record<
-//   OrderStatus,
-//   {
-//     label: string;
-//     variant: "default" | "secondary" | "destructive" | "outline";
-//     icon: React.ReactNode;
-//     description: string;
-//     color: string;
-//   }
-// > = {
-//   PENDING: {
-//     label: "قيد الانتظار",
-//     variant: "secondary",
-//     icon: <Clock className="h-6 w-6" />,
-//     description: "طلبك في انتظار المعالجة",
-//     color: "bg-yellow-500/10 text-yellow-600",
-//   },
-//   CONFIRMED: {
-//     label: "مؤكد",
-//     variant: "default",
-//     icon: <CheckCircle className="h-6 w-6" />,
-//     description: "تم تأكيد طلبك وجاري التجهيز",
-//     color: "bg-blue-500/10 text-blue-600",
-//   },
-//   SHIPPED: {
-//     label: "تم الشحن",
-//     variant: "outline",
-//     icon: <Truck className="h-6 w-6" />,
-//     description: "طلبك في الطريق إليك",
-//     color: "bg-purple-500/10 text-purple-600",
-//   },
-//   DELIVERED: {
-//     label: "تم التسليم",
-//     variant: "default",
-//     icon: <Package className="h-6 w-6" />,
-//     description: "تم تسليم طلبك بنجاح",
-//     color: "bg-green-500/10 text-green-600",
-//   },
-//   CANCELLED: {
-//     label: "ملغي",
-//     variant: "destructive",
-//     icon: <XCircle className="h-6 w-6" />,
-//     description: "تم إلغاء هذا الطلب",
-//     color: "bg-red-500/10 text-red-600",
-//   },
-// };
+import { getUserOrderById } from "@/app/actions";
+import { OrderItemsCard } from "@/features/orders/components/OrderItemsCard";
+import { OrderSummary } from "@/features/orders/components/OrderSummary";
+import { ORDER_STATUS_CONFIG } from "@/features/orders/types";
+import { formatDate } from "date-fns";
+import { markets } from "@/config/markets";
 
-// // Order status timeline steps
-// const ORDER_STEPS: OrderStatus[] = [
-//   "PENDING",
-//   "CONFIRMED",
-//   "SHIPPED",
-//   "DELIVERED",
-// ];
+async function OrderDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
 
-// async function OrderDetailsPage({
-//   params,
-// }: {
-//   params: Promise<{ id: string }>;
-// }) {
-//   const { id } = await params;
-//   if (!id) notFound();
+  if (!id) notFound();
 
-//   let order;
-//   try {
-//     order = await OrderAPI.getUserOrderById(id);
-//   } catch {
-//     notFound();
-//   }
+  let order;
 
-//   const statusConfig = ORDER_STATUS_CONFIG[order.status];
-//   const isCancelled = order.status === ORDER_STATUS.CANCELLED;
-//   const currentStepIndex = ORDER_STEPS.indexOf(order.status);
+  try {
+    order = await getUserOrderById(id);
+  } catch {
+    notFound();
+  }
 
-//   return (
-//     <div className="space-y-6">
-//       {/* Header */}
-//       <div className="flex items-center gap-4">
-//         <Button variant="ghost" size="icon">
-//           <Link href="/account/orders">
-//             <ArrowRight className="h-5 w-5" />
-//           </Link>
-//         </Button>
-//         <div>
-//           <h1 className="text-2xl font-bold">طلب #{order.orderNumber}</h1>
-//           <p className="text-muted-foreground">تفاصيل طلبك</p>
-//         </div>
-//       </div>
+  const statusConfig = ORDER_STATUS_CONFIG[order.status];
 
-//       {/* Status Timeline Card */}
-//       <Card>
-//         <CardHeader>
-//           <CardTitle className="flex items-center gap-2">
-//             <ShoppingBag className="h-5 w-5" />
-//             حالة الطلب
-//           </CardTitle>
-//         </CardHeader>
-//         <CardContent>
-//           {isCancelled ? (
-//             // Cancelled Order Display
-//             <div className="border-destructive/20 bg-destructive/5 flex items-center gap-4 rounded-lg border p-4">
-//               <div className={`rounded-full p-3 ${statusConfig.color}`}>
-//                 {statusConfig.icon}
-//               </div>
-//               <div>
-//                 <Badge variant="destructive" className="mb-1">
-//                   {statusConfig.label}
-//                 </Badge>
-//                 <p className="text-muted-foreground text-sm">
-//                   {statusConfig.description}
-//                 </p>
-//               </div>
-//             </div>
-//           ) : (
-//             // Order Progress Timeline
-//             <div className="relative">
-//               <div className="flex justify-between">
-//                 {ORDER_STEPS.map((step, index) => {
-//                   const stepConfig = ORDER_STATUS_CONFIG[step];
-//                   const isCompleted = index <= currentStepIndex;
-//                   const isCurrent = index === currentStepIndex;
+  return (
+    <div className="mx-auto w-full max-w-6xl space-y-6" dir="rtl">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-3">
+          <Link href="/account/orders" aria-label="العودة إلى الطلبات">
+            <Button variant="outline" size="icon">
+              <ArrowRight className="h-4 w-4" />
+            </Button>
+          </Link>
 
-//                   return (
-//                     <div
-//                       key={step}
-//                       className="relative flex flex-1 flex-col items-center"
-//                     >
-//                       {/* Connector Line */}
-//                       {index < ORDER_STEPS.length - 1 && (
-//                         <div
-//                           className={`absolute top-5 right-1/2 h-1 w-full ${
-//                             index < currentStepIndex ? "bg-primary" : "bg-muted"
-//                           }`}
-//                         />
-//                       )}
+          <div>
+            <div className="flex items-center gap-2">
+              <h1 className="text-2xl font-bold tracking-tight">
+                طلب #{order.orderNumber}
+              </h1>
+            </div>
 
-//                       {/* Step Circle */}
-//                       <div
-//                         className={`relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 ${
-//                           isCompleted
-//                             ? "border-primary bg-primary text-primary-foreground"
-//                             : "border-muted bg-background text-muted-foreground"
-//                         } ${isCurrent ? "ring-primary/20 ring-4" : ""}`}
-//                       >
-//                         {stepConfig.icon}
-//                       </div>
+            <p className="mt-1 text-sm text-muted-foreground">
+              تفاصيل الطلب ومتابعة حالته
+            </p>
+          </div>
+        </div>
 
-//                       {/* Step Label */}
-//                       <span
-//                         className={`mt-2 text-center text-xs ${
-//                           isCompleted ? "font-medium" : "text-muted-foreground"
-//                         }`}
-//                       >
-//                         {stepConfig.label}
-//                       </span>
-//                     </div>
-//                   );
-//                 })}
-//               </div>
+        <Link href="/account/orders">
+          <Button variant="outline">جميع الطلبات</Button>
+        </Link>
+      </div>
 
-//               {/* Current Status Description */}
-//               <div className="mt-6 rounded-lg border p-4 text-center">
-//                 <p className="text-muted-foreground">
-//                   {statusConfig.description}
-//                 </p>
-//               </div>
-//             </div>
-//           )}
-//         </CardContent>
-//       </Card>
+      {/* Order Status */}
+      <Card className="overflow-hidden">
+        <div className="h-1 bg-primary" />
 
-//       <div className="grid gap-6 md:grid-cols-2">
-//         {/* Order Items Card */}
-//         <Card className="md:col-span-2">
-//           <CardHeader>
-//             <CardTitle className="flex items-center gap-2">
-//               <Package className="h-5 w-5" />
-//               المنتجات
-//             </CardTitle>
-//             <CardDescription>
-//               {order.items.length} منتج في هذا الطلب
-//             </CardDescription>
-//           </CardHeader>
-//           <CardContent>
-//             <div className="space-y-4">
-//               {order.items.map((item, index) => (
-//                 <div
-//                   key={index}
-//                   className="flex items-center justify-between rounded-lg border p-4"
-//                 >
-//                   <div className="flex items-center gap-4">
-//                     <div className="bg-muted flex h-16 w-16 items-center justify-center rounded-lg">
-//                       <Package className="text-muted-foreground h-8 w-8" />
-//                     </div>
-//                     <div>
-//                       <h4 className="font-medium">{item.productName}</h4>
-//                       <p className="text-muted-foreground text-sm">
-//                         الكمية: {item.quantity} × {item.unitPrice.toFixed(2)}
-//                       </p>
-//                     </div>
-//                   </div>
-//                   <div className="text-left">
-//                     <span className="text-lg font-semibold">
-//                       {item.subtotal.toFixed(2)}
-//                     </span>
-//                   </div>
-//                 </div>
-//               ))}
-//             </div>
-//           </CardContent>
-//         </Card>
+        <CardContent className="p-5 sm:p-6">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Package className="h-6 w-6" />
+              </div>
 
-//         {/* Order Summary Card */}
-//         <Card>
-//           <CardHeader>
-//             <CardTitle>ملخص الطلب</CardTitle>
-//           </CardHeader>
-//           <CardContent className="space-y-4">
-//             <div className="flex items-center justify-between">
-//               <span className="text-lg font-semibold">المجموع الكلي</span>
-//               <span className="text-primary text-xl font-bold">
-//                 {formatCurrency({
-//                   amount: order.totalAmount,
-//                   code: order.countryCode,
-//                 })}
-//               </span>
-//             </div>
-//           </CardContent>
-//         </Card>
+              <div>
+                <p className="text-sm text-muted-foreground">
+                  حالة الطلب الحالية
+                </p>
 
-//         {/* Order Info Card */}
-//         <Card>
-//           <CardHeader>
-//             <CardTitle>معلومات الطلب</CardTitle>
-//           </CardHeader>
-//           <CardContent className="space-y-4">
-//             <div className="flex items-center justify-between">
-//               <span className="text-muted-foreground">رقم الطلب</span>
-//               <span className="font-medium">#{order.orderNumber}</span>
-//             </div>
-//             <div className="flex items-center justify-between">
-//               <span className="text-muted-foreground">الدولة</span>
-//               <div className="flex items-center gap-1">
-//                 <Globe className="text-muted-foreground h-4 w-4" />
-//                 <span className="font-medium">{order.countryCode}</span>
-//               </div>
-//             </div>
-//             <div className="flex items-center justify-between">
-//               <span className="text-muted-foreground">الحالة</span>
-//               <Badge variant={statusConfig.variant}>{statusConfig.label}</Badge>
-//             </div>
-//           </CardContent>
-//         </Card>
-//       </div>
+                <div className="mt-1 flex items-center gap-2">
+                  <h2 className="text-lg font-bold">
+                    {statusConfig?.label ?? order.status}
+                  </h2>
+                </div>
+              </div>
+            </div>
 
-//       {/* Back to Orders Button */}
-//       <div className="flex justify-center">
-//         <Button variant="outline">
-//           <Link href="/account/orders" className="flex items-center gap-2">
-//             <ArrowRight className="h-4 w-4" />
-//             العودة إلى طلباتي
-//           </Link>
-//         </Button>
-//       </div>
-//     </div>
-//   );
-// }
+            <div className="rounded-lg bg-muted/50 px-4 py-3 text-sm">
+              <div className="flex items-center gap-2 text-muted-foreground">
+                <CalendarDays className="h-4 w-4" />
+                <span>تاريخ الطلب</span>
+              </div>
 
-// export default OrderDetailsPage;
-function page() {
-  return <div>page</div>;
+              <p className="mt-1 font-semibold">
+                {formatDate(new Date(order.createdAt), "dd MMMM yyyy")}
+              </p>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      {/* Status Timeline */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Clock3 className="h-5 w-5 text-primary" />
+            متابعة الطلب
+          </CardTitle>
+        </CardHeader>
+
+        <CardContent>
+          <OrderStatusTimeline status={order.status} />
+        </CardContent>
+      </Card>
+
+      {/* Main Content */}
+      <div className="grid gap-6 lg:grid-cols-[1fr_360px]">
+        {/* Items */}
+        <div className="space-y-6">
+          <OrderItemsCard items={order.items} />
+        </div>
+
+        {/* Summary */}
+        <div className="space-y-6">
+          <OrderSummary
+            totalAmount={order.totalAmount}
+            countryCode={order.countryCode}
+          />
+
+          {/* Order Information */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <ShoppingBag className="h-5 w-5 text-primary" />
+                معلومات الطلب
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-4">
+              <InfoRow label="رقم الطلب" value={`#${order.orderNumber}`} />
+
+              <InfoRow
+                label="عدد المنتجات"
+                value={`${order.items.length} منتجات`}
+              />
+
+              <InfoRow
+                label="الدولة"
+                value={
+                  markets[
+                    order.countryCode.toLowerCase() as keyof typeof markets
+                  ]?.name
+                }
+              />
+
+              <InfoRow
+                label="الحالة"
+                value={statusConfig?.label ?? order.status}
+              />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+
+      {/* Footer Action */}
+      <div className="flex justify-center border-t pt-6">
+        <Link href="/account/orders" className="gap-2">
+          <Button variant="outline">
+            <ArrowRight className="h-4 w-4" />
+            العودة إلى طلباتي
+          </Button>
+        </Link>
+      </div>
+    </div>
+  );
 }
-export default page;
+
+function InfoRow({ label, value }: { label: string; value: string | number }) {
+  return (
+    <div className="flex items-center justify-between gap-4 border-b last:pb-0 last:border-0">
+      <span className="text-sm text-muted-foreground">{label}</span>
+      <span className="text-sm font-medium">{value}</span>
+    </div>
+  );
+}
+
+function OrderStatusTimeline({ status }: { status: string }) {
+  const statuses = [
+    {
+      key: "PENDING",
+      label: "تم استلام الطلب",
+    },
+    {
+      key: "CONFIRMED",
+      label: "تم تأكيد الطلب",
+    },
+    {
+      key: "PROCESSING",
+      label: "جاري تجهيز الطلب",
+    },
+    {
+      key: "SHIPPED",
+      label: "تم شحن الطلب",
+    },
+    {
+      key: "DELIVERED",
+      label: "تم توصيل الطلب",
+    },
+  ];
+
+  const cancelled = status === "CANCELLED";
+  const currentIndex = statuses.findIndex((item) => item.key === status);
+
+  if (cancelled) {
+    return (
+      <div className="flex items-center gap-4 rounded-lg border border-destructive/20 bg-destructive/5 p-4">
+        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-destructive/10 text-destructive">
+          <Circle className="h-5 w-5 fill-current" />
+        </div>
+
+        <div>
+          <p className="font-semibold text-destructive">تم إلغاء الطلب</p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            تم إلغاء هذا الطلب ولا يمكن متابعة عملية الشحن.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full overflow-x-auto pb-2">
+      <div className="min-w-175 px-2">
+        <div className="relative">
+          {/* Connector */}
+          <div className="absolute right-[8%] left-[8%] top-5 h-0.5 bg-muted">
+            <div
+              className="h-full bg-primary transition-all duration-500"
+              style={{
+                width:
+                  currentIndex <= 0
+                    ? "0%"
+                    : `${(currentIndex / (statuses.length - 1)) * 100}%`,
+              }}
+            />
+          </div>
+
+          {/* Steps */}
+          <div className="relative flex items-start justify-between">
+            {statuses.map((item, index) => {
+              const completed = currentIndex >= index;
+              const current = currentIndex === index;
+
+              return (
+                <div
+                  key={item.key}
+                  className="flex w-32 flex-col items-center text-center"
+                >
+                  {/* Icon */}
+                  <div
+                    className={[
+                      "relative z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 bg-background transition-all duration-300",
+                      completed
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-muted text-muted-foreground",
+                      current && "ring-4 ring-primary/10",
+                    ]
+                      .filter(Boolean)
+                      .join(" ")}
+                  >
+                    {completed ? (
+                      <CheckCircle2 className="h-5 w-5" />
+                    ) : (
+                      <Circle className="h-4 w-4" />
+                    )}
+                  </div>
+
+                  {/* Label */}
+                  <div className="mt-3">
+                    <p
+                      className={[
+                        "text-sm font-medium",
+                        current && "text-primary",
+                        completed && !current && "text-foreground",
+                        !completed && "text-muted-foreground",
+                      ]
+                        .filter(Boolean)
+                        .join(" ")}
+                    >
+                      {item.label}
+                    </p>
+
+                    {current && (
+                      <p className="mt-1 text-xs text-primary/70">
+                        الحالة الحالية
+                      </p>
+                    )}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+export default OrderDetailsPage;

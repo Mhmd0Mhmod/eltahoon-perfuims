@@ -5,7 +5,6 @@ import { Controller, Form, useForm } from "react-hook-form";
 import { useCallback } from "react";
 import { useRouter } from "next/navigation";
 import { ForgotPasswordSchema, forgotPasswordSchema } from "../schema";
-import { toast } from "@/components/ui/toast";
 import { Button } from "@/components/ui/button";
 import {
   Field,
@@ -14,6 +13,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { toast } from "sonner";
 function ForgotPasswordForm() {
   const router = useRouter();
   const form = useForm({
@@ -24,32 +24,18 @@ function ForgotPasswordForm() {
   });
   const handleSubmit = useCallback(
     async (data: ForgotPasswordSchema) => {
-      const id = toast.add({
-        title: "جاري إرسال رابط إعادة تعيين كلمة المرور",
-        description: "يرجى الانتظار...",
-        type: "loading",
-      });
+      const id = toast.loading("جاري إرسال رابط إعادة تعيين كلمة المرور...");
       const respone = {
         success: true,
         message: "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
       };
       if (!respone?.success) {
         form.setError("root", { type: "server", message: respone?.message });
-        toast.add({
-          title: "فشل إرسال رابط إعادة تعيين كلمة المرور",
-          description: respone?.message,
-          type: "error",
-          id,
-        });
-
+        toast.error(respone?.message, { id });
         return;
       }
-      toast.add({
-        title: "تم إرسال رابط إعادة تعيين كلمة المرور",
-        description: respone?.message,
-        type: "success",
-        id,
-      });
+
+      toast.success(respone?.message, { id });
       const token = encodeURI(data.email);
       router.replace(`/reset-password?t=${token}`);
     },

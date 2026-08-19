@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 
 import { resetPasswordSchema, ResetPasswordSchema } from "../schema";
-import { toast } from "@/components/ui/toast";
 import {
   Field,
   FieldContent,
@@ -18,6 +17,7 @@ import {
 } from "@/components/ui/input-otp";
 import PasswordInput from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 function ResetPasswordForm({ email }: { email: string }) {
   const form = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
@@ -29,11 +29,7 @@ function ResetPasswordForm({ email }: { email: string }) {
     },
   });
   const onSubmit = async (data: ResetPasswordSchema) => {
-    const id = toast.add({
-      title: "جاري إعادة تعيين كلمة المرور",
-      description: "يرجى الانتظار...",
-      type: "loading",
-    });
+    const id = toast.loading("جاري إعادة تعيين كلمة المرور...");
     // const respone = await resetPassword({
     //   ...data,
     //   email: email,
@@ -43,20 +39,10 @@ function ResetPasswordForm({ email }: { email: string }) {
       message: "تم إعادة تعيين كلمة المرور بنجاح",
     };
     if (response?.success) {
-      toast.add({
-        title: "تم إعادة تعيين كلمة المرور بنجاح",
-        description: response?.message,
-        type: "success",
-        id,
-      });
+      toast.success("تم إعادة تعيين كلمة المرور بنجاح", { id });
       form.reset();
     } else {
-      toast.add({
-        title: "حدث خطأ",
-        description: response?.message,
-        type: "error",
-        id,
-      });
+      toast.error("حدث خطأ", { id });
     }
   };
   return (

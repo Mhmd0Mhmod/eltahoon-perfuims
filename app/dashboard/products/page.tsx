@@ -40,7 +40,7 @@ function ProductsPage() {
           return (
             <div className="relative h-12 w-12 overflow-hidden rounded-md">
               <Image
-                src={row.imageUrl || "/assets/logo.png"}
+                src={row.imageUrl}
                 alt={row.name}
                 fill
                 sizes="48px"

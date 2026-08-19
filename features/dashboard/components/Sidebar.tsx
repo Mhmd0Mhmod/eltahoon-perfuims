@@ -25,6 +25,7 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import IconImage from "@/public/logo.png";
 
 const menuItems = [
   {
@@ -89,7 +90,7 @@ function DashboardSidebar() {
               <Link href="/" className="flex w-full items-center gap-2">
                 <div className="relative h-12 w-12 shrink-0 sm:h-14 sm:w-14">
                   <Image
-                    src="/logo.png"
+                    src={IconImage}
                     alt="مؤسسه طاحون - المسك للعطور"
                     width={56}
                     height={56}

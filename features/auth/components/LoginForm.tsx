@@ -8,7 +8,7 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/toast";
+import { toast } from "sonner";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation } from "@tanstack/react-query";
 import Link from "next/link";
@@ -36,18 +36,10 @@ function LoginForm() {
           type: "manual",
           message: response.message || "حدث خطأ غير معروف",
         });
-        toast.add({
-          title: "خطأ",
-          description: response.message || "حدث خطأ غير معروف",
-          type: "error",
-        });
+        toast.error(response.message || "حدث خطأ غير معروف");
         return;
       }
-      toast.add({
-        title: "تم تسجيل الدخول بنجاح",
-        description: "تم تسجيل الدخول بنجاح",
-        type: "success",
-      });
+      toast.success("تم تسجيل الدخول بنجاح");
       router.push("/");
     },
     [router, form],

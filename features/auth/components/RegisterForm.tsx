@@ -7,12 +7,12 @@ import {
   FieldLabel,
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { toast } from "@/components/ui/toast";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useCallback } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { RegisterSchema, registerSchema } from "../schema";
 import PasswordInput from "@/components/PasswordInput";
+import { toast } from "sonner";
 
 function RegisterForm() {
   const form = useForm<RegisterSchema>({
@@ -30,31 +30,21 @@ function RegisterForm() {
 
   const onSubmit = useCallback(
     async function (data: RegisterSchema) {
-      const id = toast.add({
-        title: "جاري التسجيل",
-        description: "يرجى الانتظار...",
-        type: "loading",
-      });
+      const id = toast.loading("جاري التسجيل...");
       const response = {
         success: true,
         message: "تم التسجيل بنجاح",
       };
       // const response = await register(data);
       if (response?.success) {
-        toast.add({
-          title: "تم التسجيل بنجاح!",
-          description: "يمكنك الآن تسجيل الدخول.",
-          type: "success",
-        });
+        toast.success("تم التسجيل بنجاح!", { id });
         form.reset();
         return;
       }
-      toast.add({
-        title: "فشل التسجيل",
-        description: response?.message,
-        type: "error",
-        id,
-      });
+      toast.error(response?.message, { id });
+
+      form.reset();
+      return;
     },
     [form],
   );

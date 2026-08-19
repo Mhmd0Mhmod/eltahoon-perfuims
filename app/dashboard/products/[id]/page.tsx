@@ -1,17 +1,9 @@
 import Link from "next/link";
-import { ArrowRight, PackageCheck } from "lucide-react";
+import {ArrowRight} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-
-import ProductForm from "@/features/products/components/ProductForm/ProductForm";
-import { getProductById } from "@/app/dashboard/actions";
+import {Button} from "@/components/ui/button";
+import {Card, CardContent,} from "@/components/ui/card";
+import {getProductById} from "@/app/dashboard/actions";
 import ProductPage from "@/features/products/components/ProductPage";
 
 interface ProductEditPageProps {

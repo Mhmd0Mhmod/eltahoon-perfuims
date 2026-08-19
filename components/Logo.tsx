@@ -1,6 +1,6 @@
 import Image from "next/image";
 import MarketLink from "./MarketLink";
-
+import IconImage from "@/public/logo.png";
 function Logo() {
   return (
     <MarketLink
@@ -10,7 +10,7 @@ function Logo() {
     >
       <div className="relative h-12 w-12 shrink-0 sm:h-14 sm:w-14">
         <Image
-          src="/logo.png"
+          src={IconImage}
           alt="مؤسسه طاحون - المسك للعطور"
           width={56}
           height={56}
