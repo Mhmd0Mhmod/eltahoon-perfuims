@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
+import { MarketKey } from "@/config/markets";
 import useCookies from "@/hooks/useCookies";
-import { Market } from "@/config/markets";
+import { useEffect, useState } from "react";
 export function useCountryCode() {
   const [countryCode, setCountryCode] = useState<string | null>(null);
   const { getCookie } = useCookies();
@@ -11,5 +11,5 @@ export function useCountryCode() {
       setCountryCode(code);
     }
   }, [getCookie]);
-  return countryCode?.toLowerCase() as Market;
+  return countryCode?.toLowerCase() as MarketKey;
 }

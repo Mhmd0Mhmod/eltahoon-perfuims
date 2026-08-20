@@ -25,20 +25,21 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import { IProduct, IProductVariant } from "../types";
+import { Market } from "@/config/markets";
 
 interface ProductDetailsProps {
   product: IProduct;
-  market?: {
-    code: string;
-    currency: string;
-    locale: string;
-  };
+  market?: Market;
 }
 
 export function ProductDetails({ product, market }: ProductDetailsProps) {
-  const [selectedVariant, setSelectedVariant] = useState<IProductVariant | null>(
-    () => product.variants?.find((v) => v.isAvailable) || product.variants?.[0] || null,
-  );
+  const [selectedVariant, setSelectedVariant] =
+    useState<IProductVariant | null>(
+      () =>
+        product.variants?.find((v) => v.isAvailable) ||
+        product.variants?.[0] ||
+        null,
+    );
   const [quantity, setQuantity] = useState(1);
   const [imageError, setImageError] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -85,9 +86,7 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
     }
   };
 
-  const currentPrice = selectedVariant
-    ? selectedVariant.newPrice
-    : minPrice;
+  const currentPrice = selectedVariant ? selectedVariant.newPrice : minPrice;
   const currentOldPrice = selectedVariant?.oldPrice;
 
   return (
@@ -318,7 +317,9 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
           <div className="space-y-3">
             <div className="flex items-center gap-2">
               <Package className="text-primary h-4 w-4" />
-              <span className="text-sm font-semibold">تفاصيل الأحجام والأسعار</span>
+              <span className="text-sm font-semibold">
+                تفاصيل الأحجام والأسعار
+              </span>
             </div>
             <div className="space-y-2">
               {product.variants?.map((variant) => (
@@ -346,11 +347,12 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
                     )}
                   </div>
                   <div className="flex items-center gap-2">
-                    {variant.oldPrice && variant.oldPrice > variant.newPrice && (
-                      <span className="text-muted-foreground text-xs line-through">
-                        {formatCurrency(variant.oldPrice, currency, locale)}
-                      </span>
-                    )}
+                    {variant.oldPrice &&
+                      variant.oldPrice > variant.newPrice && (
+                        <span className="text-muted-foreground text-xs line-through">
+                          {formatCurrency(variant.oldPrice, currency, locale)}
+                        </span>
+                      )}
                     <span className="text-primary font-bold">
                       {formatCurrency(variant.newPrice, currency, locale)}
                     </span>
@@ -382,7 +384,9 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
             {product.createdAt && (
               <div className="flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5" />
-                <span>أضيف بتاريخ: {formatDate(product.createdAt, locale)}</span>
+                <span>
+                  أضيف بتاريخ: {formatDate(product.createdAt, locale)}
+                </span>
               </div>
             )}
             {product.updatedAt && (

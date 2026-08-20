@@ -1,17 +1,20 @@
 "use client";
 
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 import { IProduct } from "../types";
 import { ProductCard } from "./ProductCard";
+import { Market } from "@/config/markets";
 
 interface RelatedProductsProps {
   products: IProduct[];
-  market?: {
-    code: string;
-    currency: string;
-    locale: string;
-  };
+  market?: Market;
 }
 
 export function RelatedProducts({ products, market }: RelatedProductsProps) {
@@ -24,7 +27,9 @@ export function RelatedProducts({ products, market }: RelatedProductsProps) {
       <CardHeader className="px-0 pb-6 text-right">
         <div className="flex items-center gap-2">
           <Sparkles className="text-primary h-5 w-5" />
-          <CardTitle className="text-2xl font-bold">منتجات قد تعجبك أيضاً</CardTitle>
+          <CardTitle className="text-2xl font-bold">
+            منتجات قد تعجبك أيضاً
+          </CardTitle>
         </div>
         <CardDescription>
           تشكيلة مختارة من أفضل العطور التي تناسب ذوقك الرفيع
@@ -33,7 +38,7 @@ export function RelatedProducts({ products, market }: RelatedProductsProps) {
       <CardContent className="px-0">
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
           {products.slice(0, 4).map((product) => (
-            <ProductCard key={product.id} product={product} market={market} />
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       </CardContent>

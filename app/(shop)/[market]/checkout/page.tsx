@@ -1,5 +1,5 @@
 import { getCurrentUser } from "@/app/actions";
-import { markets, Market } from "@/config/markets";
+import { MarketKey, markets } from "@/config/markets";
 import { CheckoutForm } from "@/features/checkout/components/CheckoutForm";
 import { CreditCard, ShieldCheck } from "lucide-react";
 import { notFound } from "next/navigation";
@@ -10,7 +10,7 @@ interface CheckoutPageProps {
 
 export default async function CheckoutPage({ params }: CheckoutPageProps) {
   const { market } = await params;
-  const currentMarket = markets[market.toLowerCase() as Market];
+  const currentMarket = markets[market.toLowerCase() as MarketKey];
 
   if (!currentMarket) {
     notFound();
@@ -22,7 +22,9 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
     <div className="container mx-auto px-4 py-10 md:px-6" dir="rtl">
       {/* Page Title Header */}
       <div className="mb-8 space-y-2 text-center">
-        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">إتمام الطلب</h1>
+        <h1 className="text-3xl font-bold tracking-tight md:text-4xl">
+          إتمام الطلب
+        </h1>
         <p className="text-muted-foreground">
           قم بتعبئة معلومات الشحن والدفع لإتمام عملية الشراء
         </p>
@@ -41,7 +43,8 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
           <span>تشفير آمن بنسبة 100% لمعلوماتك وبياناتك</span>
         </div>
         <p className="text-muted-foreground max-w-md text-xs">
-          بالنقر على &quot;إتمام الشراء الآن&quot;، فإنك توافق على شروط الخدمة وسياسة الخصوصية الخاصة بمتجرنا.
+          بالنقر على &quot;إتمام الشراء الآن&quot;، فإنك توافق على شروط الخدمة
+          وسياسة الخصوصية الخاصة بمتجرنا.
         </p>
       </div>
     </div>
