@@ -1,21 +1,8 @@
 import { getCurrentUser } from "@/app/actions";
-import { MarketKey, markets } from "@/config/markets";
 import { CheckoutForm } from "@/features/checkout/components/CheckoutForm";
 import { CreditCard, ShieldCheck } from "lucide-react";
-import { notFound } from "next/navigation";
 
-interface CheckoutPageProps {
-  params: Promise<{ market: string }>;
-}
-
-export default async function CheckoutPage({ params }: CheckoutPageProps) {
-  const { market } = await params;
-  const currentMarket = markets[market.toLowerCase() as MarketKey];
-
-  if (!currentMarket) {
-    notFound();
-  }
-
+export default async function CheckoutPage() {
   const user = await getCurrentUser();
 
   return (
@@ -32,7 +19,7 @@ export default async function CheckoutPage({ params }: CheckoutPageProps) {
 
       {/* Checkout Form & Order Summary */}
       <div className="mx-auto max-w-7xl">
-        <CheckoutForm user={user} market={currentMarket} />
+        <CheckoutForm user={user} />
       </div>
 
       {/* Security and Terms Footer */}

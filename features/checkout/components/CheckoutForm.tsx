@@ -30,21 +30,15 @@ import {
 import { useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import { checkoutSchema, CheckoutFormValues } from "../types";
+import { CheckoutFormValues, checkoutSchema } from "../types";
 import { CheckoutSummary } from "./CheckoutSummary";
+import { PAYMENT_METHOD_CONFIG } from "@/features/payments/config";
 
 interface CheckoutFormProps {
   user?: User | null;
-  market: {
-    code: string;
-    name: string;
-    currency: string;
-    locale: string;
-    flag: string;
-  };
 }
 
-export function CheckoutForm({ user, market }: CheckoutFormProps) {
+export function CheckoutForm({ user }: CheckoutFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
@@ -86,29 +80,21 @@ export function CheckoutForm({ user, market }: CheckoutFormProps) {
     }
   }
 
-  const paymentMethods = [
-    {
-      id: "CASH_ON_DELIVERY",
-      title: "الدفع عند الاستلام",
-      description: "ادفع نقدًا عند استلام شحنتك من المندوب",
-      icon: Banknote,
-    },
-    {
-      id: "CREDIT_CARD",
-      title: "بطاقة بنكية / فيزا / ماستركارد",
-      description: "دفع إلكتروني آمن عبر البطاقة الائتمانية",
-      icon: CreditCard,
-    },
-    {
-      id: "PAYPAL",
-      title: "PayPal",
-      description: "الدفع السريع والآمن عبر حساب باي بال الخاص بك",
-      icon: CheckCircle2,
-    },
-  ] as const;
+  const paymentMethods = Object.entries(PAYMENT_METHOD_CONFIG).map(
+    ([key, value]) => ({
+      id: key,
+      title: value.label,
+      description: `اختر ${value.label} لإتمام عملية الدفع`,
+      icon: value.icon,
+    }),
+  );
 
   return (
-    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8" dir="rtl">
+    <form
+      onSubmit={form.handleSubmit(onSubmit)}
+      className="space-y-8"
+      dir="rtl"
+    >
       <div className="grid gap-8 lg:grid-cols-12">
         {/* Left / Main Forms (8 cols) */}
         <div className="space-y-6 lg:col-span-8">
@@ -273,7 +259,7 @@ export function CheckoutForm({ user, market }: CheckoutFormProps) {
                       onClick={() =>
                         form.setValue(
                           "paymentMethod",
-                          method.id as CheckoutFormValues["paymentMethod"]
+                          method.id as CheckoutFormValues["paymentMethod"],
                         )
                       }
                       className={`cursor-pointer rounded-lg border-2 p-4 transition-all ${
@@ -302,7 +288,9 @@ export function CheckoutForm({ user, market }: CheckoutFormProps) {
                           />
                         </div>
                         <div>
-                          <p className="font-semibold text-sm">{method.title}</p>
+                          <p className="font-semibold text-sm">
+                            {method.title}
+                          </p>
                           <p className="text-muted-foreground mt-1 text-xs">
                             {method.description}
                           </p>
@@ -318,7 +306,7 @@ export function CheckoutForm({ user, market }: CheckoutFormProps) {
 
         {/* Right / Sidebar (4 cols) */}
         <div className="space-y-6 lg:col-span-4">
-          <CheckoutSummary market={market} />
+          <CheckoutSummary />
 
           <Button
             type="submit"

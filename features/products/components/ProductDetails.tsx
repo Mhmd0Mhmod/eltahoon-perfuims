@@ -26,6 +26,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 import { IProduct, IProductVariant } from "../types";
 import { Market } from "@/config/markets";
+import { useCartStore } from "@/stores/useCartStore";
 
 interface ProductDetailsProps {
   product: IProduct;
@@ -63,6 +64,8 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
     ),
   );
 
+  const addItem = useCartStore((state) => state.addItem);
+
   const handleAddToCart = () => {
     if (!selectedVariant) {
       toast.error("يرجى اختيار الحجم المناسب");
@@ -72,6 +75,13 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
       toast.error("هذا الحجم غير متوفر حالياً");
       return;
     }
+    addItem({
+      productId: product.id,
+      countryCode: market?.code || "eg",
+      countryName: market?.name || "مصر",
+      variantDetails: selectedVariant,
+      quantity,
+    });
     toast.success(
       `تمت إضافة ${quantity} × ${product.name} (${selectedVariant.size} ${selectedVariant.unit}) إلى السلة`,
     );

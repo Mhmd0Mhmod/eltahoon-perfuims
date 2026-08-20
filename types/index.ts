@@ -20,3 +20,5 @@ export type StatsCardData = Title &
     value: string | number;
     icon: ReactElement<{ className?: string }>;
   };
+
+export type { CartItem } from "@/features/cart/types";

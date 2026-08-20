@@ -11,7 +11,6 @@
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
-    <option name="cachedIndexableFilesCount" value="246" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
@@ -24,22 +23,22 @@
   <component name="NextEditCompletionFeaturesState">
     <decayedCancelled>
       <entry key="MS100" value="1.0" />
-      <entry key="MS500" value="1.0" />
-      <entry key="S2" value="1.0" />
-      <entry key="S5" value="1.0" />
-      <entry key="S10" value="1.0" />
-      <entry key="S30" value="1.0" />
-      <entry key="S60" value="1.0" />
-      <entry key="M2" value="1.0" />
-      <entry key="M5" value="1.0" />
-      <entry key="M10" value="1.0" />
-      <entry key="M15" value="1.0" />
-      <entry key="M30" value="1.0" />
-      <entry key="H1" value="1.0" />
-      <entry key="H2" value="1.0" />
-      <entry key="H4" value="1.0" />
-      <entry key="D1" value="1.0" />
-      <entry key="W1" value="1.0" />
+      <entry key="MS500" value="1.0000004788243977" />
+      <entry key="S2" value="1.02630534898103" />
+      <entry key="S5" value="1.2333552774376497" />
+      <entry key="S10" value="1.4830686053115538" />
+      <entry key="S30" value="1.7846384830071103" />
+      <entry key="S60" value="1.8857982179972537" />
+      <entry key="M2" value="1.941168538571734" />
+      <entry key="M5" value="1.9760385261363027" />
+      <entry key="M10" value="1.9879466210966577" />
+      <entry key="M15" value="1.9919481843139886" />
+      <entry key="M30" value="1.9959659553990732" />
+      <entry key="H1" value="1.9979809393966765" />
+      <entry key="H2" value="1.9989899596075411" />
+      <entry key="H4" value="1.9994948522166291" />
+      <entry key="D1" value="1.9999157909768628" />
+      <entry key="W1" value="1.9999879697053766" />
     </decayedCancelled>
     <decayedSelected>
       <entry key="MS100" value="0.0" />
@@ -61,23 +60,23 @@
       <entry key="W1" value="0.0" />
     </decayedSelected>
     <decayedShown>
-      <entry key="MS100" value="0.005083366622820051" />
-      <entry key="MS500" value="0.347720492927497" />
-      <entry key="S2" value="0.7679051348510492" />
-      <entry key="S5" value="0.8997524308629525" />
-      <entry key="S10" value="0.9485528086843412" />
-      <entry key="S30" value="0.9825481405869384" />
-      <entry key="S60" value="0.9912356634962941" />
-      <entry key="M2" value="0.9956081877406865" />
-      <entry key="M5" value="0.9982409550975608" />
-      <entry key="M10" value="0.9991200904283533" />
-      <entry key="M15" value="0.9994133075584808" />
-      <entry key="M30" value="0.9997066107406116" />
-      <entry key="H1" value="0.9998532946090699" />
-      <entry key="H2" value="0.9999266446140287" />
-      <entry key="H4" value="0.9999633216343631" />
-      <entry key="D1" value="0.9999938868456346" />
-      <entry key="W1" value="0.9999991266899455" />
+      <entry key="MS100" value="2.5297839968771297E-32" />
+      <entry key="MS500" value="6.453214532641518E-7" />
+      <entry key="S2" value="0.046505361537611804" />
+      <entry key="S5" value="0.44331725556687374" />
+      <entry key="S10" value="0.9412846876670555" />
+      <entry key="S30" value="1.5555835655187027" />
+      <entry key="S60" value="1.7638330023375963" />
+      <entry key="M2" value="1.8782036416176886" />
+      <entry key="M5" value="1.950360156678621" />
+      <entry key="M10" value="1.9750239385051362" />
+      <entry key="M15" value="1.9833144001258614" />
+      <entry key="M30" value="1.9916397050841157" />
+      <entry key="H1" value="1.9958154696094983" />
+      <entry key="H2" value="1.9979066379210138" />
+      <entry key="H4" value="1.9989530445956163" />
+      <entry key="D1" value="1.999825469314143" />
+      <entry key="W1" value="1.999975066111205" />
     </decayedShown>
   </component>
   <component name="ProjectColorInfo">{
@@ -111,7 +110,7 @@
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "bun",
     "to.speed.mode.migration.done": "true",
-    "ts.external.directory.path": "D:\\Work\\eltahoon-perfuims\\node_modules\\typescript\\lib"
+    "ts.external.directory.path": "C:\\Users\\iammh\\AppData\\Local\\Programs\\WebStorm\\plugins\\javascript-plugin\\jsLanguageServicesImpl\\external"
   }
 }]]></component>
   <component name="RunManager" selected="npm.Next.js: server-side">
@@ -145,6 +144,7 @@
       <updated>1787211233275</updated>
       <workItem from="1787211235944" duration="1148000" />
       <workItem from="1787214290541" duration="2036000" />
+      <workItem from="1787219922588" duration="782000" />
     </task>
     <servers />
   </component>

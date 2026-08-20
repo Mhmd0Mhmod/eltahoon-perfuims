@@ -1,29 +1,21 @@
 "use client";
 
+import FormatCurrency from "@/components/FormatCurrency";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency } from "@/lib/utils";
 import { ShoppingBag, Tag } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
 interface CheckoutSummaryProps {
-  market: {
-    code: string;
-    name: string;
-    currency: string;
-    locale: string;
-    flag: string;
-  };
   subtotal?: number;
   shipping?: number;
   discount?: number;
 }
 
 export function CheckoutSummary({
-  market,
   subtotal = 0,
   shipping = 0,
   discount = 0,
@@ -91,16 +83,14 @@ export function CheckoutSummary({
           <div className="flex justify-between">
             <span className="text-muted-foreground">المجموع الفرعي</span>
             <span className="font-medium">
-              {formatCurrency(subtotal, market.currency, market.locale)}
+              <FormatCurrency value={subtotal} />
             </span>
           </div>
 
           <div className="flex justify-between">
             <span className="text-muted-foreground">الشحن</span>
             <span className="font-medium">
-              {shipping === 0
-                ? "مجاني"
-                : formatCurrency(shipping, market.currency, market.locale)}
+              {shipping === 0 ? "مجاني" : <FormatCurrency value={shipping} />}
             </span>
           </div>
 
@@ -108,7 +98,7 @@ export function CheckoutSummary({
             <div className="text-emerald-600 dark:text-emerald-400 flex justify-between">
               <span>الخصم</span>
               <span className="font-medium">
-                -{formatCurrency(discount, market.currency, market.locale)}
+                - <FormatCurrency value={discount} />
               </span>
             </div>
           )}
@@ -118,7 +108,7 @@ export function CheckoutSummary({
           <div className="flex items-center justify-between pt-1">
             <span className="text-base font-bold">الإجمالي الكلي</span>
             <span className="text-primary text-xl font-bold">
-              {formatCurrency(total, market.currency, market.locale)}
+              <FormatCurrency value={total} />
             </span>
           </div>
         </div>

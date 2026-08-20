@@ -2,6 +2,7 @@
 
 import { Roles } from "@/enums/roles";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useCartStore } from "@/stores/useCartStore";
 import {
   LayoutDashboard,
   Search,
@@ -9,10 +10,19 @@ import {
   User,
 } from "lucide-react";
 import Link from "next/link";
+import { useEffect, useState } from "react";
 
 function HeaderActions() {
   const { userProfile, isLoading } = useAuth();
   const isAdmin = userProfile?.role === Roles.ADMIN;
+  const items = useCartStore((state) => state.items);
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
 
   const actionClass =
     "flex size-9 shrink-0 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:size-10";
@@ -73,9 +83,11 @@ function HeaderActions() {
       >
         <ShoppingBag className="size-4 sm:size-4.5" />
 
-        <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-none bg-primary text-[9px] text-primary-foreground sm:text-[10px]">
-          0
-        </span>
+        {mounted && totalItems > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-none bg-primary text-[9px] text-primary-foreground sm:text-[10px]">
+            {totalItems > 99 ? "+99" : totalItems}
+          </span>
+        )}
       </Link>
     </div>
   );
