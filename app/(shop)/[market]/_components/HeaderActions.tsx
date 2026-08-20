@@ -2,64 +2,78 @@
 
 import { Roles } from "@/enums/roles";
 import { useAuth } from "@/features/auth/hooks/useAuth";
-import { LayoutDashboard, Search, ShoppingBag, User } from "lucide-react";
+import {
+  LayoutDashboard,
+  Search,
+  ShoppingBag,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 
 function HeaderActions() {
   const { userProfile, isLoading } = useAuth();
   const isAdmin = userProfile?.role === Roles.ADMIN;
 
+  const actionClass =
+    "flex size-9 shrink-0 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:size-10";
+
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-1 sm:gap-2">
+      {/* Search */}
       <button
-        className="flex size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70"
+        type="button"
+        className={actionClass}
         aria-label="البحث"
       >
-        <Search className="size-4.5" />
+        <Search className="size-4 sm:size-4.5" />
       </button>
 
       {!isLoading && (
         <>
           {userProfile ? (
             <>
+              {/* Account */}
               <Link
                 href="/account"
-                className="hidden size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:flex"
+                className={actionClass}
                 aria-label="الحساب"
               >
-                <User className="size-4.5" />
+                <User className="size-4 sm:size-4.5" />
               </Link>
 
+              {/* Dashboard */}
               {isAdmin && (
                 <Link
                   href="/dashboard"
-                  className="hidden size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:flex"
+                  className={actionClass}
                   aria-label="لوحة التحكم"
                 >
-                  <LayoutDashboard className="size-4.5" />
+                  <LayoutDashboard className="size-4 sm:size-4.5" />
                 </Link>
               )}
             </>
           ) : (
+            /* Login */
             <Link
               href="/login"
-              className="hidden size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:flex"
+              className={actionClass}
               aria-label="تسجيل الدخول"
             >
-              <User className="size-4.5" />
+              <User className="size-4 sm:size-4.5" />
             </Link>
           )}
         </>
       )}
 
+      {/* Cart */}
       <Link
         href="/cart"
-        className="relative flex size-10 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70"
+        className={`${actionClass} relative`}
         aria-label="سلة التسوق"
       >
-        <ShoppingBag className="size-4.5" />
+        <ShoppingBag className="size-4 sm:size-4.5" />
 
-        <span className="absolute right-0 top-0 flex size-4 items-center justify-center rounded-none bg-primary text-[10px] text-primary-foreground">
+        <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-none bg-primary text-[9px] text-primary-foreground sm:text-[10px]">
           0
         </span>
       </Link>

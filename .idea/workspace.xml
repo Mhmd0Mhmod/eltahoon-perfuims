@@ -4,13 +4,24 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c1ae69a6-2993-425d-b793-7166f906e5aa" name="Changes" comment="" />
+    <list default="true" id="c1ae69a6-2993-425d-b793-7166f906e5aa" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(shop)/[market]/_components/HeaderActions.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(shop)/[market]/_components/HeaderActions.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(shop)/[market]/checkout/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(shop)/[market]/checkout/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(shop)/[market]/products/[id]/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(shop)/[market]/products/[id]/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/(shop)/[market]/products/page.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/app/(shop)/[market]/products/page.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/actions.ts" beforeDir="false" afterPath="$PROJECT_DIR$/app/actions.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/products/services/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/features/products/services/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/features/products/types/index.ts" beforeDir="false" afterPath="$PROJECT_DIR$/features/products/types/index.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/lib/utils.ts" beforeDir="false" afterPath="$PROJECT_DIR$/lib/utils.ts" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
   <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="246" />
     <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
   </component>
   <component name="Git.Settings">
@@ -20,10 +31,69 @@
     <commands />
     <urls />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "customColor": "",
-  "associatedIndex": 0
-}]]></component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.0" />
+      <entry key="MS500" value="1.0" />
+      <entry key="S2" value="1.0" />
+      <entry key="S5" value="1.0" />
+      <entry key="S10" value="1.0" />
+      <entry key="S30" value="1.0" />
+      <entry key="S60" value="1.0" />
+      <entry key="M2" value="1.0" />
+      <entry key="M5" value="1.0" />
+      <entry key="M10" value="1.0" />
+      <entry key="M15" value="1.0" />
+      <entry key="M30" value="1.0" />
+      <entry key="H1" value="1.0" />
+      <entry key="H2" value="1.0" />
+      <entry key="H4" value="1.0" />
+      <entry key="D1" value="1.0" />
+      <entry key="W1" value="1.0" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="0.005083366622820051" />
+      <entry key="MS500" value="0.347720492927497" />
+      <entry key="S2" value="0.7679051348510492" />
+      <entry key="S5" value="0.8997524308629525" />
+      <entry key="S10" value="0.9485528086843412" />
+      <entry key="S30" value="0.9825481405869384" />
+      <entry key="S60" value="0.9912356634962941" />
+      <entry key="M2" value="0.9956081877406865" />
+      <entry key="M5" value="0.9982409550975608" />
+      <entry key="M10" value="0.9991200904283533" />
+      <entry key="M15" value="0.9994133075584808" />
+      <entry key="M30" value="0.9997066107406116" />
+      <entry key="H1" value="0.9998532946090699" />
+      <entry key="H2" value="0.9999266446140287" />
+      <entry key="H4" value="0.9999633216343631" />
+      <entry key="D1" value="0.9999938868456346" />
+      <entry key="W1" value="0.9999991266899455" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;customColor&quot;: &quot;&quot;,
+  &quot;associatedIndex&quot;: 0
+}</component>
   <component name="ProjectId" id="3IAdIlMXW10DWrYl3pgcRDvXemb" />
   <component name="ProjectViewState">
     <option name="autoscrollFromSource" value="true" />
@@ -50,7 +120,8 @@
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "bun",
-    "to.speed.mode.migration.done": "true"
+    "to.speed.mode.migration.done": "true",
+    "ts.external.directory.path": "D:\\Work\\eltahoon-perfuims\\node_modules\\typescript\\lib"
   }
 }]]></component>
   <component name="RunManager" selected="npm.Next.js: server-side">
@@ -83,6 +154,7 @@
       <option name="presentableId" value="Default" />
       <updated>1787211233275</updated>
       <workItem from="1787211235944" duration="1148000" />
+      <workItem from="1787214290541" duration="1435000" />
     </task>
     <servers />
   </component>

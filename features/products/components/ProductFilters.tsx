@@ -6,52 +6,53 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+import { getCategories } from "@/features/category/services";
+import { getOffers } from "@/features/offers/services";
+import { useCountryCode } from "@/hooks/useCountryCode";
 import { useProductsFilter } from "@/stores/useProductsFilter";
+import { useQuery } from "@tanstack/react-query";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 
-interface Category {
-  id: number | string;
-  name: string;
-}
-
-interface IOffer {
-  id: number | string;
-  title: string;
-}
-
-interface ProductFiltersProps {
-  categories?: Category[];
-  offers?: IOffer[];
-}
-
-function ProductFilters({ categories = [], offers = [] }: ProductFiltersProps) {
+function ProductFilters() {
+  const countryCode = useCountryCode();
+  const { data: categories = [] } = useQuery({
+    queryKey: [countryCode, "categories"],
+    queryFn: getCategories,
+    select: (data) => data.data,
+  });
+  const { data: offers = [] } = useQuery({
+    queryKey: [countryCode, "offers"],
+    queryFn: getOffers,
+    select: (data) => data.data,
+  });
   const {
     filters,
     setSearchTerm: setStoreSearchTerm,
     toggleCategoryFilter,
     toggleOfferFilter,
     resetFilters,
-  } = useProductsFilter((state) => state);
-
+  } = useProductsFilter();
   const [searchTerm, setSearchTerm] = useState(filters.searchTerm);
 
-  // Debounce search term update to Zustand store
+  useEffect(() => {
+    setSearchTerm(filters.searchTerm);
+  }, [filters.searchTerm]);
+
+  /**
+   * Debounce search updates.
+   */
   useEffect(() => {
     const timer = setTimeout(() => {
-      setStoreSearchTerm(searchTerm);
+      const value = searchTerm.trim();
+
+      if (value !== filters.searchTerm) {
+        setStoreSearchTerm(value);
+      }
     }, 500);
 
     return () => clearTimeout(timer);
-  }, [searchTerm, setStoreSearchTerm]);
-
-  const handleCategoryToggle = (categoryId: number) => {
-    toggleCategoryFilter(categoryId);
-  };
-
-  const handleOfferToggle = (offerId: string | number) => {
-    toggleOfferFilter(offerId);
-  };
+  }, [searchTerm, filters.searchTerm, setStoreSearchTerm]);
 
   const handleReset = () => {
     setSearchTerm("");
@@ -61,8 +62,10 @@ function ProductFilters({ categories = [], offers = [] }: ProductFiltersProps) {
   return (
     <Card>
       <CardContent className="p-6">
+        {/* Header */}
         <div className="mb-6 flex items-center justify-between">
           <h3 className="text-lg font-bold">التصفية</h3>
+
           <SlidersHorizontal className="text-muted-foreground h-5 w-5" />
         </div>
 
@@ -70,14 +73,20 @@ function ProductFilters({ categories = [], offers = [] }: ProductFiltersProps) {
 
         {/* Search */}
         <div className="mb-6">
-          <Label className="mb-2 block text-right">بحث</Label>
+          <Label htmlFor="product-search" className="mb-2 block text-right">
+            بحث
+          </Label>
+
           <div className="relative">
             <Search className="text-muted-foreground absolute top-1/2 right-3 h-4 w-4 -translate-y-1/2" />
+
             <Input
+              id="product-search"
+              type="search"
               placeholder="ابحث عن منتج..."
               className="pr-10"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(event) => setSearchTerm(event.target.value)}
             />
           </div>
         </div>
@@ -87,45 +96,56 @@ function ProductFilters({ categories = [], offers = [] }: ProductFiltersProps) {
         {/* Categories */}
         <div className="mb-6">
           <Label className="mb-4 block text-right">التصنيف</Label>
-          <div className="space-y-3">
-            {categories?.map((category) => {
-              const catId = Number(category.id);
-              return (
-                <div key={category.id} className="flex items-center gap-2">
-                  <Checkbox
-                    id={category.id.toString()}
-                    checked={filters.categories.includes(catId)}
-                    onCheckedChange={() => handleCategoryToggle(catId)}
-                  />
-                  <Label
-                    htmlFor={category.id.toString()}
-                    className="cursor-pointer"
-                  >
-                    {category.name}
-                  </Label>
-                </div>
-              );
-            })}
-          </div>
+
+          {categories.length > 0 ? (
+            <div className="space-y-3">
+              {categories.map((category) => {
+                const categoryId = Number(category.id);
+
+                return (
+                  <div key={category.id} className="flex items-center gap-2">
+                    <Checkbox
+                      id={`category-${category.id}`}
+                      checked={filters.categories.includes(categoryId)}
+                      onCheckedChange={() => toggleCategoryFilter(categoryId)}
+                    />
+
+                    <Label
+                      htmlFor={`category-${category.id}`}
+                      className="cursor-pointer"
+                    >
+                      {category.name}
+                    </Label>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-muted-foreground text-sm">
+              لا توجد تصنيفات متاحة
+            </p>
+          )}
         </div>
 
         {/* Offers */}
-        {offers && offers.length > 0 && (
+        {offers.length > 0 && (
           <>
             <Separator className="mb-6" />
 
             <div className="mb-6">
               <Label className="mb-4 block text-right">العروض</Label>
+
               <div className="space-y-3">
-                {offers?.map((offer) => (
+                {offers.map((offer) => (
                   <div key={offer.id} className="flex items-center gap-2">
                     <Checkbox
-                      id={offer.id.toString()}
+                      id={`offer-${offer.id}`}
                       checked={filters.offers.includes(offer.id)}
-                      onCheckedChange={() => handleOfferToggle(offer.id)}
+                      onCheckedChange={() => toggleOfferFilter(offer.id)}
                     />
+
                     <Label
-                      htmlFor={offer.id.toString()}
+                      htmlFor={`offer-${offer.id}`}
                       className="cursor-pointer"
                     >
                       {offer.title}
@@ -139,8 +159,13 @@ function ProductFilters({ categories = [], offers = [] }: ProductFiltersProps) {
 
         <Separator className="mb-6" />
 
-        {/* Reset Button */}
-        <Button variant="outline" className="w-full" onClick={handleReset}>
+        {/* Reset */}
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          onClick={handleReset}
+        >
           إعادة تعيين الفلاتر
         </Button>
       </CardContent>

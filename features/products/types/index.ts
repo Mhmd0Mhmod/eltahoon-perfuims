@@ -1,6 +1,26 @@
-// import { ICategory } from "./Icategory";
-
 import { ICategory } from "@/features/category/types";
+
+interface IOfferDTO {
+  id: number | string;
+  title: string;
+  description: string;
+  discountType?: string;
+  discountValue?: number;
+}
+
+interface IProductVariant {
+  id: number;
+  name: string;
+  imageUrl?: string;
+  size: number;
+  unit: string;
+  oldPrice?: number;
+  newPrice: number;
+  isAvailable: boolean;
+  offerResponseDTO?: IOfferDTO | null;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 interface IProduct {
   id: number;
@@ -10,25 +30,8 @@ interface IProduct {
   categories: Pick<ICategory, "id" | "name">[];
   createdAt: string;
   updatedAt: string;
-  countryCode: string;
+  countryCode?: string;
   variants: IProductVariant[];
 }
 
-interface IProductVariant {
-  id: number;
-  name: string;
-  imageUrl: string;
-  size: number;
-  unit: string;
-  oldPrice: number;
-  newPrice: number;
-  isAvailable: true;
-  //   offerResponseDTO: Pick<
-  //     IOffer,
-  //     "id" | "title" | "description" | "discountType" | "discountValue"
-  //   > | null;
-  createdAt: string;
-  updatedAt: string;
-}
-
-export type { IProduct, IProductVariant };
+export type { IProduct, IProductVariant, IOfferDTO };

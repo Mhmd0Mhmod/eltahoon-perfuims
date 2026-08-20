@@ -37,13 +37,17 @@ async function proxyRequest(
     const { url } = await context.params;
     const endpoint = url.join("/");
     const api = getSpringAPI(request);
-
+    const queryParams = Object.fromEntries(
+      request.nextUrl.searchParams.entries(),
+    );
     const config = {
-      params: request.nextUrl.searchParams,
+      params: queryParams,
       headers: {
         "Content-Type": contentType,
       },
     };
+    console.log(config);
+
     let response;
     if (method === "get") {
       response = await api.get(endpoint, config);

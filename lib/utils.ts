@@ -19,6 +19,23 @@ export function formatCurrency(
     currency,
   }).format(value);
 }
+
+export function formatDate(
+  dateString?: string | Date | null,
+  locale: string = "ar-EG",
+) {
+  if (!dateString) return "-";
+  try {
+    const date = typeof dateString === "string" ? new Date(dateString) : dateString;
+    return new Intl.DateTimeFormat(locale, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(date);
+  } catch {
+    return String(dateString);
+  }
+}
 export const idGenerator = () => {
   let i = 0;
   return () => {
