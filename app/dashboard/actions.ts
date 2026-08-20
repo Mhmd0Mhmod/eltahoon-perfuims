@@ -65,7 +65,7 @@ export async function getProducts({
 }: { getAll?: boolean } = {}) {
   try {
     const response = await nextServerAPI.get<IProduct[]>(`/admin/products`, {
-      params: { disaplyAll: getAll },
+      params: { displayAll: getAll },
     });
 
     return APIResponse.success({
