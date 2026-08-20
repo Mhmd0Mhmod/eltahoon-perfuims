@@ -1,54 +1,34 @@
 "use client";
 
+import FormatCurrency from "@/components/FormatCurrency";
+import MarketLink from "@/components/MarketLink";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { Market } from "@/config/markets";
-import { formatCurrency } from "@/lib/utils";
 import {
   ArrowLeft,
   CheckCircle2,
-  CreditCard,
   ShieldCheck,
   ShoppingBag,
   Sparkles,
   Tag,
-  Truck,
 } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 
 interface CartSummaryProps {
-  market: Market;
-  marketKey: string;
   totalItems: number;
   subtotal: number;
 }
 
-export function CartSummary({
-  market,
-  marketKey,
-  totalItems,
-  subtotal,
-}: CartSummaryProps) {
+export function CartSummary({ totalItems, subtotal }: CartSummaryProps) {
   const [couponCode, setCouponCode] = useState("");
   const [discountPercent, setDiscountPercent] = useState(0);
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
 
-  // Free shipping threshold based on market
-  const freeShippingThreshold = market.code.toUpperCase() === "EG" ? 1500 : 250;
-  const isFreeShipping = subtotal >= freeShippingThreshold;
-  const progressToFreeShipping = Math.min(
-    100,
-    Math.round((subtotal / freeShippingThreshold) * 100),
-  );
-  const remainingForFreeShipping = Math.max(0, freeShippingThreshold - subtotal);
-
   const discountAmount = (subtotal * discountPercent) / 100;
-  const shippingAmount = isFreeShipping ? 0 : market.code.toUpperCase() === "EG" ? 50 : 25;
-  const finalTotal = Math.max(0, subtotal - discountAmount + (subtotal > 0 ? shippingAmount : 0));
+  const finalTotal = Math.max(0, subtotal - discountAmount);
 
   const handleApplyCoupon = (e: React.FormEvent) => {
     e.preventDefault();
@@ -83,42 +63,6 @@ export function CartSummary({
 
   return (
     <div className="space-y-6">
-      {/* Free Shipping Progress Indicator */}
-      <Card className="overflow-hidden border p-4 shadow-2xs">
-        <div className="space-y-2.5">
-          <div className="flex items-center justify-between text-xs font-semibold">
-            <span className="flex items-center gap-1.5">
-              <Truck className="text-primary h-4 w-4" />
-              {isFreeShipping ? (
-                <span className="text-emerald-600 dark:text-emerald-400 font-bold">
-                  تهانينا! لقد حصلت على شحن مجاني
-                </span>
-              ) : (
-                <span>
-                  أضف بقيمة{" "}
-                  <strong className="text-primary">
-                    {formatCurrency(
-                      remainingForFreeShipping,
-                      market.currency,
-                      market.locale,
-                    )}
-                  </strong>{" "}
-                  للحصول على شحن مجاني
-                </span>
-              )}
-            </span>
-            <span className="text-muted-foreground">{progressToFreeShipping}%</span>
-          </div>
-
-          <div className="bg-muted h-2 w-full overflow-hidden rounded-full">
-            <div
-              className="bg-primary h-full transition-all duration-500 rounded-full"
-              style={{ width: `${progressToFreeShipping}%` }}
-            />
-          </div>
-        </div>
-      </Card>
-
       {/* Main Summary Card */}
       <Card className="sticky top-20 border shadow-xs">
         <CardHeader className="text-right pb-4">
@@ -170,23 +114,11 @@ export function CartSummary({
           <div className="space-y-2.5 text-sm">
             <div className="flex justify-between">
               <span className="text-muted-foreground">
-                المجموع الفرعي ({totalItems} {totalItems === 1 ? "منتج" : "منتجات"})
+                المجموع الفرعي ({totalItems}{" "}
+                {totalItems === 1 ? "منتج" : "منتجات"})
               </span>
               <span className="font-semibold">
-                {formatCurrency(subtotal, market.currency, market.locale)}
-              </span>
-            </div>
-
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">الشحن والتوصيل</span>
-              <span className="font-semibold">
-                {isFreeShipping ? (
-                  <span className="text-emerald-600 dark:text-emerald-400">
-                    مجاني
-                  </span>
-                ) : (
-                  formatCurrency(shippingAmount, market.currency, market.locale)
-                )}
+                <FormatCurrency value={subtotal} />
               </span>
             </div>
 
@@ -194,7 +126,8 @@ export function CartSummary({
               <div className="text-emerald-600 dark:text-emerald-400 flex justify-between font-medium">
                 <span>الخصم المطبق</span>
                 <span>
-                  -{formatCurrency(discountAmount, market.currency, market.locale)}
+                  -
+                  <FormatCurrency value={discountAmount} />
                 </span>
               </div>
             )}
@@ -204,25 +137,25 @@ export function CartSummary({
             <div className="flex items-center justify-between pt-1">
               <span className="text-base font-bold">الإجمالي التقديري</span>
               <span className="text-primary text-xl font-bold">
-                {formatCurrency(finalTotal, market.currency, market.locale)}
+                <FormatCurrency value={finalTotal} />
               </span>
             </div>
           </div>
 
           {/* Action Buttons */}
           <div className="space-y-2 pt-2">
-            <Link href={`/${marketKey}/checkout`} className="w-full block">
+            <MarketLink href={`/checkout`} className="w-full block">
               <Button size="lg" className="w-full gap-2 text-base font-bold">
                 <span>المتابعة لإتمام الشراء</span>
                 <ArrowLeft className="h-4 w-4" />
               </Button>
-            </Link>
+            </MarketLink>
 
-            <Link href={`/${marketKey}/products`} className="w-full block">
+            <MarketLink href={`/products`} className="w-full block">
               <Button variant="ghost" size="sm" className="w-full text-xs">
                 متابعة التسوق وإضافة منتجات أخرى
               </Button>
-            </Link>
+            </MarketLink>
           </div>
 
           {/* Guarantee Badges */}

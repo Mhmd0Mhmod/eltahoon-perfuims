@@ -1,26 +1,16 @@
 "use client";
 
-import { Roles } from "@/enums/roles";
-import { useAuth } from "@/features/auth/hooks/useAuth";
-import { useCartStore } from "@/stores/useCartStore";
-import {
-  LayoutDashboard,
-  Search,
-  ShoppingBag,
-  User,
-} from "lucide-react";
+import {Roles} from "@/enums/roles";
+import {useAuth} from "@/features/auth/hooks/useAuth";
+import {CartDrawer} from "@/features/cart";
+import {useCartStore} from "@/stores/useCartStore";
+import {LayoutDashboard, Search, ShoppingBag, User,} from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
 
 function HeaderActions() {
   const { userProfile, isLoading } = useAuth();
   const isAdmin = userProfile?.role === Roles.ADMIN;
   const items = useCartStore((state) => state.items);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
 
@@ -75,20 +65,22 @@ function HeaderActions() {
         </>
       )}
 
-      {/* Cart */}
-      <Link
-        href="/cart"
-        className={`${actionClass} relative`}
-        aria-label="سلة التسوق"
-      >
-        <ShoppingBag className="size-4 sm:size-4.5" />
+      {/* Cart Drawer */}
+      <CartDrawer>
+        <button
+          type="button"
+          className={`${actionClass} relative`}
+          aria-label="سلة التسوق"
+        >
+          <ShoppingBag className="size-4 sm:size-4.5" />
 
-        {mounted && totalItems > 0 && (
-          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-none bg-primary text-[9px] text-primary-foreground sm:text-[10px]">
-            {totalItems > 99 ? "+99" : totalItems}
-          </span>
-        )}
-      </Link>
+          {totalItems > 0 && (
+            <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-none bg-primary text-[9px] text-primary-foreground sm:text-[10px]">
+              {totalItems > 99 ? "+99" : totalItems}
+            </span>
+          )}
+        </button>
+      </CartDrawer>
     </div>
   );
 }

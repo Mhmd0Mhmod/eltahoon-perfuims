@@ -1,5 +1,6 @@
 "use client";
-import { markets } from "@/config/markets";
+import { Market, MarketKey, markets } from "@/config/markets";
+import { useCountryCode } from "@/hooks/useCountryCode";
 import {
   QueryClient,
   QueryClientProvider,
@@ -25,33 +26,29 @@ function QueryProvider({ children }: { children: React.ReactNode }) {
 
 // Market Context
 const MarketContext = createContext<{
-  market: string | null;
-  setMarket: (market: string) => void;
+  market: Market | null;
+  changeMarket: (market: MarketKey) => void;
 }>({
   market: null,
-  setMarket: () => {},
+  changeMarket: () => {},
 });
 function MarketProvider({ children }: { children: React.ReactNode }) {
-  const [currentMarket, setCurrentMarket] = useState("");
-  const queryClient = useQueryClient();
+  const [currentMarket, setCurrentMarket] = useState<Market | null>(null);
+  const countryCode = useCountryCode();
   const router = useRouter();
-  const setMarket = (market: string) => {
-    setCurrentMarket(market);
-    cookieStore.set("country_code", market);
-    queryClient.invalidateQueries();
-    router.refresh();
-  };
   useEffect(() => {
-    cookieStore.get("country_code").then((cookie) => {
-      if (cookie && cookie.value) {
-        setCurrentMarket(cookie.value);
-      } else {
-        setCurrentMarket(markets.eg.code);
-      }
-    });
-  }, []);
+    if (countryCode) {
+      const market = markets[countryCode] || markets.eg;
+      setCurrentMarket(market);
+    }
+  }, [countryCode]);
+  function changeMarket(marketKey: MarketKey) {
+    const market = markets[marketKey] || markets.eg;
+    setCurrentMarket(market);
+    router.replace(`/${marketKey}`);
+  }
   return (
-    <MarketContext value={{ market: currentMarket, setMarket }}>
+    <MarketContext value={{ market: currentMarket, changeMarket }}>
       {children}
     </MarketContext>
   );

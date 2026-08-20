@@ -1,6 +1,6 @@
 "use client";
 import { useMarket } from "@/app/providers";
-import { markets } from "@/config/markets";
+import { MarketKey, markets } from "@/config/markets";
 import {
   Select,
   SelectContent,
@@ -12,18 +12,22 @@ import {
 
 function SelectCountry() {
   const items = Object.entries(markets).map(([key, value]) => ({
-    value: value.code,
+    value: value.code as MarketKey,
     label: `${value.name} ${value.flag}`,
   }));
-  const { market, setMarket } = useMarket();
+  const { market, changeMarket } = useMarket();
 
-  const handleChange = (newValue: string | null) => {
+  const handleChange = (newValue: MarketKey | null) => {
     if (!newValue) return;
-    setMarket(newValue);
+    changeMarket(newValue);
   };
 
   return (
-    <Select items={items} value={market} onValueChange={handleChange}>
+    <Select
+      items={items}
+      value={market?.code as MarketKey}
+      onValueChange={handleChange}
+    >
       <SelectTrigger>
         <SelectValue placeholder="🌐 إختار الدولة" />
       </SelectTrigger>

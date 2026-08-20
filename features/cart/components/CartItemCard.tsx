@@ -1,20 +1,17 @@
 "use client";
 
+import FormatCurrency from "@/components/FormatCurrency";
+import MarketLink from "@/components/MarketLink";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Market } from "@/config/markets";
-import { formatCurrency } from "@/lib/utils";
-import { CartItem } from "../types";
 import { Minus, Plus, Sparkles, Trash2 } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
+import { CartItem } from "../types";
 
 interface CartItemCardProps {
   item: CartItem;
-  market: Market;
-  marketKey: string;
   onIncrease: (id: number) => void;
   onDecrease: (id: number) => void;
   onRemove: (id: number) => void;
@@ -22,8 +19,6 @@ interface CartItemCardProps {
 
 export function CartItemCard({
   item,
-  market,
-  marketKey,
   onIncrease,
   onDecrease,
   onRemove,
@@ -41,8 +36,8 @@ export function CartItemCard({
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         {/* Product Info & Image */}
         <div className="flex items-center gap-4">
-          <Link
-            href={`/${marketKey}/products/${item.productId}`}
+          <MarketLink
+            href={`/products/${item.productId}`}
             className="bg-muted/40 relative h-20 w-20 shrink-0 overflow-hidden rounded-xl border sm:h-24 sm:w-24"
           >
             <Image
@@ -53,15 +48,15 @@ export function CartItemCard({
               className="object-cover transition-transform duration-300 hover:scale-105"
               onError={() => setImageError(true)}
             />
-          </Link>
+          </MarketLink>
 
           <div className="space-y-1.5 text-right">
-            <Link
-              href={`/${marketKey}/products/${item.productId}`}
+            <MarketLink
+              href={`/products/${item.productId}`}
               className="hover:text-primary line-clamp-1 font-semibold transition-colors"
             >
               {variant.name}
-            </Link>
+            </MarketLink>
 
             <div className="flex flex-wrap items-center gap-2">
               <Badge variant="secondary" className="text-xs">
@@ -78,11 +73,11 @@ export function CartItemCard({
 
             <div className="flex items-baseline gap-2">
               <span className="text-primary font-bold">
-                {formatCurrency(variant.newPrice, market.currency, market.locale)}
+                <FormatCurrency value={variant.newPrice} />
               </span>
               {variant.oldPrice && variant.oldPrice > variant.newPrice && (
                 <span className="text-muted-foreground text-xs line-through">
-                  {formatCurrency(variant.oldPrice, market.currency, market.locale)}
+                  <FormatCurrency value={variant.oldPrice} />
                 </span>
               )}
             </div>
@@ -127,7 +122,7 @@ export function CartItemCard({
               المجموع:
             </span>
             <span className="text-base font-bold sm:text-lg">
-              {formatCurrency(itemTotal, market.currency, market.locale)}
+              <FormatCurrency value={itemTotal} />
             </span>
           </div>
 

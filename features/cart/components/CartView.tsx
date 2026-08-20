@@ -22,46 +22,12 @@ import { toast } from "sonner";
 import { CartEmptyState } from "./CartEmptyState";
 import { CartItemCard } from "./CartItemCard";
 import { CartSummary } from "./CartSummary";
+import MarketLink from "@/components/MarketLink";
 
-interface CartViewProps {
-  market: Market;
-  marketKey: string;
-}
-
-export function CartView({ market, marketKey }: CartViewProps) {
-  const [mounted, setMounted] = useState(false);
-
-  const items = useCartStore((state) => state.items);
-  const increaseQuantity = useCartStore((state) => state.increaseQuantity);
-  const decreaseQuantity = useCartStore((state) => state.decreaseQuantity);
-  const removeItem = useCartStore((state) => state.removeItem);
-  const clearCart = useCartStore((state) => state.clearCart);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-10 w-48" />
-          <Skeleton className="h-10 w-28" />
-        </div>
-        <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
-          <div className="space-y-4 lg:col-span-2">
-            <Skeleton className="h-28 w-full rounded-xl" />
-            <Skeleton className="h-28 w-full rounded-xl" />
-            <Skeleton className="h-28 w-full rounded-xl" />
-          </div>
-          <div className="lg:col-span-1">
-            <Skeleton className="h-80 w-full rounded-xl" />
-          </div>
-        </div>
-      </div>
-    );
-  }
-
+export function CartView() {
+  const cartStore = useCartStore((state) => state);
+  const { removeItem, increaseQuantity, clearCart, decreaseQuantity, items } =
+    cartStore;
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = items.reduce(
     (acc, item) => acc + item.variantDetails.newPrice * item.quantity,
@@ -84,7 +50,7 @@ export function CartView({ market, marketKey }: CartViewProps) {
   };
 
   if (items.length === 0) {
-    return <CartEmptyState marketKey={marketKey} />;
+    return <CartEmptyState />;
   }
 
   return (
@@ -92,14 +58,11 @@ export function CartView({ market, marketKey }: CartViewProps) {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b pb-6">
         <div className="flex items-center gap-3">
-          <Link
-            href={`/${marketKey}/products`}
-            aria-label="العودة إلى المنتجات"
-          >
+          <MarketLink href={`/products`} aria-label="العودة إلى المنتجات">
             <Button variant="outline" size="icon" className="h-9 w-9">
               <ArrowRight className="h-4 w-4" />
             </Button>
-          </Link>
+          </MarketLink>
 
           <div className="text-right">
             <div className="flex items-center gap-2.5">
@@ -134,8 +97,8 @@ export function CartView({ market, marketKey }: CartViewProps) {
             <AlertDialogHeader>
               <AlertDialogTitle>تأكيد تفريغ السلة</AlertDialogTitle>
               <AlertDialogDescription>
-                هل أنت متأكد من رغبتك في حذف جميع المنتجات من سلة التسوق؟ لا يمكن
-                التراجع عن هذا الإجراء.
+                هل أنت متأكد من رغبتك في حذف جميع المنتجات من سلة التسوق؟ لا
+                يمكن التراجع عن هذا الإجراء.
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
@@ -159,8 +122,6 @@ export function CartView({ market, marketKey }: CartViewProps) {
             <CartItemCard
               key={item.id}
               item={item}
-              market={market}
-              marketKey={marketKey}
               onIncrease={increaseQuantity}
               onDecrease={decreaseQuantity}
               onRemove={handleRemove}
@@ -170,12 +131,7 @@ export function CartView({ market, marketKey }: CartViewProps) {
 
         {/* Order Summary */}
         <div className="lg:col-span-1">
-          <CartSummary
-            market={market}
-            marketKey={marketKey}
-            totalItems={totalItems}
-            subtotal={subtotal}
-          />
+          <CartSummary totalItems={totalItems} subtotal={subtotal} />
         </div>
       </div>
     </div>

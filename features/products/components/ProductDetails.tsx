@@ -65,6 +65,7 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
   );
 
   const addItem = useCartStore((state) => state.addItem);
+  const openCart = useCartStore((state) => state.openCart);
 
   const handleAddToCart = () => {
     if (!selectedVariant) {
@@ -82,6 +83,7 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
       variantDetails: selectedVariant,
       quantity,
     });
+    openCart();
     toast.success(
       `تمت إضافة ${quantity} × ${product.name} (${selectedVariant.size} ${selectedVariant.unit}) إلى السلة`,
     );
