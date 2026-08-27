@@ -178,7 +178,10 @@ function ProductRows({
           </TableCell>
 
           <TableCell>
-            <FormatCurrency value={variant.newPrice} />
+            <FormatCurrency
+              value={variant.newPrice}
+              marketKey={product.countryCode}
+            />
           </TableCell>
 
           <TableCell className="text-center">

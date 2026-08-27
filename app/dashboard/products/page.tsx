@@ -92,7 +92,10 @@ function ProductsPage() {
         title: "النوع",
         render(row) {
           return row.variants && row.variants.length > 0 ? (
-            <VariantsPopover variants={row.variants} />
+            <VariantsPopover
+              variants={row.variants}
+              currency={row.countryCode}
+            />
           ) : (
             <Badge variant="secondary">لا يوجد أحجام</Badge>
           );
@@ -109,6 +112,7 @@ function ProductsPage() {
               <span>
                 <FormatCurrency
                   value={Math.min(...row.variants.map((v) => v.newPrice))}
+                  marketKey={row.countryCode}
                 />
               </span>
               {minPrice !== maxPrice && (
@@ -117,6 +121,7 @@ function ProductsPage() {
                   <span>
                     <FormatCurrency
                       value={Math.max(...row.variants.map((v) => v.newPrice))}
+                      marketKey={row.countryCode}
                     />
                   </span>
                 </>

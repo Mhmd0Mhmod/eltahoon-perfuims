@@ -39,7 +39,10 @@ const columns: Column<IOrder>[] = [
     header: "totalAmount",
     render: (order) => (
       <div className="font-semibold">
-        <FormatCurrency value={order.totalAmount} />
+        <FormatCurrency
+          value={order.totalAmount}
+          marketKey={order.countryCode}
+        />
       </div>
     ),
   },

@@ -48,7 +48,7 @@ const columns: Column<IPayment>[] = [
     render(row) {
       return (
         <span className="font-bold">
-          <FormatCurrency value={row.amount} />
+          <FormatCurrency value={row.amount} marketKey={row.countryCode} />
         </span>
       );
     },

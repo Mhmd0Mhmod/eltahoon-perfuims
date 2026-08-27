@@ -1,3 +1,4 @@
+import { MarketKey } from "@/config/markets";
 import { PaymentStatus } from "@/features/orders/types";
 
 export interface IPayment {
@@ -7,7 +8,7 @@ export interface IPayment {
   username: string;
   paymentMethodType: string;
   paymentStatus: PaymentStatus;
-  countryCode: string;
+  countryCode: MarketKey;
   amount: number;
   transactionId: string;
   createdAt: string;

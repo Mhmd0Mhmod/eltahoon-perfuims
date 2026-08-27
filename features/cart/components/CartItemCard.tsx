@@ -73,11 +73,17 @@ export function CartItemCard({
 
             <div className="flex items-baseline gap-2">
               <span className="text-primary font-bold">
-                <FormatCurrency value={variant.newPrice} />
+                <FormatCurrency
+                  value={variant.newPrice}
+                  marketKey={item.countryCode}
+                />
               </span>
               {variant.oldPrice && variant.oldPrice > variant.newPrice && (
                 <span className="text-muted-foreground text-xs line-through">
-                  <FormatCurrency value={variant.oldPrice} />
+                  <FormatCurrency
+                    value={variant.oldPrice}
+                    marketKey={item.countryCode}
+                  />
                 </span>
               )}
             </div>
@@ -122,7 +128,7 @@ export function CartItemCard({
               المجموع:
             </span>
             <span className="text-base font-bold sm:text-lg">
-              <FormatCurrency value={itemTotal} />
+              <FormatCurrency value={itemTotal} marketKey={item.countryCode} />
             </span>
           </div>
 

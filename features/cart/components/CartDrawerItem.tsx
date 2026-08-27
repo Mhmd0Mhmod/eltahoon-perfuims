@@ -127,7 +127,7 @@ function CartDrawerItem({
           {/* Line Total */}
           <div className="text-left">
             <span className="text-primary text-sm font-bold">
-              <FormatCurrency value={itemTotal} />
+              <FormatCurrency value={itemTotal} marketKey={item.countryCode} />
             </span>
           </div>
         </div>

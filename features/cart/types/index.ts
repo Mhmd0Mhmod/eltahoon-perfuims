@@ -1,3 +1,4 @@
+import { MarketKey } from "@/config/markets";
 import { IProductVariant } from "@/features/products/types";
 
 interface CartItem {
@@ -5,7 +6,7 @@ interface CartItem {
   userId: number;
   productId: number;
   countryName: string;
-  countryCode: string;
+  countryCode: MarketKey;
   variantDetails: IProductVariant;
   quantity: number;
   createdAt: string;

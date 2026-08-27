@@ -41,7 +41,7 @@ const columns: Column<IOrder>[] = [
     render(row) {
       return (
         <span className="font-bold">
-          <FormatCurrency value={row.totalAmount} />
+          <FormatCurrency value={row.totalAmount} marketKey={row.countryCode} />
         </span>
       );
     },

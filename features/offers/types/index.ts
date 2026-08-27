@@ -1,3 +1,5 @@
+import { MarketKey } from "@/config/markets";
+
 export interface IOffer {
   id: number;
   title: string;
@@ -9,7 +11,7 @@ export interface IOffer {
   isActive: boolean;
   createdAt: string;
   updatedAt: string;
-  countryCode: string;
+  countryCode: MarketKey;
   productVariantIds: number[];
 }
 

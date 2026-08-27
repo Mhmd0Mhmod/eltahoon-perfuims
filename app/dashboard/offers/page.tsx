@@ -56,7 +56,10 @@ const columns: Column<IOffer>[] = [
 
       return (
         <span className="font-medium">
-          <FormatCurrency value={row.discountValue} />
+          <FormatCurrency
+            value={row.discountValue}
+            marketKey={row.countryCode}
+          />
         </span>
       );
     },

@@ -9,7 +9,14 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { Check, Package, X } from "lucide-react";
 import { IProductVariant } from "../types";
-function VariantsPopover({ variants }: { variants: IProductVariant[] }) {
+import { MarketKey } from "@/config/markets";
+function VariantsPopover({
+  variants,
+  currency,
+}: {
+  variants: IProductVariant[];
+  currency?: MarketKey;
+}) {
   const availableCount = variants.filter((v) => v.isAvailable).length;
 
   return (
@@ -65,7 +72,10 @@ function VariantsPopover({ variants }: { variants: IProductVariant[] }) {
                   )}
                 </div>
                 <span className="font-semibold">
-                  <FormatCurrency value={variant.newPrice} />
+                  <FormatCurrency
+                    value={variant.newPrice}
+                    marketKey={currency}
+                  />
                 </span>
               </div>
             ))}

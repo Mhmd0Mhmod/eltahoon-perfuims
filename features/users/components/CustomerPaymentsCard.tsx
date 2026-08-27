@@ -40,7 +40,9 @@ export function CustomerPaymentsCard({
     {
       header: "amount",
       title: "المبلغ",
-      render: (value) => <FormatCurrency value={value.amount} />,
+      render: (value) => (
+        <FormatCurrency value={value.amount} marketKey={value.countryCode} />
+      ),
     },
     {
       header: "paymentMethodType",
