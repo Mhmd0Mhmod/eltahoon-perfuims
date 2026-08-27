@@ -1,23 +1,19 @@
 import axios from "axios";
 import { cookies } from "next/headers";
 const baseURL = `${process.env.NEXT_PUBLIC_API_URL}/api`;
-export const nextServerAPI = axios.create({
-  baseURL,
-  withCredentials: true,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
-nextServerAPI.interceptors.request.use(async (config) => {
-  const cookieStore = await cookies();
-
-  const token = cookieStore.get("token")?.value;
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  config.headers.Cookie = cookieStore
-    .getAll()
-    .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join("; ");
-  return config;
-});
+export const getNextServerAPI = async () => {
+  const cookeisStore = await cookies();
+  const token = cookeisStore.get("token")?.value;
+  const allCookies = cookeisStore.getAll();
+  return axios.create({
+    baseURL,
+    withCredentials: true,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+      Cookie: allCookies
+        .map((cookie) => `${cookie.name}=${cookie.value}`)
+        .join("; "),
+    },
+  });
+};

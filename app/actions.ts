@@ -3,11 +3,12 @@
 import { ICategory } from "@/features/category/types";
 import { IOrder } from "@/features/orders/types";
 import { IProduct } from "@/features/products/types";
-import { nextServerAPI } from "@/lib/nextServerAPI";
+import { getNextServerAPI } from "@/lib/nextServerAPI";
 import { User } from "@/types/user";
 
 export async function getCurrentUser() {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get<User>("users/me");
     return response.data;
   } catch (error) {
@@ -18,6 +19,7 @@ export async function getCurrentUser() {
 
 export async function getUserOrderById(id: string) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get<IOrder>(`/orders/${id}`);
     return response.data;
   } catch (error) {
@@ -28,6 +30,7 @@ export async function getUserOrderById(id: string) {
 
 export async function getShopProducts() {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get<IProduct[]>("/products");
     return response.data || [];
   } catch (error) {
@@ -38,6 +41,7 @@ export async function getShopProducts() {
 
 export async function getShopProductById(id: string | number) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get<IProduct>(`/products/${id}`);
     return response.data;
   } catch (error) {
@@ -48,6 +52,7 @@ export async function getShopProductById(id: string | number) {
 
 export async function getShopCategories() {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get<ICategory[]>("/categories");
     return response.data || [];
   } catch (error) {

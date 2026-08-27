@@ -9,13 +9,13 @@ import { IProduct } from "@/features/products/types";
 import { SizeSchema } from "@/features/size/schema";
 import { ISize } from "@/features/size/types";
 import { ICustomer } from "@/features/users/types";
-import { nextServerAPI } from "@/lib/nextServerAPI";
+import { getNextServerAPI } from "@/lib/nextServerAPI";
 import { APIResponse } from "@/types/api";
 import { revalidatePath } from "next/cache";
 /* Categories */
-
 export async function addCategory(data: AddCategorySchema) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.post<ICategory>(
       "admin/categories",
       data,
@@ -35,6 +35,7 @@ export async function updateCategory(
   data: Partial<AddCategorySchema>,
 ) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.patch<ICategory>(
       `admin/categories/${categoryId}`,
       data,
@@ -52,6 +53,7 @@ export async function updateCategory(
 
 export async function deleteCategory(categoryId: number) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     await nextServerAPI.delete(`admin/categories/${categoryId}`);
     revalidatePath("/dashboard/categories");
     return APIResponse.success<void>(undefined, "تم حذف التصنيف بنجاح");
@@ -64,6 +66,7 @@ export async function getProducts({
   getAll = false,
 }: { getAll?: boolean } = {}) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get<IProduct[]>(`/admin/products`, {
       params: { displayAll: getAll },
     });
@@ -82,6 +85,7 @@ export async function getProducts({
 }
 export async function getProductById(id: number) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get(`/admin/products/${id}`);
     return APIResponse.success({
       success: true,
@@ -98,6 +102,7 @@ export async function getProductById(id: number) {
 
 export async function addProduct(data: ProductSchema) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.post<IProduct>(
       "admin/products",
       getProductFormData(data),
@@ -118,6 +123,7 @@ export async function addProduct(data: ProductSchema) {
 }
 export async function updateProduct(productId: number, data: ProductSchema) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.patch<IProduct>(
       `admin/products/${productId}`,
       getProductFormData(data),
@@ -138,6 +144,7 @@ export async function updateProduct(productId: number, data: ProductSchema) {
 }
 export async function deleteProduct(productId: number) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     await nextServerAPI.delete(`admin/products/${productId}`);
     revalidatePath("/dashboard/products");
     return APIResponse.success<void>(undefined, "تم حذف المنتج بنجاح");
@@ -149,6 +156,7 @@ export async function deleteProduct(productId: number) {
 
 export async function addSize(data: SizeSchema) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.post<ISize>("admin/sizes", data);
     revalidatePath("/dashboard/sizes");
     return APIResponse.success<ISize>(response.data, "تمت إضافة الحجم بنجاح");
@@ -159,6 +167,7 @@ export async function addSize(data: SizeSchema) {
 
 export async function updateSize(sizeId: string, data: Partial<SizeSchema>) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.patch<ISize>(
       `admin/sizes/${sizeId}`,
       data,
@@ -175,6 +184,7 @@ export async function updateSize(sizeId: string, data: Partial<SizeSchema>) {
 
 export async function deleteSize(sizeId: string) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     await nextServerAPI.delete(`admin/sizes/${sizeId}`);
     revalidatePath("/dashboard/sizes");
     return APIResponse.success<void>(undefined, "تم حذف الحجم بنجاح");
@@ -186,6 +196,7 @@ export async function deleteSize(sizeId: string) {
 /* Offers */
 export async function getOfferById(id: number) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get(`/admin/offers/${id}`);
     return APIResponse.success({
       success: true,
@@ -205,6 +216,7 @@ type TOfferValues = Omit<OfferFormValues, "startDate" | "endDate"> & {
 };
 export async function createOffer(data: TOfferValues) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     await nextServerAPI.post("admin/offers", data);
     revalidatePath("/dashboard/offers");
 
@@ -222,6 +234,7 @@ export async function updateOffer({
   data: Partial<TOfferValues>;
 }) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     await nextServerAPI.patch(`admin/offers/${id}`, data);
     revalidatePath(`/dashboard/offers/${id}`);
     return APIResponse.success<void>(undefined, "تم تحديث العرض بنجاح");
@@ -232,6 +245,7 @@ export async function updateOffer({
 
 export async function deleteOffer(id: number) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     await nextServerAPI.delete(`admin/offers/${id}`);
     revalidatePath("/dashboard/offers");
     return APIResponse.success<void>(undefined, "تم حذف العرض بنجاح");
@@ -242,6 +256,7 @@ export async function deleteOffer(id: number) {
 
 export async function toggleOfferStatus(id: number, isActive: boolean) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     await nextServerAPI.patch(`admin/offers/${id}/status`, { isActive });
     revalidatePath("/dashboard/offers");
     return APIResponse.success<void>(
@@ -256,6 +271,7 @@ export async function toggleOfferStatus(id: number, isActive: boolean) {
 /* Users */
 export async function getUser(id: string) {
   try {
+    const nextServerAPI = await getNextServerAPI();
     const response = await nextServerAPI.get<ICustomer>(`/admin/users/${id}`);
     return APIResponse.success({
       success: true,
