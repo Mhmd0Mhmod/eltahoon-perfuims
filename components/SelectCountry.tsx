@@ -10,6 +10,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { useParams, usePathname, useRouter } from "next/navigation";
 
 type SelectCountryProps = {
   size?: "sm" | "default";
@@ -20,11 +21,19 @@ function SelectCountry({ size = "default" }: SelectCountryProps) {
     value: value.key as MarketKey,
     label: `${value.name} ${value.flag}`,
   }));
+  const { market: currentMarket } = useParams<{
+    market: MarketKey;
+  }>();
+  const router = useRouter();
+  const pathName = usePathname();
   const { market, changeMarket } = useMarket();
 
   const handleChange = (newValue: MarketKey | null) => {
     if (!newValue) return;
     changeMarket(newValue);
+    if (currentMarket)
+      if (currentMarket !== newValue)
+        router.replace(pathName.replace(currentMarket, newValue));
   };
 
   return (
