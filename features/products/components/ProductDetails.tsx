@@ -1,10 +1,12 @@
 "use client";
 
+import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { formatCurrency, formatDate } from "@/lib/utils";
+import { markets } from "@/config/markets";
+import { useCartStore } from "@/stores/useCartStore";
 import {
   Check,
   CheckCircle2,
@@ -25,15 +27,13 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import { IProduct, IProductVariant } from "../types";
-import { Market } from "@/config/markets";
-import { useCartStore } from "@/stores/useCartStore";
+import { formatDate } from "date-fns";
 
 interface ProductDetailsProps {
   product: IProduct;
-  market?: Market;
 }
 
-export function ProductDetails({ product, market }: ProductDetailsProps) {
+export function ProductDetails({ product }: ProductDetailsProps) {
   const [selectedVariant, setSelectedVariant] =
     useState<IProductVariant | null>(
       () =>
@@ -44,9 +44,6 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
   const [quantity, setQuantity] = useState(1);
   const [imageError, setImageError] = useState(false);
   const [copied, setCopied] = useState(false);
-
-  const currency = market?.currency || "EGP";
-  const locale = market?.locale || "ar-EG";
 
   const prices = product.variants?.map((v) => v.newPrice) || [];
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
@@ -76,6 +73,7 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
       toast.error("هذا الحجم غير متوفر حالياً");
       return;
     }
+    const market = markets[product.countryCode];
     addItem({
       productId: product.id,
       countryCode: market?.code || "eg",
@@ -213,12 +211,18 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
             </span>
             <div className="flex items-baseline gap-3">
               <span className="text-primary text-3xl font-extrabold">
-                {formatCurrency(currentPrice, currency, locale)}
+                <FormatCurrency
+                  value={currentPrice}
+                  marketKey={product.countryCode}
+                />
               </span>
 
               {currentOldPrice && currentOldPrice > currentPrice && (
                 <span className="text-muted-foreground text-lg line-through">
-                  {formatCurrency(currentOldPrice, currency, locale)}
+                  <FormatCurrency
+                    value={currentOldPrice}
+                    marketKey={product.countryCode}
+                  />
                 </span>
               )}
 
@@ -265,7 +269,10 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
                         {variant.size} {variant.unit}
                       </span>
                       <span className="text-primary mt-1 text-xs font-medium">
-                        {formatCurrency(variant.newPrice, currency, locale)}
+                        <FormatCurrency
+                          value={variant.newPrice}
+                          marketKey={product.countryCode}
+                        />
                       </span>
                       {!variant.isAvailable && (
                         <span className="text-destructive mt-1 text-[10px]">
@@ -362,11 +369,17 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
                     {variant.oldPrice &&
                       variant.oldPrice > variant.newPrice && (
                         <span className="text-muted-foreground text-xs line-through">
-                          {formatCurrency(variant.oldPrice, currency, locale)}
+                          <FormatCurrency
+                            value={variant.oldPrice}
+                            marketKey={product.countryCode}
+                          />
                         </span>
                       )}
                     <span className="text-primary font-bold">
-                      {formatCurrency(variant.newPrice, currency, locale)}
+                      <FormatCurrency
+                        value={variant.newPrice}
+                        marketKey={product.countryCode}
+                      />
                     </span>
                   </div>
                 </div>
@@ -397,14 +410,16 @@ export function ProductDetails({ product, market }: ProductDetailsProps) {
               <div className="flex items-center gap-1.5">
                 <Clock className="h-3.5 w-3.5" />
                 <span>
-                  أضيف بتاريخ: {formatDate(product.createdAt, locale)}
+                  أضيف بتاريخ: {formatDate(product.createdAt, "dd/mm/yyyy")}
                 </span>
               </div>
             )}
             {product.updatedAt && (
               <div className="flex items-center gap-1.5">
                 <Info className="h-3.5 w-3.5" />
-                <span>آخر تحديث: {formatDate(product.updatedAt, locale)}</span>
+                <span>
+                  آخر تحديث: {formatDate(product.updatedAt, "dd/mm/yyyy")}
+                </span>
               </div>
             )}
           </div>
