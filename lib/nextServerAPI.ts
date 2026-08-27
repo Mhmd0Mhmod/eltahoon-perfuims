@@ -7,6 +7,9 @@ export const nextServerAPI = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
+  fetchOptions: {
+    credentials: "include",
+  },
 });
 nextServerAPI.interceptors.request.use(async (config) => {
   const cookieStore = await cookies();

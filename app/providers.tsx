@@ -1,14 +1,8 @@
 "use client";
 import { Market, MarketKey, markets } from "@/config/markets";
-import { useCountryCode } from "@/hooks/useCountryCode";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQueryClient,
-} from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { useCookiesNext } from "cookies-next/client";
 import { createContext, useContext, useEffect, useState } from "react";
-
 function QueryProvider({ children }: { children: React.ReactNode }) {
   const [query] = useState(
     new QueryClient({
@@ -34,21 +28,26 @@ const MarketContext = createContext<{
 });
 function MarketProvider({ children }: { children: React.ReactNode }) {
   const [currentMarket, setCurrentMarket] = useState<Market | null>(null);
-  const countryCode = useCountryCode();
-  const router = useRouter();
-  useEffect(() => {
-    if (countryCode) {
-      const market = markets[countryCode] || markets.eg;
-      setCurrentMarket(market);
-    }
-  }, [countryCode]);
-  function changeMarket(marketKey: MarketKey) {
-    const market = markets[marketKey] || markets.eg;
-    setCurrentMarket(market);
-    router.replace(`/${marketKey}`);
+  const { getCookie, setCookie } = useCookiesNext();
+  function hanldeMarketChange(marketKey: MarketKey) {
+    const selectedMarket = markets[marketKey];
+    setCurrentMarket(selectedMarket);
+    setCookie("country_code", marketKey, { path: "/" });
   }
+  useEffect(() => {
+    const countryCode = getCookie("country_code") as MarketKey | undefined;
+    if (countryCode && markets[countryCode]) {
+      setCurrentMarket(markets[countryCode]);
+    } else {
+      // Default to Egypt if no cookie is set
+      setCurrentMarket(markets.eg);
+      setCookie("country_code", "eg", { path: "/" });
+    }
+  }, [getCookie, setCookie]);
   return (
-    <MarketContext value={{ market: currentMarket, changeMarket }}>
+    <MarketContext
+      value={{ market: currentMarket, changeMarket: hanldeMarketChange }}
+    >
       {children}
     </MarketContext>
   );
@@ -61,4 +60,4 @@ function useMarket() {
   return context;
 }
 
-export { QueryProvider, MarketProvider, useMarket };
+export { MarketProvider, QueryProvider, useMarket };

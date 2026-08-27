@@ -3,7 +3,8 @@ import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getAdminOfferCoupons } from "@/features/copouns/services";
-import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import QueryTableDashboardPage from "@/features/dashboard/layout/QueryTableDashboardPage";
+import TableDashboardPage from "@/features/dashboard/layout/TableDashboardPage";
 import { DiscountType, IOfferCoupon } from "@/features/offers/types";
 import { Column } from "@/types";
 import { formatDate, isBefore } from "date-fns";
@@ -129,7 +130,7 @@ const columns: Column<IOfferCoupon>[] = [
 
 function CouponsPage() {
   return (
-    <TableDashboardPage<IOfferCoupon>
+    <QueryTableDashboardPage<IOfferCoupon>
       title="الكوبونات"
       description="إدارة جميع الكوبونات وأكواد الخصم"
       table={{
@@ -138,7 +139,7 @@ function CouponsPage() {
       }}
       columns={columns}
       params={{}}
-      queryKey="admin-coupons"
+      queryKey={["admin-coupons"]}
       queryFn={getAdminOfferCoupons}
       stats={[
         {
@@ -180,7 +181,6 @@ function CouponsPage() {
           </p>
         </div>
       }
-      isPaginated={false}
     />
   );
 }

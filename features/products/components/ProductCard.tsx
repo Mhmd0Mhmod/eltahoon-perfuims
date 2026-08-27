@@ -1,19 +1,16 @@
 "use client";
 
+import FormatCurrency from "@/components/FormatCurrency";
+import MarketLink from "@/components/MarketLink";
 import { Badge } from "@/components/ui/badge";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { cn, formatCurrency } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 import { Eye, Package, ShoppingBag, Sparkles } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
 import { toast } from "sonner";
 import { IProduct } from "../types";
-import { useCountryCode } from "@/hooks/useCountryCode";
-import { markets } from "@/config/markets";
-import MarketLink from "@/components/MarketLink";
-import FormatCurrency from "@/components/FormatCurrency";
 
 interface ProductCardProps {
   product: IProduct;
@@ -21,8 +18,6 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
-  const countryCode = useCountryCode();
-  const market = markets[countryCode];
   const prices = product.variants?.map((v) => v.newPrice) || [];
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
@@ -137,20 +132,29 @@ export function ProductCard({ product }: ProductCardProps) {
               <span className="text-muted-foreground text-xs line-through">
                 <FormatCurrency
                   value={maxOldPrice}
-                  currencyCode={countryCode}
+                  marketKey={product.countryCode}
                 />
               </span>
             )}
             <div className="text-primary font-bold">
               {minPrice === maxPrice ? (
                 <span className="text-base sm:text-lg">
-                  <FormatCurrency value={minPrice} currencyCode={countryCode} />
+                  <FormatCurrency
+                    value={minPrice}
+                    marketKey={product.countryCode}
+                  />
                 </span>
               ) : (
                 <span className="text-sm sm:text-base">
-                  <FormatCurrency value={minPrice} currencyCode={countryCode} />
+                  <FormatCurrency
+                    value={minPrice}
+                    marketKey={product.countryCode}
+                  />
                   -{" "}
-                  <FormatCurrency value={maxPrice} currencyCode={countryCode} />
+                  <FormatCurrency
+                    value={maxPrice}
+                    marketKey={product.countryCode}
+                  />
                 </span>
               )}
             </div>

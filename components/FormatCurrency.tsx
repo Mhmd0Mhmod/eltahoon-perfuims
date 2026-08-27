@@ -1,19 +1,18 @@
 "use client";
 
-import { markets } from "@/config/markets";
-import useCookies from "@/hooks/useCookies";
+import { MarketKey, markets } from "@/config/markets";
 import { formatCurrency as formatCurrencyFunc } from "@/lib/utils";
+import { getCookie } from "cookies-next/client";
 function FormatCurrency({
   value,
-  currencyCode,
+  marketKey,
 }: {
   value: number | string;
-  currencyCode?: string;
+  marketKey?: MarketKey;
 }) {
-  const { getCookie } = useCookies();
-  const countryCode = getCookie("country_code");
-  const code = currencyCode || countryCode;
-  const configMarket = markets[code as keyof typeof markets] || markets.eg;
+  const countryCode = getCookie("country_code") as MarketKey;
+  const code = marketKey || countryCode;
+  const configMarket = markets[code] || markets.eg;
   return formatCurrencyFunc(
     Number(value),
     configMarket.currency,

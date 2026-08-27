@@ -6,7 +6,7 @@ import { Clock, Package, ShoppingCart, Truck } from "lucide-react";
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
 
-import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import TableDashboardPage from "@/features/dashboard/layout/TableDashboardPage";
 import { fetchAdminOrders } from "@/features/orders/services";
 import {
   ORDER_STATUS_CONFIG,
@@ -15,6 +15,7 @@ import {
 } from "@/features/orders/types";
 
 import type { Column } from "@/types";
+import PagiedTableDashboardPage from "@/features/dashboard/layout/PagiedTableDashboardPage";
 
 const columns: Column<IOrder>[] = [
   {
@@ -100,7 +101,7 @@ function OrdersClientPage() {
   ];
 
   return (
-    <TableDashboardPage<IOrder>
+    <PagiedTableDashboardPage<IOrder>
       title="الطلبات"
       description="متابعة وإدارة جميع طلبات العملاء وحالات الشحن"
       table={{
@@ -109,10 +110,9 @@ function OrdersClientPage() {
       }}
       columns={columns}
       params={{}}
-      queryKey="admin-orders"
+      queryKey={["admin-orders"]}
       queryFn={fetchAdminOrders}
       stats={statsCards}
-      isPaginated
       emptyState={
         <div className="flex flex-col items-center justify-center py-12 text-center">
           <ShoppingCart className="mb-4 h-12 w-12 text-muted-foreground" />

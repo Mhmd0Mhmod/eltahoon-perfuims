@@ -3,7 +3,7 @@
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import PagiedTableDashboardPage from "@/features/dashboard/layout/PagiedTableDashboardPage";
 import { Column } from "@/types";
 import { formatDate } from "date-fns";
 import Link from "next/link";
@@ -80,12 +80,12 @@ const columns: Column<IOrder>[] = [
 
 function OrdersPage({ searchParams }: { searchParams: IOrderSearchParams }) {
   return (
-    <TableDashboardPage<IOrder>
+    <PagiedTableDashboardPage<IOrder>
       title="طلباتي"
       description="تتبع جميع طلباتك وحالتها"
       queryFn={getUserOrders}
       columns={columns}
-      queryKey="user-orders"
+      queryKey={["user-orders"]}
       table={{
         title: "سجل الطلبات",
         description: "عرض جميع الطلبات الخاصة بك",

@@ -66,7 +66,6 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
     const toastId = toast.loading("جاري تنفيذ طلبك...");
 
     try {
-      console.log("Submitting order data:", data);
       // Simulate order placement
       await new Promise((resolve) => setTimeout(resolve, 1000));
 

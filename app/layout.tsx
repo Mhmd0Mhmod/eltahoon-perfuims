@@ -4,7 +4,7 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import type { Metadata } from "next";
 import { Cairo, Playfair_Display } from "next/font/google";
 import "./globals.css";
-import { QueryProvider } from "./providers";
+import { MarketProvider, QueryProvider } from "./providers";
 const playfairDisplay = Playfair_Display({
   variable: "--font-playfair",
   subsets: ["latin"],
@@ -34,11 +34,13 @@ export default function RootLayout({
         className={`${playfairDisplay.variable} ${cairo.variable} ${cairo.className} ${playfairDisplay.className} antialiased`}
       >
         <QueryProvider>
-          <DirectionProvider direction="rtl">
-            {children}
-            <Toaster />
-            <ReactQueryDevtools initialIsOpen={false} />
-          </DirectionProvider>
+          <MarketProvider>
+            <DirectionProvider direction="rtl">
+              {children}
+              <Toaster />
+              <ReactQueryDevtools initialIsOpen={false} />
+            </DirectionProvider>
+          </MarketProvider>
         </QueryProvider>
       </body>
     </html>

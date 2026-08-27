@@ -4,29 +4,29 @@ import { IOrder, IOrderSearchParams } from "../types";
 
 export async function fetchAdminOrders({
   params,
-  pageParam,
+  page,
 }: {
   params?: Record<string, unknown> | IOrderSearchParams;
-  pageParam?: number;
+  page?: number;
 } = {}) {
   return nextAPI.get(`/admin/orders`, {
     params: {
       ...params,
-      page: pageParam,
+      page,
     },
   });
 }
 export async function getUserOrders({
   params,
-  pageParam,
+  page,
 }: {
   params?: Record<string, unknown> | IOrderSearchParams;
-  pageParam?: number;
+  page?: number;
 } = {}) {
   return nextAPI.get<IPagination<IOrder>>(`/orders`, {
     params: {
       ...params,
-      page: pageParam,
+      page,
     },
   });
 }

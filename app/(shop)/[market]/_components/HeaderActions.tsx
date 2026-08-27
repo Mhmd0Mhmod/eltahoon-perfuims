@@ -1,10 +1,11 @@
 "use client";
 
-import {Roles} from "@/enums/roles";
-import {useAuth} from "@/features/auth/hooks/useAuth";
-import {CartDrawer} from "@/features/cart";
-import {useCartStore} from "@/stores/useCartStore";
-import {LayoutDashboard, Search, ShoppingBag, User,} from "lucide-react";
+import SelectCountry from "@/components/SelectCountry";
+import { Roles } from "@/enums/roles";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { CartDrawer } from "@/features/cart";
+import { useCartStore } from "@/stores/useCartStore";
+import { LayoutDashboard, Search, ShoppingBag, User } from "lucide-react";
 import Link from "next/link";
 
 function HeaderActions() {
@@ -19,25 +20,13 @@ function HeaderActions() {
 
   return (
     <div className="flex items-center gap-1 sm:gap-2">
-      {/* Search */}
-      <button
-        type="button"
-        className={actionClass}
-        aria-label="البحث"
-      >
-        <Search className="size-4 sm:size-4.5" />
-      </button>
-
+      <SelectCountry size="sm" />
       {!isLoading && (
         <>
           {userProfile ? (
             <>
               {/* Account */}
-              <Link
-                href="/account"
-                className={actionClass}
-                aria-label="الحساب"
-              >
+              <Link href="/account" className={actionClass} aria-label="الحساب">
                 <User className="size-4 sm:size-4.5" />
               </Link>
 
@@ -66,21 +55,7 @@ function HeaderActions() {
       )}
 
       {/* Cart Drawer */}
-      <CartDrawer>
-        <button
-          type="button"
-          className={`${actionClass} relative`}
-          aria-label="سلة التسوق"
-        >
-          <ShoppingBag className="size-4 sm:size-4.5" />
-
-          {totalItems > 0 && (
-            <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-none bg-primary text-[9px] text-primary-foreground sm:text-[10px]">
-              {totalItems > 99 ? "+99" : totalItems}
-            </span>
-          )}
-        </button>
-      </CartDrawer>
+      <CartDrawer />
     </div>
   );
 }

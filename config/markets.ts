@@ -5,6 +5,7 @@ export const markets = {
     currency: "EGP",
     locale: "ar-EG",
     flag: "🇪🇬",
+    key: "eg",
   },
   sa: {
     code: "SA",
@@ -12,6 +13,7 @@ export const markets = {
     currency: "SAR",
     locale: "ar-SA",
     flag: "🇸🇦",
+    key: "sa",
   },
 } as const;
 export type Market = {
@@ -20,6 +22,7 @@ export type Market = {
   currency: string;
   locale: string;
   flag: string;
+  key: MarketKey;
 };
 
 export type MarketKey = keyof typeof markets;

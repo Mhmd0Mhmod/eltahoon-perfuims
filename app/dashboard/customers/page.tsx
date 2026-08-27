@@ -4,13 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Roles } from "@/enums/roles";
 import { UserAvatar } from "@/features/users/components/UserAvatar";
 import { ICustomer } from "@/features/users/types";
-import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import TableDashboardPage from "@/features/dashboard/layout/TableDashboardPage";
 import { Column } from "@/types";
 import { TPaginationParams } from "@/types/pagination";
 import { formatDate } from "date-fns";
 import { Calendar, Eye, Mail, Phone, Shield, UserCog } from "lucide-react";
 import Link from "next/link";
 import { getAdminUsers } from "@/features/users/services";
+import PagiedTableDashboardPage from "@/features/dashboard/layout/PagiedTableDashboardPage";
 
 const columns: Column<ICustomer>[] = [
   {
@@ -84,7 +85,7 @@ const columns: Column<ICustomer>[] = [
 ];
 function UsersPage() {
   return (
-    <TableDashboardPage<ICustomer, TPaginationParams>
+    <PagiedTableDashboardPage<ICustomer>
       title="العملاء"
       description="إدارة وعرض جميع العملاء المسجلين"
       table={{
@@ -93,7 +94,7 @@ function UsersPage() {
       }}
       columns={columns}
       params={{ page: 0 }}
-      queryKey="customers"
+      queryKey={["customers"]}
       queryFn={getAdminUsers}
       emptyState={
         <div className="flex flex-col items-center justify-center py-12">
@@ -102,7 +103,6 @@ function UsersPage() {
           <p className="text-muted-foreground text-sm">لا توجد نتائج لعرضها</p>
         </div>
       }
-      isPaginated
     />
   );
 }

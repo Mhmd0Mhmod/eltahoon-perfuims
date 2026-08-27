@@ -1,6 +1,6 @@
 "use client";
 
-import CardsDashboardPage from "@/features/dashboard/components/CardsDashboardPage";
+import CardsDashboardPage from "@/features/dashboard/layout/CardsDashboardPage";
 import SizeCard from "@/features/size/components/SizeCard";
 import SizeForm from "@/features/size/components/SizeForm";
 import { getAdminSizes } from "@/features/size/services";

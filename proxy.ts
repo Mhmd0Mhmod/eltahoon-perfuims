@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { markets } from "./config/markets";
-import { cookies } from "next/headers";
-const DEFAULT_MARKET = markets.eg.code;
+const DEFAULT_MARKET = markets.eg.key;
 
 const PUBLIC_ROUTES = [
   "login",
@@ -10,12 +9,11 @@ const PUBLIC_ROUTES = [
   "reset-password",
 ];
 
-const GLOBAL_ROUTES = ["account", "dashboard"];
+const NON_MARKET_ROUTES = ["account", "dashboard"];
 
 function isValidMarket(value: string | undefined): boolean {
   return (
-    !!value &&
-    Object.values(markets).some((market) => market.code === value.toUpperCase())
+    !!value && Object.values(markets).some((market) => market.key === value)
   );
 }
 
@@ -24,20 +22,14 @@ export async function proxy(request: NextRequest) {
   const segments = pathname.split("/");
   const firstSegment = segments[1];
   if (
-    GLOBAL_ROUTES.includes(firstSegment) ||
+    NON_MARKET_ROUTES.includes(firstSegment) ||
     PUBLIC_ROUTES.includes(firstSegment)
   ) {
     return NextResponse.next();
   }
-  const cookieStore = await cookies();
   if (isValidMarket(firstSegment)) {
     const response = NextResponse.next();
-    cookieStore.set("country_code", firstSegment.toUpperCase(), {
-      path: "/",
-      maxAge: 60 * 60 * 24 * 365,
-      sameSite: "lax",
-    });
-    response.cookies.set("country_code", firstSegment.toUpperCase(), {
+    response.cookies.set("country_code", firstSegment, {
       path: "/",
       maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
@@ -49,12 +41,7 @@ export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   url.pathname = `/${market.toLowerCase()}${pathname === "/" ? "" : pathname}`;
   const response = NextResponse.redirect(url);
-  cookieStore.set("country_code", market.toUpperCase(), {
-    path: "/",
-    maxAge: 60 * 60 * 24 * 365,
-    sameSite: "lax",
-  });
-  response.cookies.set("country_code", market.toUpperCase(), {
+  response.cookies.set("country_code", market, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",

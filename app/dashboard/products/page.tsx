@@ -3,7 +3,7 @@ import AlertDialog from "@/components/AlertDialog";
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import PagiedTableDashboardPage from "@/features/dashboard/layout/PagiedTableDashboardPage";
 import VariantsPopover from "@/features/products/components/VariantsPopover";
 import { getAdminProducts } from "@/features/products/services";
 import { IProduct } from "@/features/products/types";
@@ -161,7 +161,7 @@ function ProductsPage() {
     [],
   );
   return (
-    <TableDashboardPage<IProduct>
+    <PagiedTableDashboardPage<IProduct>
       title="المنتجات"
       description="إدارة جميع المنتجات والباقات"
       table={{
@@ -169,7 +169,7 @@ function ProductsPage() {
         description: "عرض وإدارة جميع المنتجات",
       }}
       columns={columns}
-      queryKey="products"
+      queryKey={["products"]}
       queryFn={getAdminProducts}
       stats={[
         {

@@ -1,13 +1,13 @@
 import FormatCurrency from "@/components/FormatCurrency";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { formatCurrency } from "@/lib/utils";
+import { MarketKey } from "@/config/markets";
 
 export function OrderSummary({
   totalAmount,
-  countryCode,
+  marketKey,
 }: {
   totalAmount: number;
-  countryCode: string;
+  marketKey: MarketKey;
 }) {
   return (
     <Card>
@@ -18,7 +18,7 @@ export function OrderSummary({
         <div className="flex items-center justify-between">
           <span className="text-lg font-semibold">المجموع الكلي</span>
           <span className="text-primary text-xl font-bold">
-            <FormatCurrency value={totalAmount} currencyCode={countryCode} />
+            <FormatCurrency value={totalAmount} marketKey={marketKey} />
           </span>
         </div>
       </CardContent>

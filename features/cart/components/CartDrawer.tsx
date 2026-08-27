@@ -1,16 +1,7 @@
 "use client";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+import FormatCurrency from "@/components/FormatCurrency";
+import MarketLink from "@/components/MarketLink";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -21,40 +12,12 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { MarketKey, markets } from "@/config/markets";
-import { formatCurrency } from "@/lib/utils";
 import { useCartStore } from "@/stores/useCartStore";
-import {
-  ArrowLeft,
-  ShieldCheck,
-  ShoppingBag,
-  Trash2,
-  Truck,
-} from "lucide-react";
-import Link from "next/link";
-import { useParams } from "next/navigation";
-import { toast } from "sonner";
+import { ArrowLeft, ShieldCheck, ShoppingBag } from "lucide-react";
 import CartDrawerItem from "./CartDrawerItem";
-import MarketLink from "@/components/MarketLink";
 
-interface CartDrawerProps {
-  children?: React.ReactNode;
-  marketKey?: string;
-}
-
-export function CartDrawer({ children, marketKey }: CartDrawerProps) {
-  const isOpen = useCartStore((state) => state.isOpen);
-  const setIsOpen = useCartStore((state) => state.setIsOpen);
-  const items = useCartStore((state) => state.items);
-  const clearCart = useCartStore((state) => state.clearCart);
-
-  const params = useParams<{ market?: string }>();
-  const activeMarketKey = (
-    marketKey ||
-    params?.market ||
-    "eg"
-  ).toLowerCase() as MarketKey;
-  const market = markets[activeMarketKey] || markets.eg;
+export function CartDrawer() {
+  const { isOpen, setIsOpen, items } = useCartStore((state) => state);
 
   const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
   const subtotal = items.reduce(
@@ -62,42 +25,28 @@ export function CartDrawer({ children, marketKey }: CartDrawerProps) {
     0,
   );
 
-  const freeShippingThreshold = activeMarketKey === "eg" ? 1500 : 250;
-  const isFreeShipping = subtotal >= freeShippingThreshold;
-  const progressToFreeShipping = Math.min(
-    100,
-    Math.round((subtotal / freeShippingThreshold) * 100),
-  );
-  const remainingForFreeShipping = Math.max(
-    0,
-    freeShippingThreshold - subtotal,
-  );
-
-  const handleClearCart = () => {
-    clearCart();
-    toast.success("تم تفريغ سلة التسوق بنجاح");
-  };
-
   const handleClose = () => {
     setIsOpen(false);
   };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
-      {children && (
-        <SheetTrigger
-          render={
-            typeof children === "function"
-              ? undefined
-              : (children as React.ReactElement)
-          }
-        >
-          {typeof children === "function"
-            ? (children as () => React.ReactNode)()
-            : null}
-        </SheetTrigger>
-      )}
+      <SheetTrigger
+        render={
+          <button
+            className={`flex size-9 shrink-0 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:size-10 relative`}
+            aria-label="سلة التسوق"
+          />
+        }
+      >
+        <ShoppingBag className="size-4 sm:size-4.5" />
 
+        {totalItems > 0 && (
+          <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-none bg-primary text-[9px] text-primary-foreground sm:text-[10px]">
+            {totalItems > 99 ? "+99" : totalItems}
+          </span>
+        )}
+      </SheetTrigger>
       <SheetContent
         side="left"
         className="flex h-full w-full flex-col gap-0 p-0 sm:max-w-md"
@@ -160,21 +109,15 @@ export function CartDrawer({ children, marketKey }: CartDrawerProps) {
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">المجموع الفرعي</span>
                 <span className="text-foreground text-sm font-bold">
-                  {formatCurrency(subtotal, market.currency, market.locale)}
+                  <FormatCurrency value={subtotal} />
                 </span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-muted-foreground">الشحن والتوصيل</span>
                 <span className="text-xs font-semibold">
-                  {isFreeShipping ? (
-                    <span className="text-emerald-600 dark:text-emerald-400">
-                      مجاني
-                    </span>
-                  ) : (
-                    <span className="text-muted-foreground">
-                      يُحسب عند إتمام الشراء
-                    </span>
-                  )}
+                  <span className="text-muted-foreground">
+                    يُحسب عند إتمام الشراء
+                  </span>
                 </span>
               </div>
             </div>

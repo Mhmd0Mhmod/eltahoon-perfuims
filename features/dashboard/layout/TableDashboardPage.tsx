@@ -1,7 +1,5 @@
 "use client";
 
-import { useInfiniteQuery, useQuery } from "@tanstack/react-query";
-import type { AxiosResponse } from "axios";
 import { Loader2, Plus } from "lucide-react";
 import Link from "next/link";
 import { type ReactNode } from "react";
@@ -19,11 +17,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import useCookies from "@/hooks/useCookies";
-import { idGenerator } from "@/lib/utils";
+import Table from "@/components/Table";
 import type { Column, Description, StatsCardData, Title } from "@/types";
 import type { IPagination } from "@/types/pagination";
-import Table from "@/components/Table";
 
 type TableConfig = Title & Description;
 
@@ -36,84 +32,34 @@ type FormConfig =
       to: string;
     });
 
-type PaginatedResponse<T> = AxiosResponse<IPagination<T>>;
-type NonPaginatedResponse<T> = AxiosResponse<T[]>;
-
-type QueryResponse<T> = PaginatedResponse<T> | NonPaginatedResponse<T>;
-
-interface DashboardPageContentProps<T, P = Record<string, unknown>> {
+export interface DashboardPageProps<T> {
   title: string;
   description: string;
-  params?: P;
-  stats?: StatsCardData[];
-  columns: Column<T>[];
   table: TableConfig;
   form?: FormConfig;
+  stats?: StatsCardData[];
+  columns: Column<T>[];
   emptyState?: ReactNode;
-  queryKey: string;
-  isPaginated?: boolean;
-  queryFn: ({
-    params,
-    pageParam,
-  }: {
-    params?: P;
-    pageParam?: number;
-  }) => Promise<QueryResponse<T>>;
+  rows: T[];
+  isLoading: boolean;
+  hasNextPage?: boolean;
+  isFetchingNextPage?: boolean;
+  fetchNextPage?: () => void;
 }
-const generateId = idGenerator();
-function TableDashboardPage<T, P = Record<string, unknown>>({
+function TableDashboardPage<T>({
   title,
   description,
   table,
   form,
-  params,
   stats,
   columns,
-  queryFn,
   emptyState,
-  queryKey,
-  isPaginated = true,
-}: DashboardPageContentProps<T, P>) {
-  const { getCookie } = useCookies();
-  const countryCode = getCookie("country_code");
-
-  const infiniteQuery = useInfiniteQuery({
-    queryKey: ["infinite", countryCode, queryKey, params],
-    initialPageParam: 0,
-    queryFn: ({ pageParam }) => queryFn({ params, pageParam }),
-    getNextPageParam: (lastPage) => {
-      if (!isPaginated || !isPaginatedResponse(lastPage.data)) {
-        return undefined;
-      }
-      return lastPage.data.last ? undefined : lastPage.data.page + 1;
-    },
-    enabled: !!countryCode && !!queryKey && isPaginated,
-  });
-
-  const query = useQuery({
-    queryKey: ["Query", countryCode, queryKey, params],
-    queryFn: () => queryFn({ params }),
-    enabled: !!countryCode && !!queryKey && !isPaginated,
-  });
-
-  const isLoading = isPaginated ? infiniteQuery.isLoading : query.isLoading;
-  const isFetchingNextPage = isPaginated
-    ? infiniteQuery.isFetchingNextPage
-    : false;
-  const hasNextPage = isPaginated ? infiniteQuery.hasNextPage : false;
-  const fetchNextPage = infiniteQuery.fetchNextPage;
-
-  const rows: T[] = isPaginated
-    ? (infiniteQuery.data?.pages.flatMap((page) => {
-        if (!isPaginatedResponse(page.data)) {
-          return [];
-        }
-        return page.data.content;
-      }) ?? [])
-    : query.data?.data && Array.isArray(query.data.data)
-      ? query.data.data
-      : [];
-
+  rows,
+  isLoading,
+  hasNextPage,
+  isFetchingNextPage,
+  fetchNextPage,
+}: DashboardPageProps<T>) {
   return (
     <div dir="rtl" className="container mx-auto w-full space-y-6 p-4 sm:p-6">
       {/* Page Header */}
@@ -195,7 +141,7 @@ function TableDashboardPage<T, P = Record<string, unknown>>({
                 <div className="flex justify-center pt-2">
                   <Button
                     variant="outline"
-                    onClick={() => fetchNextPage()}
+                    onClick={() => fetchNextPage?.()}
                     disabled={isFetchingNextPage}
                   >
                     {isFetchingNextPage && (

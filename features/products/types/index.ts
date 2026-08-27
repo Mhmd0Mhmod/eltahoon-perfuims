@@ -1,3 +1,4 @@
+import { MarketKey } from "@/config/markets";
 import { ICategory } from "@/features/category/types";
 
 interface IOfferDTO {
@@ -30,7 +31,7 @@ interface IProduct {
   categories: Pick<ICategory, "id" | "name">[];
   createdAt: string;
   updatedAt: string;
-  countryCode?: string;
+  countryCode: MarketKey;
   variants: IProductVariant[];
 }
 

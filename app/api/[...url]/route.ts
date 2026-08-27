@@ -46,8 +46,6 @@ async function proxyRequest(
         "Content-Type": contentType,
       },
     };
-    console.log(config);
-
     let response;
     if (method === "get") {
       response = await api.get(endpoint, config);

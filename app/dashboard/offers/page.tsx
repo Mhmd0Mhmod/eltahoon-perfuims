@@ -2,7 +2,7 @@
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import QueryTableDashboardPage from "@/features/dashboard/layout/QueryTableDashboardPage";
 import { getAdminOffers } from "@/features/offers/services";
 import { DiscountType, IOffer } from "@/features/offers/types";
 import { Column } from "@/types";
@@ -120,7 +120,7 @@ const columns: Column<IOffer>[] = [
 
 function OffersPage() {
   return (
-    <TableDashboardPage<IOffer>
+    <QueryTableDashboardPage<IOffer>
       title="العروض"
       description="إدارة جميع العروض والخصومات"
       table={{
@@ -129,7 +129,7 @@ function OffersPage() {
       }}
       columns={columns}
       params={{}}
-      queryKey="offers"
+      queryKey={["offers"]}
       queryFn={getAdminOffers}
       stats={[
         {
@@ -168,7 +168,6 @@ function OffersPage() {
           <p className="text-sm text-muted-foreground">ابدأ بإضافة عرض جديد</p>
         </div>
       }
-      isPaginated={false}
     />
   );
 }

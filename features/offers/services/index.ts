@@ -1,18 +1,12 @@
 import { nextAPI } from "@/lib/nextAPI";
-import { IPagination } from "@/types/pagination";
 import { IOffer } from "../types";
 
 export async function getAdminOffers({
-  params,
-  pageParam,
-}: {
-  params?: Record<string, unknown>;
-  pageParam?: number;
-} = {}) {
-  return nextAPI.get<IPagination<IOffer>>("/admin/offers", {
+  ...params
+}: Record<string, unknown> = {}) {
+  return nextAPI.get<IOffer[]>("/admin/offers", {
     params: {
       ...params,
-      page: pageParam,
     },
   });
 }

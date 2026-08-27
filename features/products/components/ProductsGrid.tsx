@@ -12,14 +12,12 @@ import { useProductsFilter } from "@/stores/useProductsFilter";
 import { ArrowUpDown, PackageOpen, Sparkles } from "lucide-react";
 import { useMemo, useState } from "react";
 import { ProductCard } from "./ProductCard";
-import { useInfiniteQuery } from "@tanstack/react-query";
-import { useCountryCode } from "@/hooks/useCountryCode";
+import { useInfiniteQuery } from "@/hooks/useMarketQuery";
 import { getProducts } from "../services";
 
 type SortOption = "featured" | "price-asc" | "price-desc" | "newest";
 
 export function ProductsGrid() {
-  const countryCode = useCountryCode();
   const { filters, resetFilters } = useProductsFilter();
   const [sortBy, setSortBy] = useState<SortOption>("featured");
 
@@ -42,7 +40,7 @@ export function ProductsGrid() {
     isFetchingNextPage,
     fetchNextPage,
   } = useInfiniteQuery({
-    queryKey: [countryCode, "products", params],
+    queryKey: ["products", params],
     initialPageParam: 0,
     queryFn: ({ pageParam }) =>
       getProducts({

@@ -130,7 +130,7 @@ async function OrderDetailsPage({
         <div className="space-y-6">
           <OrderSummary
             totalAmount={order.totalAmount}
-            countryCode={order.countryCode}
+            marketKey={order.countryCode}
           />
 
           {/* Order Information */}

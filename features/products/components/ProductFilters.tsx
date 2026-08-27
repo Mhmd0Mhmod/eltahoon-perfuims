@@ -8,21 +8,19 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { getCategories } from "@/features/category/services";
 import { getOffers } from "@/features/offers/services";
-import { useCountryCode } from "@/hooks/useCountryCode";
+import { useQuery } from "@/hooks/useMarketQuery";
 import { useProductsFilter } from "@/stores/useProductsFilter";
-import { useQuery } from "@tanstack/react-query";
 import { Search, SlidersHorizontal } from "lucide-react";
 import { useEffect, useState } from "react";
 
 function ProductFilters() {
-  const countryCode = useCountryCode();
   const { data: categories = [] } = useQuery({
-    queryKey: [countryCode, "categories"],
+    queryKey: ["categories"],
     queryFn: getCategories,
     select: (data) => data.data,
   });
   const { data: offers = [] } = useQuery({
-    queryKey: [countryCode, "offers"],
+    queryKey: [ "offers"],
     queryFn: getOffers,
     select: (data) => data.data,
   });

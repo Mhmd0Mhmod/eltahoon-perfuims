@@ -1,3 +1,4 @@
+import { MarketKey } from "@/config/markets";
 import { TPaginationParams } from "@/types/pagination";
 
 interface IOrder {
@@ -5,7 +6,7 @@ interface IOrder {
   orderNumber: string;
   totalAmount: number;
   status: OrderStatus;
-  countryCode: string;
+  countryCode: MarketKey;
   shippingAddress: null;
   phoneNumber: null;
   user: {

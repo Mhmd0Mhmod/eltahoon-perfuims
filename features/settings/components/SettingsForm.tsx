@@ -2,19 +2,17 @@
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { markets } from "@/config/markets";
-import useCookies from "@/hooks/useCookies";
 import { Globe, Phone } from "lucide-react";
 import { SocialMediaForm } from "./SocialMediaForm";
 import { ContactForm } from "./ContactForm";
+import { useMarket } from "@/app/providers";
 
 interface SettingsFormProps {
   socialMedia: any;
 }
 
 export default function SettingsForm({ socialMedia }: SettingsFormProps) {
-  const { getCookie } = useCookies();
-  const countryCode = getCookie("country_code");
-  const country = markets[countryCode as keyof typeof markets] || markets["eg"];
+  const { market } = useMarket();
   return (
     <Tabs
       defaultValue="contact"
@@ -34,7 +32,7 @@ export default function SettingsForm({ socialMedia }: SettingsFormProps) {
       </TabsList>
 
       <TabsContent value="contact" className="mt-4">
-        <ContactForm country={country} />
+        {/* <ContactForm country={country} /> */}
       </TabsContent>
 
       <TabsContent value="social" className="mt-4">

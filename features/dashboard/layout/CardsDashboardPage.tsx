@@ -1,9 +1,6 @@
 "use client";
-
-import { useQuery } from "@tanstack/react-query";
 import { Plus } from "lucide-react";
 import { type ReactNode } from "react";
-
 import CardSkeleton from "@/components/CardSkeleton";
 import Dialog from "@/components/Dialog";
 import { Button } from "@/components/ui/button";
@@ -15,9 +12,9 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-import useCookies from "@/hooks/useCookies";
 import type { Description, Title } from "@/types";
 import Link from "next/link";
+import { useQuery } from "@/hooks/useMarketQuery";
 
 type FormConfig =
   | (Title &
@@ -60,19 +57,12 @@ function CardsDashboardPage<T, P = Record<string, unknown>>({
   emptyState,
   gridColumns = 3,
 }: CardsDashboardPageProps<T, P>) {
-  const { getCookie } = useCookies();
-  const countryCode = getCookie("country_code");
-
   const { data, isLoading } = useQuery({
-    queryKey: ["cards", countryCode, queryKey, params],
-
+    queryKey: ["cards", , queryKey, params],
     queryFn: () => queryFn(params),
-
-    enabled: Boolean(countryCode && queryKey),
+    enabled: Boolean(queryKey),
   });
-
   const items: T[] = data?.data ?? [];
-
   const gridClass = gridColumnsClasses[gridColumns];
 
   return (

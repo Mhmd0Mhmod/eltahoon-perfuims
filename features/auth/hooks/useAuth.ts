@@ -3,12 +3,12 @@
 import { loginAction, logoutAction } from "@/app/(auth)/actions";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { fetchUserProfile } from "../services";
-import useCookies from "@/hooks/useCookies";
+import { getCookie } from "cookies-next/client";
+import { useEffect, useState } from "react";
 
 function useAuth() {
-  const queryClient = useQueryClient();
-  const { getCookie } = useCookies();
-  const token = getCookie("token");
+  const [token, setToken] = useState<string | null>(null);
+
   const {
     data: userProfile,
     isLoading,
@@ -23,20 +23,26 @@ function useAuth() {
   const { mutateAsync: login, isPending: isLoginPending } = useMutation({
     mutationKey: ["login"],
     mutationFn: loginAction,
-    onSuccess: (data) => {
+    onSuccess: (data, _, __, ctx) => {
       if (!data.success) return;
-      queryClient.setQueryData(["me"], data.data.userProfile);
+      ctx.client.setQueryData(["me"], data.data.userProfile);
     },
   });
   const { mutateAsync: logout, isPending: isLogoutPending } = useMutation({
     mutationKey: ["logout"],
     mutationFn: logoutAction,
-    onSuccess: () => {
-      queryClient.removeQueries({
+    onSuccess: (_, __, ___, ctx) => {
+      ctx.client.removeQueries({
         queryKey: ["me"],
       });
     },
   });
+  useEffect(() => {
+    const storedToken = getCookie("token") as string | undefined;
+    if (storedToken) {
+      setToken(storedToken);
+    }
+  }, []);
   return {
     userProfile,
     isLoading,

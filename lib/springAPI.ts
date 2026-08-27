@@ -1,7 +1,8 @@
 import axios from "axios";
 import { NextRequest } from "next/server";
 const baseURL =
-  `${process.env.SPRING_API_URL}/api` || "http://localhost:3000/api";
+  `${process.env.SPRING_API_URL}/api` ||
+  `${process.env.NEXT_PUBLIC_API_URL}/api`;
 export const getSpringAPI = function (request: NextRequest) {
   const token = request.cookies.get("token")?.value;
   const api = axios.create({
@@ -9,10 +10,7 @@ export const getSpringAPI = function (request: NextRequest) {
     headers: {
       "Content-Type": "application/json",
       Authorization: token ? `Bearer ${token}` : "",
-      Cookie: request.cookies
-        .getAll()
-        .map((cookie) => `${cookie.name}=${cookie.value}`)
-        .join("; "),
+      Cookie: request.cookies.toString(),
     },
   });
   return api;

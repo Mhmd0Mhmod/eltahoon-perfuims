@@ -2,7 +2,8 @@
 
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
-import TableDashboardPage from "@/features/dashboard/components/TableDashboardPage";
+import PagiedTableDashboardPage from "@/features/dashboard/layout/PagiedTableDashboardPage";
+import TableDashboardPage from "@/features/dashboard/layout/TableDashboardPage";
 import { getAdminPayments } from "@/features/payments/services";
 import { IPayment } from "@/features/payments/types";
 import { Column } from "@/types";
@@ -115,7 +116,7 @@ function PaymentsPage() {
   ];
 
   return (
-    <TableDashboardPage<IPayment>
+    <PagiedTableDashboardPage<IPayment>
       title="المدفوعات"
       description="إدارة ومتابعة العمليات المالية المسجلة في النظام"
       table={{
@@ -123,8 +124,7 @@ function PaymentsPage() {
         description: "عرض جميع العمليات المالية والمدفوعات التفصيلية",
       }}
       columns={columns}
-      params={{}}
-      queryKey="admin-payments"
+      queryKey={["admin-payments"]}
       queryFn={getAdminPayments}
       stats={statsCards}
       emptyState={

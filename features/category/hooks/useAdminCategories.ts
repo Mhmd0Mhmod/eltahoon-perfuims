@@ -1,11 +1,8 @@
-import useCookies from "@/hooks/useCookies";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery } from "@/hooks/useMarketQuery";
 import { getAdminCategories } from "../services";
 export function useAdminCategories() {
-  const { getCookie } = useCookies();
-  const countryCode = getCookie("country_code");
   const query = useQuery({
-    queryKey: ["query", countryCode, "categories"],
+    queryKey: ["query", "categories"],
     queryFn: getAdminCategories,
     select: (data) => data.data,
   });
