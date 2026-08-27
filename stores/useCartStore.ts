@@ -1,3 +1,4 @@
+import { MarketKey } from "@/config/markets";
 import { CartItem } from "@/features/cart/types";
 import { IProductVariant } from "@/features/products/types";
 import { create } from "zustand";
@@ -8,7 +9,7 @@ export type CartItemInput = {
   userId?: number;
   productId: number;
   countryName?: string;
-  countryCode?: string;
+  countryCode?: MarketKey;
   variantDetails: IProductVariant;
   quantity?: number;
   createdAt?: string;
@@ -70,7 +71,7 @@ export const useCartStore = create<CartStore>()(
             userId: itemInput.userId ?? 0,
             productId: itemInput.productId,
             countryName: itemInput.countryName ?? "",
-            countryCode: itemInput.countryCode ?? "",
+            countryCode: itemInput.countryCode ?? "eg",
             variantDetails: itemInput.variantDetails,
             quantity: itemInput.quantity || 1,
             createdAt: itemInput.createdAt ?? now,

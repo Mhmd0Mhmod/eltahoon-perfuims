@@ -2,7 +2,7 @@ import { Badge } from "@/components/ui/badge";
 import ProductFilters from "@/features/products/components/ProductFilters";
 import { ProductsGrid } from "@/features/products/components/ProductsGrid";
 
-export default async function ProductsPage() {
+export default function ProductsPage() {
   return (
     <div className="container mx-auto px-4 py-8 md:px-6" dir="rtl">
       {/* Page Header */}

@@ -45,7 +45,7 @@ export function ProductsGrid() {
     queryFn: ({ pageParam }) =>
       getProducts({
         params,
-        pageParam,
+        page: pageParam,
       }),
     getNextPageParam: (lastPage) => {
       if (lastPage.data.last) {

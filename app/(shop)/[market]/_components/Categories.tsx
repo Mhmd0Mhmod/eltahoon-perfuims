@@ -1,8 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import { getCategories } from "../actions";
-import CardSkeleton from "./CardSkeleton";
-import { Suspense } from "react";
-import MarketLink from "@/components/MarketLink";
+import CategoriesCards from "./CategoriesCards";
 
 function Categories() {
   return (
@@ -23,36 +20,11 @@ function Categories() {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <Suspense
-            fallback={Array.from({ length: 4 }).map((_, index) => (
-              <CardSkeleton key={index} />
-            ))}
-          >
-            <CategoriesCards />
-          </Suspense>
+          <CategoriesCards />
         </div>
       </div>
     </section>
   );
 }
-async function CategoriesCards() {
-  const categories = await getCategories();
-  return categories.map((category, index) => (
-    <MarketLink
-      key={category.id}
-      href={`/products?categories=${category.id}`}
-      className="editorial-shell relative p-6 text-right"
-    >
-      <article>
-        <span className="text-primary/75 text-[11px] tracking-[0.32em] uppercase">
-          0{index + 1}
-        </span>
-        <h3 className="mt-4 text-xl font-medium">{category.name}</h3>
-        <p className="mt-3 text-sm leading-7 text-muted-foreground">
-          {category.description}
-        </p>
-      </article>
-    </MarketLink>
-  ));
-}
+
 export default Categories;

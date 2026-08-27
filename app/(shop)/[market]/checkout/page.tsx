@@ -1,10 +1,10 @@
-import { getCurrentUser } from "@/app/actions";
+"use client";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 import { CheckoutForm } from "@/features/checkout/components/CheckoutForm";
 import { CreditCard, ShieldCheck } from "lucide-react";
 
-export default async function CheckoutPage() {
-  const user = await getCurrentUser();
-
+export default function CheckoutPage() {
+  const { userProfile: user } = useAuth();
   return (
     <div className="container mx-auto px-4 py-10 md:px-6" dir="rtl">
       {/* Page Title Header */}

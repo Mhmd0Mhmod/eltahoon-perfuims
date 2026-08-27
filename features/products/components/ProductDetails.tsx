@@ -76,8 +76,8 @@ export function ProductDetails({ product }: ProductDetailsProps) {
     const market = markets[product.countryCode];
     addItem({
       productId: product.id,
-      countryCode: market?.code || "eg",
-      countryName: market?.name || "مصر",
+      countryCode: market?.key || "eg",
+      countryName: market?.name || "Egypt",
       variantDetails: selectedVariant,
       quantity,
     });

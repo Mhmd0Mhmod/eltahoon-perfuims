@@ -1,19 +1,19 @@
 import { nextAPI } from "@/lib/nextAPI";
-import { ProductSchema } from "../schema";
 import { IPagination } from "@/types/pagination";
+import { ProductSchema } from "../schema";
 import { IProduct } from "../types";
 
 export function getAdminProducts({
   params,
-  pageParams,
+  page,
 }: {
   params?: Record<string, unknown>;
-  pageParams?: number;
+  page?: number;
 } = {}) {
   return nextAPI.get("admin/products", {
     params: {
       ...params,
-      page: pageParams,
+      page,
     },
   });
 }
@@ -38,15 +38,15 @@ export function getProductFormData(data: ProductSchema) {
 
 export async function getProducts({
   params,
-  pageParam,
+  page,
 }: {
   params?: Record<string, unknown>;
-  pageParam?: number;
+  page?: number;
 }) {
   return nextAPI.get<IPagination<IProduct>>("/products", {
     params: {
       ...params,
-      page: pageParam,
+      page,
     },
   });
 }

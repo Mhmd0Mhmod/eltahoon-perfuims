@@ -32,7 +32,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <div className="container mx-auto px-4 py-8 md:px-6 lg:py-12" dir="rtl">
       {/* Product Main Details */}
-      <ProductDetails product={product} market={currentMarket} />
+      <ProductDetails product={product} />
 
       {/* Suggested / Related Products Section */}
       {relatedProducts.length > 0 && (

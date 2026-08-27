@@ -6,7 +6,7 @@ function useAdminProducts() {
     useInfiniteQuery({
       queryKey: ["infinite", "products"],
       initialPageParam: 0,
-      queryFn: ({ pageParam }) => getAdminProducts({ pageParams: pageParam }),
+      queryFn: ({ pageParam }) => getAdminProducts({ page: pageParam }),
       getNextPageParam: (lastPage) => {
         if (!lastPage.data.last) {
           return lastPage.data.page + 1;
