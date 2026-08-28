@@ -92,21 +92,6 @@ function RegisterForm() {
           </Field>
         )}
       />
-
-      <Controller
-        name="email"
-        control={form.control}
-        render={({ field, fieldState }) => (
-          <Field>
-            <FieldLabel>البريد الإلكتروني</FieldLabel>
-            <FieldContent>
-              <Input {...field} type="email" placeholder="example@domain.com" />
-            </FieldContent>
-            <FieldError>{fieldState.error?.message}</FieldError>
-          </Field>
-        )}
-      />
-
       <Controller
         name="phoneNumber"
         control={form.control}
@@ -129,20 +114,6 @@ function RegisterForm() {
             <FieldLabel>كلمة المرور</FieldLabel>
             <FieldContent>
               <PasswordInput placeholder="أدخل كلمة المرور" {...field} />
-            </FieldContent>
-            <FieldError>{fieldState.error?.message}</FieldError>
-          </Field>
-        )}
-      />
-
-      <Controller
-        name="address"
-        control={form.control}
-        render={({ field, fieldState }) => (
-          <Field>
-            <FieldLabel>العنوان</FieldLabel>
-            <FieldContent>
-              <Input {...field} placeholder="أدخل عنوانك" />
             </FieldContent>
             <FieldError>{fieldState.error?.message}</FieldError>
           </Field>

@@ -33,6 +33,7 @@ export async function proxy(request: NextRequest) {
       path: "/",
       maxAge: 60 * 60 * 24 * 365,
       sameSite: "lax",
+      secure: process.env.NODE_ENV === "production",
     });
     return response;
   }
@@ -41,23 +42,14 @@ export async function proxy(request: NextRequest) {
   const url = request.nextUrl.clone();
   url.pathname = `/${market.toLowerCase()}${pathname === "/" ? "" : pathname}`;
   const response = NextResponse.redirect(url);
-  response.cookies.set("country_code", market, {
+  response.cookies.set("country_code", firstSegment, {
     path: "/",
     maxAge: 60 * 60 * 24 * 365,
     sameSite: "lax",
+    secure: process.env.NODE_ENV === "production",
   });
-
   return response;
 }
-
 export const config = {
-  matcher: [
-    /*
-     * Match everything except:
-     * - API routes
-     * - Next.js static files
-     * - Next.js image optimization
-     */
-    "/((?!api|_next/static|_next/image).*)",
-  ],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico|.*\\..*).*)"],
 };

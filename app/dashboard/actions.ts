@@ -77,10 +77,8 @@ export async function getProducts({
       data: response.data,
     });
   } catch (error) {
-    return APIResponse.error({
-      success: false,
-      message: "حدث خطأ أثناء جلب المنتجات",
-    });
+    console.error(error);
+    return APIResponse.error(error);
   }
 }
 export async function getProductById(id: number) {

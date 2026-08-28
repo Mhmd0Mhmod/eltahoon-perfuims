@@ -26,7 +26,7 @@ interface OfferFormProps {
 }
 
 export default function OfferForm({ offer, products }: OfferFormProps) {
-  const {} = useMutation({
+  const { mutateAsync: createOfferMutate } = useMutation({
     mutationKey: ["create-offer"],
     mutationFn: createOffer,
     onSuccess: (data, _, __, context) =>
@@ -37,7 +37,7 @@ export default function OfferForm({ offer, products }: OfferFormProps) {
         key: "offer",
       }),
   });
-  const {} = useMutation({
+  const { mutateAsync: updateOfferMutate } = useMutation({
     mutationKey: ["update-offer"],
     mutationFn: updateOffer,
     onSuccess: (data, _, __, context) =>
@@ -71,18 +71,20 @@ export default function OfferForm({ offer, products }: OfferFormProps) {
       const loadingId = toast.loading(
         isEditing ? "جاري تحديث العرض..." : "جاري إنشاء العرض...",
       );
-
       const payload = {
         ...data,
         startDate: data.startDate.toISOString(),
         endDate: data.endDate.toISOString(),
       };
-      isEditing
-        ? await updateOffer({ id: offer!.id, data: payload })
-        : await createOffer(payload);
+      const response = isEditing
+        ? await updateOfferMutate({ id: offer!.id, data: payload })
+        : await createOfferMutate(payload);
       toast.dismiss(loadingId);
+      if (response.success) {
+        router.push("/dashboard/offers");
+      }
     },
-    [form, isEditing, offer, router],
+    [isEditing, offer, router],
   );
 
   return (

@@ -29,7 +29,7 @@ function ProductForm({ product }: ProductFormProps) {
           ),
           variants: product.variants.map((variant) => ({
             id: variant.id,
-            price: variant.oldPrice,
+            price: variant.newPrice,
             size: variant.size,
             unit: variant.unit,
             isAvailable: variant.isAvailable,

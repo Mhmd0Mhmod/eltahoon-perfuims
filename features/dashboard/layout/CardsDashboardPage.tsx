@@ -58,7 +58,7 @@ function CardsDashboardPage<T, P = Record<string, unknown>>({
   gridColumns = 3,
 }: CardsDashboardPageProps<T, P>) {
   const { data, isLoading } = useQuery({
-    queryKey: ["cards", , queryKey, params],
+    queryKey: ["cards", queryKey, params],
     queryFn: () => queryFn(params),
     enabled: Boolean(queryKey),
   });
