@@ -14,7 +14,7 @@ export const PAYMENT_METHOD_CONFIG = {
     description: "الدفع باستخدام حساب باي بال الخاص بك",
   },
   CASH_ON_DELIVERY: {
-    label: "نقدا",
+    label: " نقدًا عند الاستلام",
     variant: "secondary" as const,
     icon: Banknote,
     description: "الدفع عند الاستلام",

@@ -12,6 +12,8 @@ import { ICustomer } from "@/features/users/types";
 import { getNextServerAPI } from "@/lib/nextServerAPI";
 import { APIResponse } from "@/types/api";
 import { revalidatePath } from "next/cache";
+import { IOrder } from "@/features/orders/types";
+
 /* Categories */
 export async function addCategory(data: AddCategorySchema) {
   try {
@@ -281,5 +283,22 @@ export async function getUser(id: string) {
       success: false,
       message: "حدث خطأ أثناء جلب بيانات المستخدم",
     });
+  }
+}
+/* Orders */
+// add to existing imports at top
+
+// add anywhere near the other GET-by-id actions
+export async function getOrderById(id: string) {
+  try {
+    const nextServerAPI = await getNextServerAPI();
+    const response = await nextServerAPI.get<IOrder>(`/admin/orders/${id}`);
+    return APIResponse.success({
+      success: true,
+      message: "تم جلب الطلب بنجاح",
+      data: response.data,
+    });
+  } catch (error) {
+    return APIResponse.error(error);
   }
 }

@@ -1,6 +1,5 @@
-import FormatCurrency from "@/components/FormatCurrency";
+import Table from "@/components/Table";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,12 +7,10 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import Table from "@/components/Table";
 import { ORDER_STATUS_CONFIG } from "@/features/orders/types";
 import { Column } from "@/types";
 import { formatDate } from "date-fns";
-import { Package, ShoppingCart } from "lucide-react";
-import Link from "next/link";
+import { ShoppingCart } from "lucide-react";
 
 interface Order {
   orderId: string;
