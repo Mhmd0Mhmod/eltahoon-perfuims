@@ -64,13 +64,16 @@ export default function SizeCard({ size }: { size: ISize }) {
         </div>
       </CardContent>
       <CardFooter className="flex justify-end gap-2">
-        <Dialog
-          title="تعديل الحجم"
-          description="قم بتعديل بيانات الحجم هنا. انقر حفظ عند الانتهاء."
-          triggerRender={<Pencil className="h-4 w-4" />}
-          variant="outline"
-        >
-          <SizeForm size={size} />
+        <Dialog>
+          <Dialog.Trigger variant="outline">
+            <Pencil className="h-4 w-4" />
+          </Dialog.Trigger>
+          <Dialog.Content
+            title="تعديل الحجم"
+            description="قم بتعديل بيانات الحجم هنا. انقر حفظ عند الانتهاء."
+          >
+            <SizeForm size={size} />
+          </Dialog.Content>
         </Dialog>
         <AlertDialog
           title="حذف الحجم"

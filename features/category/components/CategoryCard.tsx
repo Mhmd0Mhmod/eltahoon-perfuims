@@ -78,12 +78,16 @@ export function CategoryCard({ category }: { category: ICategory }) {
       </CardContent>
 
       <CardFooter className="mt-auto flex justify-end gap-2">
-        <Dialog
-          title={`تعديل التصنيف: ${category.name}`}
-          description={`تعديل بيانات التصنيف: ${category.name}`}
-          triggerRender={<Pencil className="h-4 w-4" />}
-        >
-          <CategoryForm category={category} />
+        <Dialog>
+          <Dialog.Trigger>
+            <Pencil className="h-4 w-4" />
+          </Dialog.Trigger>
+          <Dialog.Content
+            title={`تعديل التصنيف: ${category.name}`}
+            description={`تعديل بيانات التصنيف: ${category.name}`}
+          >
+            <CategoryForm category={category} />
+          </Dialog.Content>
         </Dialog>
 
         <AlertDialog

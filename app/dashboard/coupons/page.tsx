@@ -1,23 +1,14 @@
 "use client";
 import FormatCurrency from "@/components/FormatCurrency";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { getAdminOfferCoupons } from "@/features/copouns/services";
+import CouponsActions from "@/features/coupons/components/CouponsActions";
+import CouponForm from "@/features/coupons/components/CouponForm";
+import { getAdminOfferCoupons } from "@/features/coupons/services";
 import QueryTableDashboardPage from "@/features/dashboard/layout/QueryTableDashboardPage";
-import TableDashboardPage from "@/features/dashboard/layout/TableDashboardPage";
 import { DiscountType, IOfferCoupon } from "@/features/offers/types";
 import { Column } from "@/types";
 import { formatDate, isBefore } from "date-fns";
-import {
-  CalendarCheck,
-  CalendarX,
-  Pencil,
-  Percent,
-  Power,
-  PowerOff,
-  Tag,
-  Trash,
-} from "lucide-react";
+import { CalendarCheck, CalendarX, Percent, Tag } from "lucide-react";
 const columns: Column<IOfferCoupon>[] = [
   {
     header: "code",
@@ -105,25 +96,7 @@ const columns: Column<IOfferCoupon>[] = [
   {
     title: "الإجراءات",
     render(row) {
-      return (
-        <div className="flex items-center justify-center">
-          <div className="flex items-center justify-center">
-            <Button variant="outline" size="sm">
-              <Pencil className="h-4 w-4" />
-            </Button>
-            <Button variant="secondary" size="sm" className="mr-2">
-              {row.isActive ? (
-                <Power className="h-4 w-4" />
-              ) : (
-                <PowerOff className="h-4 w-4" />
-              )}
-            </Button>
-            <Button variant="destructive" size="sm" className="mr-2">
-              <Trash />
-            </Button>
-          </div>{" "}
-        </div>
-      );
+      return <CouponsActions coupon={row} />;
     },
   },
 ];
@@ -170,7 +143,7 @@ function CouponsPage() {
       form={{
         title: "إضافة كوبون",
         description: "إضافة كوبون جديد",
-        component: <></>,
+        component: <CouponForm />,
       }}
       emptyState={
         <div className="flex flex-col items-center justify-center py-12">

@@ -92,8 +92,14 @@ function CardsDashboardPage<T, P = Record<string, unknown>>({
         )}
 
         {form && "component" in form && (
-          <Dialog title={form.title} description={form.description}>
-            {form.component}
+          <Dialog>
+            <Dialog.Trigger>
+              <Plus className="ml-2 h-4 w-4" />
+              {form.title}
+            </Dialog.Trigger>
+            <Dialog.Content title={form.title} description={form.description}>
+              {form.component}
+            </Dialog.Content>
           </Dialog>
         )}
       </div>

@@ -4,56 +4,52 @@ import type { ReactNode } from "react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog as DialogComponent,
-  DialogContent,
+  DialogContent as DialogContentComponent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
+  DialogTrigger as DialogTriggerComponent,
 } from "@/components/ui/dialog";
 import { Separator } from "./ui/separator";
+import { VariantProps } from "class-variance-authority";
 
 interface FormDialogProps {
-  title: string;
-  description: string;
   children: ReactNode;
-  icon?: ReactNode;
-  triggerRender?: ReactNode;
-  variant?: "default" | "outline" | "ghost" | "link" | "destructive";
 }
 
-function Dialog({
-  title,
-  description,
-  children,
-  icon,
-  triggerRender,
-  variant = "default",
-}: FormDialogProps) {
+function Dialog({ children }: FormDialogProps) {
+  return <DialogComponent modal>{children}</DialogComponent>;
+}
+interface DialogTriggerProps {
+  variant?: VariantProps<typeof Button>["variant"];
+  children: ReactNode;
+}
+function DialogTrigger({ variant = "default", children }: DialogTriggerProps) {
   return (
-    <DialogComponent modal>
-      <DialogTrigger render={<Button variant={variant} />}>
-        {triggerRender ? (
-          triggerRender
-        ) : (
-          <>
-            {icon ? icon : <Plus className="h-4 w-4" />}
-            {title}
-          </>
-        )}
-      </DialogTrigger>
-
-      <DialogContent className="md:min-w-xl max-h-[80vh] overflow-y-auto  overflow-x-hidden scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted/80 scrollbar-track-muted/20">
-        <DialogHeader>
-          <DialogTitle>{title}</DialogTitle>
-
-          <DialogDescription>{description}</DialogDescription>
-        </DialogHeader>
-        <Separator />
-
-        {children}
-      </DialogContent>
-    </DialogComponent>
+    <DialogTriggerComponent render={<Button variant={variant} />}>
+      {children}
+    </DialogTriggerComponent>
   );
 }
+interface DialogContentProps {
+  title: string;
+  description?: string;
+  children: ReactNode;
+}
+function DialogContent({ title, description, children }: DialogContentProps) {
+  return (
+    <DialogContentComponent className="md:min-w-xl max-h-[80vh] overflow-y-auto  overflow-x-hidden scrollbar-thin scrollbar-thumb-rounded scrollbar-thumb-muted/80 scrollbar-track-muted/20">
+      <DialogHeader>
+        <DialogTitle>{title}</DialogTitle>
 
+        <DialogDescription>{description}</DialogDescription>
+      </DialogHeader>
+      <Separator />
+
+      {children}
+    </DialogContentComponent>
+  );
+}
+Dialog.Trigger = DialogTrigger;
+Dialog.Content = DialogContent;
 export default Dialog;

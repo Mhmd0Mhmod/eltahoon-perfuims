@@ -1,6 +1,7 @@
 "use server";
 
 import { AddCategorySchema } from "@/features/category/schema";
+import { CouponFormValues } from "@/features/coupons/schema";
 import { ICategory } from "@/features/category/types";
 import { OfferFormValues } from "@/features/offers/schema";
 import { ProductSchema } from "@/features/products/schema";
@@ -13,6 +14,7 @@ import { getNextServerAPI } from "@/lib/nextServerAPI";
 import { APIResponse } from "@/types/api";
 import { revalidatePath } from "next/cache";
 import { IOrder } from "@/features/orders/types";
+import { IOfferCoupon } from "@/features/offers/types";
 
 /* Categories */
 export async function addCategory(data: AddCategorySchema) {
@@ -298,6 +300,57 @@ export async function getOrderById(id: string) {
       message: "تم جلب الطلب بنجاح",
       data: response.data,
     });
+  } catch (error) {
+    return APIResponse.error(error);
+  }
+}
+
+/* Coupons */
+type TCouponPayload = Omit<CouponFormValues, "expiresAt"> & {
+  expiresAt: string;
+};
+export async function createCoupon(data: TCouponPayload) {
+  try {
+    const nextServerAPI = await getNextServerAPI();
+    await nextServerAPI.post<IOfferCoupon>("/admin/coupons", data);
+    revalidatePath("/dashboard/coupons");
+    return APIResponse.success<void>(undefined, "تم إنشاء الكوبون بنجاح");
+  } catch (error) {
+    return APIResponse.error(error);
+  }
+}
+
+export async function updateCoupon(id: number, data: Partial<TCouponPayload>) {
+  try {
+    const nextServerAPI = await getNextServerAPI();
+    await nextServerAPI.patch<IOfferCoupon>(`/admin/coupons/${id}`, data);
+    revalidatePath("/dashboard/coupons");
+    return APIResponse.success<void>(undefined, "تم تحديث الكوبون بنجاح");
+  } catch (error) {
+    return APIResponse.error(error);
+  }
+}
+
+export async function deleteCoupon(id: number) {
+  try {
+    const nextServerAPI = await getNextServerAPI();
+    await nextServerAPI.delete(`/admin/coupons/${id}`);
+    revalidatePath("/dashboard/coupons");
+    return APIResponse.success<void>(undefined, "تم حذف الكوبون بنجاح");
+  } catch (error) {
+    return APIResponse.error(error);
+  }
+}
+
+export async function toggleCouponStatus(id: number, isActive: boolean) {
+  try {
+    const nextServerAPI = await getNextServerAPI();
+    await nextServerAPI.patch(`/admin/coupons/${id}`, { isActive });
+    revalidatePath("/dashboard/coupons");
+    return APIResponse.success<void>(
+      undefined,
+      isActive ? "تم تفعيل الكوبون بنجاح" : "تم إلغاء تفعيل الكوبون بنجاح",
+    );
   } catch (error) {
     return APIResponse.error(error);
   }
