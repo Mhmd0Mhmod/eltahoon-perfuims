@@ -1,4 +1,3 @@
-"use client";
 import { Plus } from "lucide-react";
 import { type ReactNode } from "react";
 import CardSkeleton from "@/components/CardSkeleton";
@@ -8,13 +7,13 @@ import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
 
 import type { Description, Title } from "@/types";
 import Link from "next/link";
-import { useQuery } from "@/hooks/useMarketQuery";
 
 type FormConfig =
   | (Title &
@@ -25,18 +24,18 @@ type FormConfig =
       to: string;
     });
 
-interface CardsDashboardPageProps<T, P = Record<string, unknown>> {
+export interface CardsDashboardPageProps<T> {
   title: string;
   description: string;
-  params?: P;
-  queryKey: string;
-  queryFn: (params?: P) => Promise<{
-    data: T[];
-  }>;
-  renderCard: (item: T) => ReactNode;
+  items: T[];
+  renderCard: ({ item }: { item: T }) => ReactNode;
   form?: FormConfig;
   emptyState?: ReactNode;
   gridColumns?: 1 | 2 | 3 | 4;
+  isLoading: boolean;
+  hasNextPage?: boolean;
+  fetchNextPage?: () => void;
+  isFetchingNextPage?: boolean;
 }
 
 const gridColumnsClasses = {
@@ -46,23 +45,19 @@ const gridColumnsClasses = {
   4: "lg:grid-cols-4",
 } as const;
 
-function CardsDashboardPage<T, P = Record<string, unknown>>({
+function CardsDashboardPage<T>({
   title,
   description,
-  params,
-  queryKey,
-  queryFn,
+  items,
   renderCard,
   form,
   emptyState,
   gridColumns = 3,
-}: CardsDashboardPageProps<T, P>) {
-  const { data, isLoading } = useQuery({
-    queryKey: ["cards", queryKey, params],
-    queryFn: () => queryFn(params),
-    enabled: Boolean(queryKey),
-  });
-  const items: T[] = data?.data ?? [];
+  isLoading,
+  hasNextPage,
+  fetchNextPage,
+  isFetchingNextPage,
+}: CardsDashboardPageProps<T>) {
   const gridClass = gridColumnsClasses[gridColumns];
 
   return (
@@ -130,12 +125,23 @@ function CardsDashboardPage<T, P = Record<string, unknown>>({
             >
               {items.map((item, index) => (
                 <div key={getItemKey(item, index)} className="h-full">
-                  {renderCard(item)}
+                  {renderCard({ item })}
                 </div>
               ))}
             </div>
           )}
         </CardContent>
+        <CardFooter>
+          {hasNextPage && (
+            <Button
+              onClick={fetchNextPage}
+              disabled={isFetchingNextPage}
+              className="w-full"
+            >
+              {isFetchingNextPage ? "جاري التحميل..." : "تحميل المزيد"}
+            </Button>
+          )}
+        </CardFooter>
       </Card>
     </div>
   );

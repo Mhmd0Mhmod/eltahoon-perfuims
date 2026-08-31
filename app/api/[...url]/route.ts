@@ -55,7 +55,6 @@ async function proxyRequest(
       const body = await getBody(request);
       response = await api[method](endpoint, body, config);
     }
-
     return NextResponse.json(response.data, {
       status: response.status,
     });

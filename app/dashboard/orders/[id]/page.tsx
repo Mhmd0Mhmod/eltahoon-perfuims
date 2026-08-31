@@ -9,6 +9,7 @@ import {
 
 import { OrderCustomerCard } from "@/features/orders/components/OrderCustomerCard";
 import { OrderDetailsHeader } from "@/features/orders/components/OrderDetailsHeader";
+import { OrderStatusUpdate } from "@/features/orders/components/OrderStatusUpdate";
 import { OrderItemsTable } from "@/features/orders/components/OrderItemsTable";
 import { OrderPaymentCard } from "@/features/orders/components/OrderPaymentCard";
 import { OrderSummary } from "@/features/orders/components/OrderSummary";
@@ -33,6 +34,8 @@ async function OrderDetailsPage({ params }: OrderDetailsPageProps) {
   return (
     <div className="container mx-auto space-y-6 p-6">
       <OrderDetailsHeader order={order} />
+
+      <OrderStatusUpdate order={order} />
 
       <div className="grid gap-6 lg:grid-cols-2">
         <OrderCustomerCard

@@ -10,32 +10,11 @@ import {
   SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
 } from "@/components/ui/sidebar";
 
-import { Package, Settings, User } from "lucide-react";
+import { User } from "lucide-react";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-
-const ACCOUNT_NAV_ITEMS = [
-  {
-    href: "/account",
-    label: "الملف الشخصي",
-    icon: User,
-  },
-  {
-    href: "/account/orders",
-    label: "طلباتي",
-    icon: Package,
-  },
-  {
-    href: "/account/settings",
-    label: "الإعدادات",
-    icon: Settings,
-  },
-];
+import AccountSidebarMenuItems from "./AccountSidebarMenuItems";
 
 interface AccountSidebarProps {
   user: {
@@ -45,8 +24,6 @@ interface AccountSidebarProps {
   };
 }
 function AccountSidebar({ user }: AccountSidebarProps) {
-  const pathname = usePathname();
-
   return (
     <Sidebar side="right" variant="floating">
       {/* User */}
@@ -75,28 +52,7 @@ function AccountSidebar({ user }: AccountSidebarProps) {
 
           <SidebarGroupContent>
             <SidebarMenu>
-              {ACCOUNT_NAV_ITEMS.map((item) => {
-                const Icon = item.icon;
-
-                const isActive =
-                  item.href === "/account"
-                    ? pathname === "/account"
-                    : pathname.startsWith(item.href);
-
-                return (
-                  <SidebarMenuItem key={item.href}>
-                    <Link href={item.href}>
-                      <SidebarMenuButton
-                        isActive={isActive}
-                        tooltip={item.label}
-                      >
-                        <Icon />
-                        <span>{item.label}</span>
-                      </SidebarMenuButton>
-                    </Link>
-                  </SidebarMenuItem>
-                );
-              })}
+              <AccountSidebarMenuItems />
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>

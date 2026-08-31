@@ -20,6 +20,7 @@ import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { storeSettingsSchema, StoreSettingsSchema } from "../schema";
 import { Button } from "@/components/ui/button";
+import { updateSiteSettings } from "@/app/dashboard/settings/actions";
 
 interface SocialMediaFormProps {
   initialData: Partial<StoreSettingsSchema>;
@@ -40,11 +41,7 @@ export function SocialMediaForm({ initialData }: SocialMediaFormProps) {
     const id = toast.loading("جارٍ حفظ إعدادات التواصل الاجتماعي...");
 
     try {
-      //   const result = await updateStoreSettingsAction(data);
-      const result = {
-        success: true,
-        message: "تم حفظ إعدادات التواصل الاجتماعي بنجاح",
-      };
+      const result = await updateSiteSettings(data);
       if (!result.success) {
         toast.error(
           result.message || "حدث خطأ أثناء حفظ إعدادات التواصل الاجتماعي",

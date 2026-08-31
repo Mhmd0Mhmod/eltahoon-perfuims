@@ -15,6 +15,13 @@ export interface ICountry {
   updatedAt: string;
   paymentMethods: IPaymentMethod[];
 }
+export interface ISiteSettings {
+  id: number;
+  facebookUrl?: string;
+  instagramUrl?: string;
+  twitterUrl?: string;
+  whatsappNumber?: string;
+}
 export interface IPublicCountry {
   name: {
     common: string;

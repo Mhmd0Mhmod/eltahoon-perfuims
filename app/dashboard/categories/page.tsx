@@ -4,17 +4,17 @@ import { CategoryCard } from "@/features/category/components/CategoryCard";
 import { CategoryForm } from "@/features/category/components/CategoryForm/CategoryForm";
 import { getAdminCategories } from "@/features/category/services";
 import { ICategory } from "@/features/category/types";
-import CardsDashboardPage from "@/features/dashboard/layout/CardsDashboardPage";
+import QueryCardsDashboardPage from "@/features/dashboard/layout/QueryCardsDashboardPage";
 import { FolderTree } from "lucide-react";
 
 function CategoriesPage() {
   return (
-    <CardsDashboardPage<ICategory>
+    <QueryCardsDashboardPage<ICategory>
       title="التصنيفات"
       description="إدارة تصنيفات المنتجات"
-      queryKey="categories"
+      queryKey={["categories"]}
       queryFn={getAdminCategories}
-      renderCard={(category) => <CategoryCard category={category} />}
+      renderCard={({ item: category }) => <CategoryCard category={category} />}
       form={{
         title: "إضافة تصنيف",
         description: "أضف تصنيف جديد للمنتجات",

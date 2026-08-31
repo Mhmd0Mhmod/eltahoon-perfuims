@@ -6,6 +6,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import DeleteAccountButton from "@/features/account/components/DeleteAccountButton";
 import { SettingsForm } from "@/features/account/components/SettingsForm";
 import { redirect } from "next/navigation";
 
@@ -29,6 +30,18 @@ export default async function SettingsPage() {
         </CardHeader>
         <CardContent>
           <SettingsForm user={user} />
+        </CardContent>
+      </Card>
+
+      <Card className="border-destructive/40">
+        <CardHeader className="text-right">
+          <CardTitle className="text-destructive">منطقة الخطر</CardTitle>
+          <CardDescription>
+            حذف حسابك نهائيًا. لا يمكن التراجع عن هذا الإجراء.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <DeleteAccountButton />
         </CardContent>
       </Card>
     </div>

@@ -4,17 +4,12 @@ import SelectCountry from "@/components/SelectCountry";
 import { Roles } from "@/enums/roles";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { CartDrawer } from "@/features/cart";
-import { useCartStore } from "@/stores/useCartStore";
-import { LayoutDashboard, Search, ShoppingBag, User } from "lucide-react";
+import { LayoutDashboard, User } from "lucide-react";
 import Link from "next/link";
 
 function HeaderActions() {
   const { userProfile, isLoading } = useAuth();
   const isAdmin = userProfile?.role === Roles.ADMIN;
-  const items = useCartStore((state) => state.items);
-
-  const totalItems = items.reduce((acc, item) => acc + item.quantity, 0);
-
   const actionClass =
     "flex size-9 shrink-0 items-center justify-center rounded-none border border-transparent transition-colors hover:border-foreground/20 hover:bg-card/70 sm:size-10";
 

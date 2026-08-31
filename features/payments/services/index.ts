@@ -1,4 +1,6 @@
 import { nextAPI } from "@/lib/nextAPI";
+import { IPagination } from "@/types/pagination";
+import { IPayment } from "../types";
 
 export async function getAdminPayments({
   params,
@@ -9,5 +11,17 @@ export async function getAdminPayments({
 } = {}) {
   return nextAPI.get("/admin/payments", {
     params: { ...params, page: pageParam },
+  });
+}
+
+export async function getMyPayments({
+  params,
+  page,
+}: {
+  params?: Record<string, unknown>;
+  page?: number;
+} = {}) {
+  return nextAPI.get<IPagination<IPayment>>("/payments/my", {
+    params: { ...params, page },
   });
 }

@@ -16,6 +16,8 @@ import {
 
 import type { Column } from "@/types";
 import PagiedTableDashboardPage from "@/features/dashboard/layout/PagiedTableDashboardPage";
+import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 const columns: Column<IOrder>[] = [
   {
@@ -23,7 +25,11 @@ const columns: Column<IOrder>[] = [
     title: "رقم الطلب",
     render(row) {
       return (
-        <span className="font-mono text-xs font-bold">#{row.orderId}</span>
+        <Link href={`/dashboard/orders/${row.orderId}`} className="font-medium">
+          <Button variant="link" className="p-0">
+            #{row.orderId}
+          </Button>
+        </Link>
       );
     },
   },
@@ -31,10 +37,18 @@ const columns: Column<IOrder>[] = [
   {
     title: "العميل",
     render(row) {
-      return <span className="font-medium">{row.user.name}</span>;
+      return (
+        <Link
+          href={`/dashboard/customers/${row.user.userId}`}
+          className="font-medium"
+        >
+          <Button variant="link" className="p-0">
+            {row.user.name}
+          </Button>
+        </Link>
+      );
     },
   },
-
   {
     header: "totalAmount",
     title: "الإجمالي",

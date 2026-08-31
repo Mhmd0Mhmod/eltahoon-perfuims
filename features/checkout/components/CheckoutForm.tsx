@@ -17,28 +17,36 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { User } from "@/types/user";
+import { useAuth } from "@/features/auth/hooks/useAuth";
+import { useCartStore } from "@/stores/useCartStore";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Banknote,
-  CheckCircle2,
   CreditCard,
   Mail,
   MapPin,
   Phone,
   User as UserIcon,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 import { CheckoutFormValues, checkoutSchema } from "../types";
 import { CheckoutSummary } from "./CheckoutSummary";
-import { PAYMENT_METHOD_CONFIG } from "@/features/payments/config";
+import { createOrderAction } from "../../../app/(shop)/[market]/checkout/actions";
+import Link from "next/link";
+import { Button as LinkButton } from "@/components/ui/button";
 
 interface CheckoutFormProps {
   user?: User | null;
 }
 
 export function CheckoutForm({ user }: CheckoutFormProps) {
+  const router = useRouter();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const cart = useCartStore((state) => state);
+  const [couponCode, setCouponCode] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<CheckoutFormValues>({
@@ -66,10 +74,48 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
     const toastId = toast.loading("جاري تنفيذ طلبك...");
 
     try {
-      // Simulate order placement
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      if (cart.items.length === 0) {
+        toast.error("سلة التسوق فارغة، أضف منتجات أولاً", { id: toastId });
+        return;
+      }
 
-      toast.success("تم تأكيد طلبك بنجاح!", { id: toastId });
+      const shippingAddress = [
+        data.city,
+        data.address,
+        data.postalCode,
+      ].filter(Boolean).join("، ");
+
+      const syncItems = cart.items.map((item) => ({
+        productVariantId: item.variantDetails.id,
+        quantity: item.quantity,
+      }));
+
+      const result = await createOrderAction({
+        shippingAddress,
+        phoneNumber: data.phoneNumber,
+        paymentMethod: data.paymentMethod,
+        couponCode: couponCode || undefined,
+        syncItems,
+      });
+
+      if (!result.success) {
+        toast.error(result.message || "حدث خطأ أثناء إتمام الطلب", {
+          id: toastId,
+        });
+        return;
+      }
+
+      const order = result.data;
+      cart.clearCart();
+
+      toast.success("تم إنشاء الطلب بنجاح!", { id: toastId });
+
+      // Redirect to the payment gateway if provided (VISA), else the success page.
+      if (order.paymentUrl) {
+        window.location.href = order.paymentUrl;
+      } else {
+        router.push(`/payments/success?order=${order.orderId}`);
+      }
     } catch {
       toast.error("حدث خطأ أثناء إتمام الطلب، يرجى المحاولة مرة أخرى", {
         id: toastId,
@@ -79,14 +125,38 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
     }
   }
 
-  const paymentMethods = Object.entries(PAYMENT_METHOD_CONFIG).map(
-    ([key, value]) => ({
-      id: key,
-      title: value.label,
-      description: `اختر ${value.label} لإتمام عملية الدفع`,
-      icon: value.icon,
-    }),
-  );
+  if (authLoading) {
+    return <div className="p-10 text-center">جارِ التحميل...</div>;
+  }
+
+  if (!isAuthenticated) {
+    return (
+      <div className="mx-auto max-w-md space-y-4 py-16 text-center">
+        <h2 className="text-2xl font-bold">يجب تسجيل الدخول أولاً</h2>
+        <p className="text-muted-foreground">
+          قم بتسجيل الدخول لإتمام عملية الشراء ومتابعة طلباتك.
+        </p>
+        <Link href="/login" className="block">
+          <LinkButton className="w-full">تسجيل الدخول</LinkButton>
+        </Link>
+      </div>
+    );
+  }
+
+  const paymentMethods = [
+    {
+      id: "CASH_ON_DELIVERY",
+      title: "نقدًا عند الاستلام",
+      description: "الدفع عند استلام الطلب",
+      icon: Banknote,
+    },
+    {
+      id: "VISA",
+      title: "بطاقة ائتمان",
+      description: "الدفع عبر بوابة الدفع الإلكتروني",
+      icon: CreditCard,
+    },
+  ];
 
   return (
     <form
@@ -110,7 +180,6 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid gap-4 sm:grid-cols-2">
-                {/* Full Name */}
                 <Controller
                   name="fullName"
                   control={form.control}
@@ -128,7 +197,6 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
                   )}
                 />
 
-                {/* Phone Number */}
                 <Controller
                   name="phoneNumber"
                   control={form.control}
@@ -152,7 +220,6 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
               </div>
 
               <div className="grid gap-4 sm:grid-cols-2">
-                {/* Email */}
                 <Controller
                   name="email"
                   control={form.control}
@@ -175,7 +242,6 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
                   )}
                 />
 
-                {/* City */}
                 <Controller
                   name="city"
                   control={form.control}
@@ -248,7 +314,7 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="grid gap-3 sm:grid-cols-3">
+              <div className="grid gap-3 sm:grid-cols-2">
                 {paymentMethods.map((method) => {
                   const Icon = method.icon;
                   const isSelected = selectedPaymentMethod === method.id;
@@ -305,7 +371,10 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
 
         {/* Right / Sidebar (4 cols) */}
         <div className="space-y-6 lg:col-span-4">
-          <CheckoutSummary />
+          <CheckoutSummary
+            subtotal={cartSubtotal(cart.items)}
+            onCouponChange={(code) => setCouponCode(code ?? "")}
+          />
 
           <Button
             type="submit"
@@ -318,5 +387,14 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
         </div>
       </div>
     </form>
+  );
+}
+
+function cartSubtotal(
+  items: { quantity: number; variantDetails: { newPrice: number } }[],
+) {
+  return items.reduce(
+    (acc, item) => acc + item.variantDetails.newPrice * item.quantity,
+    0,
   );
 }

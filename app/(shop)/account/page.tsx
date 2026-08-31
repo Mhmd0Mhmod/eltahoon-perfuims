@@ -7,7 +7,6 @@ import AccountPromoCard from "@/features/account/components/AccountPromoCard";
 
 async function AccountPage() {
   const user = await getCurrentUser();
-
   if (!user) {
     redirect("/login");
   }

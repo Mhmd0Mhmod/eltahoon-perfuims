@@ -11,7 +11,7 @@ import { SizeSchema } from "@/features/size/schema";
 import { ISize } from "@/features/size/types";
 import { ICustomer } from "@/features/users/types";
 import { getNextServerAPI } from "@/lib/nextServerAPI";
-import { APIResponse } from "@/types/api";
+import { APIResponse, IAPIResponse } from "@/types/api";
 import { revalidatePath } from "next/cache";
 import { IOrder } from "@/features/orders/types";
 import { IOfferCoupon } from "@/features/offers/types";
@@ -259,7 +259,7 @@ export async function deleteOffer(id: number) {
 export async function toggleOfferStatus(id: number, isActive: boolean) {
   try {
     const nextServerAPI = await getNextServerAPI();
-    await nextServerAPI.patch(`admin/offers/${id}/status`, { isActive });
+    await nextServerAPI.patch(`admin/offers/${id}`, { isActive });
     revalidatePath("/dashboard/offers");
     return APIResponse.success<void>(
       undefined,
@@ -300,6 +300,46 @@ export async function getOrderById(id: string) {
       message: "تم جلب الطلب بنجاح",
       data: response.data,
     });
+  } catch (error) {
+    return APIResponse.error(error);
+  }
+}
+
+export async function updateOrderStatus(
+  orderId: number,
+  status: string,
+): Promise<IAPIResponse<void>> {
+  try {
+    const nextServerAPI = await getNextServerAPI();
+    await nextServerAPI.patch(`/admin/orders/${orderId}/status`, undefined, {
+      params: { status },
+    });
+    revalidatePath(`/dashboard/orders/${orderId}`);
+    return APIResponse.success<void>(undefined, "تم تحديث حالة الطلب بنجاح");
+  } catch (error) {
+    return APIResponse.error(error);
+  }
+}
+
+export async function updatePaymentStatus(
+  orderId: number,
+  status: string,
+  transactionId?: string,
+): Promise<IAPIResponse<void>> {
+  try {
+    const nextServerAPI = await getNextServerAPI();
+    await nextServerAPI.patch(
+      `/admin/payments/${orderId}/status`,
+      undefined,
+      {
+        params: {
+          status,
+          ...(transactionId ? { transactionId } : {}),
+        },
+      },
+    );
+    revalidatePath(`/dashboard/orders/${orderId}`);
+    return APIResponse.success<void>(undefined, "تم تحديث حالة الدفع بنجاح");
   } catch (error) {
     return APIResponse.error(error);
   }

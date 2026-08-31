@@ -8,32 +8,52 @@ import { Separator } from "@/components/ui/separator";
 import { ShoppingBag, Tag } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
+import { applyCoupon } from "../services/";
 
 interface CheckoutSummaryProps {
   subtotal?: number;
   shipping?: number;
-  discount?: number;
+  onCouponChange?: (code: string | null) => void;
 }
 
 export function CheckoutSummary({
   subtotal = 0,
   shipping = 0,
-  discount = 0,
+  onCouponChange,
 }: CheckoutSummaryProps) {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<string | null>(null);
+  const [discountAmount, setDiscountAmount] = useState(0);
+  const [isApplying, setIsApplying] = useState(false);
 
-  const handleApplyCoupon = (e: React.FormEvent) => {
+  const handleApplyCoupon = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!couponCode.trim()) {
       toast.error("يرجى إدخال كود الخصم");
       return;
     }
-    setAppliedCoupon(couponCode.trim());
-    toast.success("تم تطبيق كود الخصم بنجاح");
+    setIsApplying(true);
+    try {
+      const { data } = await applyCoupon(couponCode.trim());
+      setAppliedCoupon(data.couponCode);
+      setDiscountAmount(data.discountAmount);
+      onCouponChange?.(data.couponCode);
+      toast.success("تم تطبيق كود الخصم بنجاح");
+    } catch {
+      toast.error("كود الخصم غير صالح أو منتهي الصلاحية");
+    } finally {
+      setIsApplying(false);
+    }
   };
 
-  const total = Math.max(0, subtotal + shipping - discount);
+  const handleRemoveCoupon = () => {
+    setAppliedCoupon(null);
+    setDiscountAmount(0);
+    setCouponCode("");
+    onCouponChange?.(null);
+  };
+
+  const total = Math.max(0, subtotal + shipping - discountAmount);
 
   return (
     <Card className="sticky top-20 border shadow-xs">
@@ -55,8 +75,13 @@ export function CheckoutSummary({
               className="pr-9 text-sm"
             />
           </div>
-          <Button type="submit" variant="outline" size="sm">
-            تطبيق
+          <Button
+            type="submit"
+            variant="outline"
+            size="sm"
+            disabled={isApplying}
+          >
+            {isApplying ? "..." : "تطبيق"}
           </Button>
         </form>
 
@@ -65,10 +90,7 @@ export function CheckoutSummary({
             <span>تم تفعيل الكوبون: {appliedCoupon}</span>
             <button
               type="button"
-              onClick={() => {
-                setAppliedCoupon(null);
-                setCouponCode("");
-              }}
+              onClick={handleRemoveCoupon}
               className="text-muted-foreground hover:text-foreground text-xs underline"
             >
               إلغاء
@@ -94,11 +116,11 @@ export function CheckoutSummary({
             </span>
           </div>
 
-          {discount > 0 && (
+          {discountAmount > 0 && (
             <div className="text-emerald-600 dark:text-emerald-400 flex justify-between">
               <span>الخصم</span>
               <span className="font-medium">
-                - <FormatCurrency value={discount} />
+                - <FormatCurrency value={discountAmount} />
               </span>
             </div>
           )}

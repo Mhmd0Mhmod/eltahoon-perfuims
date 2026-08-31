@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 
 function useAuth() {
   const [token, setToken] = useState<string | null>(null);
-
+  const queryClient = useQueryClient();
   const {
     data: userProfile,
     isLoading,
@@ -32,9 +32,8 @@ function useAuth() {
     mutationKey: ["logout"],
     mutationFn: logoutAction,
     onSuccess: (_, __, ___, ctx) => {
-      ctx.client.removeQueries({
-        queryKey: ["me"],
-      });
+      setToken(null);
+      ctx.client.removeQueries();
     },
   });
   useEffect(() => {
@@ -43,6 +42,13 @@ function useAuth() {
       setToken(storedToken);
     }
   }, []);
+  useEffect(() => {
+    if (token) {
+      refetch();
+    } else {
+      queryClient.removeQueries();
+    }
+  }, [token, refetch]);
   return {
     userProfile,
     isLoading,

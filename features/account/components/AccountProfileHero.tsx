@@ -10,16 +10,10 @@ import {
   Sparkles,
 } from "lucide-react";
 import Link from "next/link";
+import { Session } from "@/types/user";
 
 interface AccountProfileHeroProps {
-  user: {
-    fullName?: string | null;
-    username: string;
-    email: string;
-    phoneNumber?: string | null;
-    address?: string | null;
-    createdAt: string | Date;
-  };
+  user: Session["user"];
 }
 
 function AccountProfileHero({ user }: AccountProfileHeroProps) {
@@ -48,7 +42,7 @@ function AccountProfileHero({ user }: AccountProfileHeroProps) {
   );
 }
 
-function UserInfo({ user }: { user: AccountProfileHeroProps["user"] }) {
+function UserInfo({ user }: { user: Session["user"] }) {
   return (
     <div className="flex-1 text-center sm:text-right">
       <div className="mb-2 flex items-center justify-center gap-2 sm:justify-start">

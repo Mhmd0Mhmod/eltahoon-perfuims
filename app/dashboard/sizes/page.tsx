@@ -1,20 +1,20 @@
 "use client";
 
-import CardsDashboardPage from "@/features/dashboard/layout/CardsDashboardPage";
+import QueryCardsDashboardPage from "@/features/dashboard/layout/QueryCardsDashboardPage";
+
 import SizeCard from "@/features/size/components/SizeCard";
 import SizeForm from "@/features/size/components/SizeForm";
 import { getAdminSizes } from "@/features/size/services";
-import { ISize } from "@/features/size/types";
 import { Package } from "lucide-react";
 
-function SizesPage() {
+function page() {
   return (
-    <CardsDashboardPage<ISize>
+    <QueryCardsDashboardPage
       title="أحجام الزجاجات"
       description="إدارة أحجام زجاجات العطور"
-      queryKey="sizes"
+      queryKey={["sizes"]}
       queryFn={getAdminSizes}
-      renderCard={(size) => <SizeCard size={size} />}
+      renderCard={({ item }) => <SizeCard size={item} />}
       form={{
         title: "إضافة حجم جديد",
         description: "أدخل بيانات الحجم الجديد هنا. انقر حفظ عند الانتهاء.",
@@ -33,5 +33,4 @@ function SizesPage() {
     />
   );
 }
-
-export default SizesPage;
+export default page;
