@@ -1,10 +1,23 @@
 "use client";
-import CardSkeleton from "@/components/CardSkeleton";
-import FormatCurrency from "@/components/FormatCurrency";
-import MarketLink from "@/components/MarketLink";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { ProductCard } from "@/features/products/components/ProductCard";
 import { getProducts } from "@/features/products/services";
-import { IProduct } from "@/features/products/types";
 import { useInfiniteQuery } from "@/hooks/useMarketQuery";
+
+function ProductCardSkeleton() {
+  return (
+    <Card className="p-0">
+      <Skeleton className="aspect-square w-full" />
+      <CardContent className="space-y-3 p-4 text-right sm:p-5">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+      </CardContent>
+    </Card>
+  );
+}
 
 function ProductsCards() {
   const { data, isLoading } = useInfiniteQuery({
@@ -13,7 +26,7 @@ function ProductsCards() {
       getProducts({
         page: pageParam,
         params: {
-          size: 4,
+          size: 8,
         },
       }),
     initialPageParam: 0,
@@ -23,50 +36,12 @@ function ProductsCards() {
   });
   const products = data?.pages.flatMap((page) => page.data.content) || [];
   if (isLoading) {
-    return Array.from({ length: 4 }).map((_, index) => (
-      <CardSkeleton key={index} />
+    return Array.from({ length: 8 }).map((_, index) => (
+      <ProductCardSkeleton key={index} />
     ));
   }
   return products.map((product) => (
     <ProductCard key={product.id} product={product} />
   ));
-}
-function ProductCard({ product }: { product: IProduct }) {
-  const minPrice = Math.min(
-    ...product.variants.map((variant) => variant.newPrice),
-  );
-  const maxPrice = Math.max(
-    ...product.variants.map((variant) => variant.newPrice),
-  );
-  return (
-    <MarketLink
-      key={product.id}
-      href={`/products/${product.id}`}
-      className="editorial-shell group relative overflow-hidden p-6 transition-transform duration-300 hover:-translate-y-1"
-    >
-      <article>
-        <div className="absolute inset-x-0 top-0 h-px bg-linear-to-l from-transparent via-primary/65 to-transparent" />
-        <p className="text-[11px] tracking-[0.28em] text-muted-foreground uppercase">
-          Exclusive
-        </p>
-        <h3 className="mt-4 text-xl leading-snug font-medium">
-          {product.name}
-        </h3>
-        <p className="mt-2 text-sm text-muted-foreground max-h-20 overflow-hidden text-ellipsis ">
-          {product.description}
-        </p>
-        <div className="flex flex-row gap-1 mt-4 items-center">
-          <p className=" text-lg font-semibold text-primary">
-            <FormatCurrency value={minPrice} />
-          </p>
-          {minPrice !== maxPrice && (
-            <p className=" text-sm text-muted-foreground">
-              - <FormatCurrency value={maxPrice} />
-            </p>
-          )}
-        </div>
-      </article>
-    </MarketLink>
-  );
 }
 export default ProductsCards;

@@ -7,13 +7,13 @@ interface ErrorProps {
   reset: () => void;
 }
 
-export default function AuthError({ error, reset }: ErrorProps) {
+export default function MarketError({ error, reset }: ErrorProps) {
   return (
     <BrandError
       error={error}
       reset={reset}
-      homeHref="/login"
-      homeLabel="تسجيل الدخول"
+      homeHref="/"
+      homeLabel="الصفحة الرئيسية"
     />
   );
 }

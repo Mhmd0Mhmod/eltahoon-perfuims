@@ -1,5 +1,6 @@
 import Logo from "@/components/Logo";
 import MarketLink from "@/components/MarketLink";
+import CategoriesSheet from "./CategoriesSheet";
 import HeaderActions from "./HeaderActions";
 
 function Header() {
@@ -8,6 +9,8 @@ function Header() {
       <div className="mx-auto max-w-7xl px-6">
         <div className="flex h-22 items-center justify-between">
           <nav className="hidden items-center gap-8 lg:flex">
+            <CategoriesSheet />
+
             <MarketLink
               href="/products"
               className="text-[13px] tracking-[0.14em] transition-opacity hover:opacity-60"
