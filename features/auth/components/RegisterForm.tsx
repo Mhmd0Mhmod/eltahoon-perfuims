@@ -13,6 +13,8 @@ import { Controller, useForm } from "react-hook-form";
 import { RegisterSchema, registerSchema } from "../schema";
 import PasswordInput from "@/components/PasswordInput";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { registerAction } from "@/app/(auth)/actions";
 
 function RegisterForm() {
   const form = useForm<RegisterSchema>({
@@ -27,24 +29,20 @@ function RegisterForm() {
       role: "customer",
     },
   });
+  const { mutate: register, isPending: isRegistering } = useMutation({
+    mutationFn: registerAction,
+    onSuccess: () => {
+      toast.success("تم التسجيل بنجاح!");
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "حدث خطأ أثناء التسجيل.");
+    },
+  });
 
   const onSubmit = useCallback(
     async function (data: RegisterSchema) {
-      const id = toast.loading("جاري التسجيل...");
-      const response = {
-        success: true,
-        message: "تم التسجيل بنجاح",
-      };
-      // const response = await register(data);
-      if (response?.success) {
-        toast.success("تم التسجيل بنجاح!", { id });
-        form.reset();
-        return;
-      }
-      toast.error(response?.message, { id });
-
-      form.reset();
-      return;
+      register(data);
     },
     [form],
   );
@@ -134,7 +132,7 @@ function RegisterForm() {
         )}
       />
 
-      <Button type="submit" className="w-full">
+      <Button type="submit" className="w-full" disabled={isRegistering}>
         تسجيل
       </Button>
     </form>

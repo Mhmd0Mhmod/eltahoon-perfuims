@@ -18,7 +18,11 @@ import {
 import PasswordInput from "@/components/PasswordInput";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { resetPassword as resetPasswordAction } from "@/app/(auth)/actions";
+import { useRouter } from "next/navigation";
 function ResetPasswordForm({ email }: { email: string }) {
+  const router = useRouter();
   const form = useForm<ResetPasswordSchema>({
     resolver: zodResolver(resetPasswordSchema),
     defaultValues: {
@@ -28,22 +32,22 @@ function ResetPasswordForm({ email }: { email: string }) {
       confirmNewPassword: "",
     },
   });
-  const onSubmit = async (data: ResetPasswordSchema) => {
-    const id = toast.loading("جاري إعادة تعيين كلمة المرور...");
-    // const respone = await resetPassword({
-    //   ...data,
-    //   email: email,
-    // });
-    const response = {
-      success: true,
-      message: "تم إعادة تعيين كلمة المرور بنجاح",
-    };
-    if (response?.success) {
-      toast.success("تم إعادة تعيين كلمة المرور بنجاح", { id });
+  const { mutate: resetPassword } = useMutation({
+    mutationFn: resetPasswordAction,
+    onSuccess: () => {
+      toast.success("تم إعادة تعيين كلمة المرور بنجاح");
       form.reset();
-    } else {
-      toast.error("حدث خطأ", { id });
-    }
+    },
+    onError: (error: any) => {
+      toast.error(error?.message || "حدث خطأ أثناء إعادة تعيين كلمة المرور.");
+    },
+  });
+  const onSubmit = async (data: ResetPasswordSchema) => {
+    resetPassword(data, {
+      onSuccess: () => {
+        router.replace("/login");
+      },
+    });
   };
   return (
     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { toast } from "sonner";
+import { useMutation } from "@tanstack/react-query";
+import { forgotPassword as forgotPasswordAction } from "@/app/(auth)/actions";
 function ForgotPasswordForm() {
   const router = useRouter();
   const form = useForm({
@@ -22,22 +24,28 @@ function ForgotPasswordForm() {
       email: "",
     },
   });
+  const { mutate: forgotPassword, isPending: isSubmitting } = useMutation({
+    mutationFn: forgotPasswordAction,
+    onSuccess: () => {
+      toast.success(
+        "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
+      );
+      form.reset();
+    },
+    onError: (error: any) => {
+      toast.error(
+        error?.message || "حدث خطأ أثناء إرسال رابط إعادة تعيين كلمة المرور.",
+      );
+    },
+  });
   const handleSubmit = useCallback(
     async (data: ForgotPasswordSchema) => {
-      const id = toast.loading("جاري إرسال رابط إعادة تعيين كلمة المرور...");
-      const respone = {
-        success: true,
-        message: "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني",
-      };
-      if (!respone?.success) {
-        form.setError("root", { type: "server", message: respone?.message });
-        toast.error(respone?.message, { id });
-        return;
-      }
-
-      toast.success(respone?.message, { id });
-      const token = encodeURI(data.email);
-      router.replace(`/reset-password?t=${token}`);
+      forgotPassword(data, {
+        onSuccess: () => {
+          const token = encodeURI(data.email);
+          router.replace(`/reset-password?t=${token}`);
+        },
+      });
     },
     [router, form],
   );
