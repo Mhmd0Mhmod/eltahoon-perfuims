@@ -6,18 +6,16 @@ export const PAYMENT_METHOD_CONFIG = {
     variant: "default" as const,
     icon: CreditCard,
     description: "الدفع باستخدام بطاقة الائتمان الخاصة بك",
-  },
-  PAYPAL: {
-    label: "باي بال",
-    variant: "secondary" as const,
-    icon: CheckCircle2,
-    description: "الدفع باستخدام حساب باي بال الخاص بك",
+    key: "VISA",
+    id: 1,
   },
   CASH_ON_DELIVERY: {
     label: " نقدًا عند الاستلام",
     variant: "secondary" as const,
     icon: Banknote,
     description: "الدفع عند الاستلام",
+    key: "CASH_ON_DELIVERY",
+    id: 2,
   },
 } as const;
 export const PAYMENT_METHODS = Object.keys(PAYMENT_METHOD_CONFIG) as Array<

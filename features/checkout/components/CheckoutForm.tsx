@@ -1,6 +1,7 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { createOrderAction } from "@/app/(shop)/[market]/actions";
+import { Button, Button as LinkButton } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -16,9 +17,9 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { User } from "@/types/user";
 import { useAuth } from "@/features/auth/hooks/useAuth";
 import { useCartStore } from "@/stores/useCartStore";
+import { User } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Banknote,
@@ -28,23 +29,22 @@ import {
   Phone,
   User as UserIcon,
 } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
 import { CheckoutFormValues, checkoutSchema } from "../types";
 import { CheckoutSummary } from "./CheckoutSummary";
-import { createOrderAction } from "../../../app/(shop)/[market]/checkout/actions";
-import Link from "next/link";
-import { Button as LinkButton } from "@/components/ui/button";
+import { PAYMENT_METHOD_CONFIG } from "@/features/payments/config";
 
-interface CheckoutFormProps {
-  user?: User | null;
-}
-
-export function CheckoutForm({ user }: CheckoutFormProps) {
+export function CheckoutForm() {
   const router = useRouter();
-  const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const {
+    isAuthenticated,
+    isLoading: authLoading,
+    userProfile: user,
+  } = useAuth();
   const cart = useCartStore((state) => state);
   const [couponCode, setCouponCode] = useState<string>("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -59,14 +59,14 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
       address: user?.address ?? "",
       postalCode: "",
       notes: "",
-      paymentMethod: "CASH_ON_DELIVERY",
+      paymentMethodId: PAYMENT_METHOD_CONFIG.CASH_ON_DELIVERY.id,
     },
   });
 
   const selectedPaymentMethod = useWatch({
     control: form.control,
-    name: "paymentMethod",
-    defaultValue: "CASH_ON_DELIVERY",
+    name: "paymentMethodId",
+    defaultValue: PAYMENT_METHOD_CONFIG.CASH_ON_DELIVERY.id,
   });
 
   async function onSubmit(data: CheckoutFormValues) {
@@ -79,23 +79,15 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
         return;
       }
 
-      const shippingAddress = [
-        data.city,
-        data.address,
-        data.postalCode,
-      ].filter(Boolean).join("، ");
-
-      const syncItems = cart.items.map((item) => ({
-        productVariantId: item.variantDetails.id,
-        quantity: item.quantity,
-      }));
+      const shippingAddress = [data.city, data.address, data.postalCode]
+        .filter(Boolean)
+        .join("، ");
 
       const result = await createOrderAction({
         shippingAddress,
         phoneNumber: data.phoneNumber,
-        paymentMethod: data.paymentMethod,
-        couponCode: couponCode || undefined,
-        syncItems,
+        paymentMethodId: data.paymentMethodId,
+        couponCode: couponCode || null,
       });
 
       if (!result.success) {
@@ -124,7 +116,16 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
       setIsSubmitting(false);
     }
   }
-
+  useEffect(() => {
+    if (user) {
+      form.reset({
+        fullName: user.fullName ?? "",
+        email: user.email ?? "",
+        phoneNumber: user.phoneNumber ?? "",
+        address: user.address ?? "",
+      });
+    }
+  }, [user, form]);
   if (authLoading) {
     return <div className="p-10 text-center">جارِ التحميل...</div>;
   }
@@ -143,27 +144,10 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
     );
   }
 
-  const paymentMethods = [
-    {
-      id: "CASH_ON_DELIVERY",
-      title: "نقدًا عند الاستلام",
-      description: "الدفع عند استلام الطلب",
-      icon: Banknote,
-    },
-    {
-      id: "VISA",
-      title: "بطاقة ائتمان",
-      description: "الدفع عبر بوابة الدفع الإلكتروني",
-      icon: CreditCard,
-    },
-  ];
+  console.log(form.formState.errors);
 
   return (
-    <form
-      onSubmit={form.handleSubmit(onSubmit)}
-      className="space-y-8"
-      dir="rtl"
-    >
+    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
       <div className="grid gap-8 lg:grid-cols-12">
         {/* Left / Main Forms (8 cols) */}
         <div className="space-y-6 lg:col-span-8">
@@ -315,17 +299,14 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
             </CardHeader>
             <CardContent>
               <div className="grid gap-3 sm:grid-cols-2">
-                {paymentMethods.map((method) => {
+                {Object.values(PAYMENT_METHOD_CONFIG).map((method) => {
                   const Icon = method.icon;
                   const isSelected = selectedPaymentMethod === method.id;
                   return (
                     <div
                       key={method.id}
                       onClick={() =>
-                        form.setValue(
-                          "paymentMethod",
-                          method.id as CheckoutFormValues["paymentMethod"],
-                        )
+                        form.setValue("paymentMethodId", method.id)
                       }
                       className={`cursor-pointer rounded-lg border-2 p-4 transition-all ${
                         isSelected
@@ -354,7 +335,7 @@ export function CheckoutForm({ user }: CheckoutFormProps) {
                         </div>
                         <div>
                           <p className="font-semibold text-sm">
-                            {method.title}
+                            {method.label}
                           </p>
                           <p className="text-muted-foreground mt-1 text-xs">
                             {method.description}

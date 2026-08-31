@@ -97,7 +97,11 @@ export function CartDrawer() {
         ) : (
           <div className="flex-1 overflow-y-auto px-4 divide-y divide-border/60">
             {items.map((item) => (
-              <CartDrawerItem key={item.id} item={item} onClose={handleClose} />
+              <CartDrawerItem
+                key={item.id}
+                item={item}
+                onClose={handleClose}
+              />
             ))}
           </div>
         )}

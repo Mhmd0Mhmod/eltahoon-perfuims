@@ -8,7 +8,7 @@ export const checkoutSchema = z.object({
   address: z.string().min(5, "العنوان التفصيلي مطلوب"),
   postalCode: z.string().optional(),
   notes: z.string().optional(),
-  paymentMethod: z.enum(["VISA", "CASH_ON_DELIVERY"]),
+  paymentMethodId: z.number(),
 });
 
 export type CheckoutFormValues = z.infer<typeof checkoutSchema>;

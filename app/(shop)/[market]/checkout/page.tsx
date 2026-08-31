@@ -1,10 +1,7 @@
-"use client";
-import { useAuth } from "@/features/auth/hooks/useAuth";
 import { CheckoutForm } from "@/features/checkout/components/CheckoutForm";
 import { CreditCard, ShieldCheck } from "lucide-react";
 
 export default function CheckoutPage() {
-  const { userProfile: user } = useAuth();
   return (
     <div className="container mx-auto px-4 py-10 md:px-6" dir="rtl">
       {/* Page Title Header */}
@@ -19,7 +16,7 @@ export default function CheckoutPage() {
 
       {/* Checkout Form & Order Summary */}
       <div className="mx-auto max-w-7xl">
-        <CheckoutForm user={user} />
+        <CheckoutForm />
       </div>
 
       {/* Security and Terms Footer */}

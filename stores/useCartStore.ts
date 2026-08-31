@@ -45,6 +45,24 @@ interface CartStore {
   getItemsByCountry: (countryCode: string) => CartItem[];
 }
 
+function dedupeCartItems(items: CartItem[]): CartItem[] {
+  const map = new Map<string, CartItem>();
+  for (const item of items) {
+    const key = `${item.variantDetails.id}_${item.productId}_${item.countryCode}`;
+    const existing = map.get(key);
+    if (existing) {
+      map.set(key, {
+        ...existing,
+        quantity: existing.quantity + item.quantity,
+        updatedAt: item.updatedAt || existing.updatedAt,
+      });
+    } else {
+      map.set(key, item);
+    }
+  }
+  return Array.from(map.values());
+}
+
 export const useCartStore = create<CartStore>()(
   persist(
     (set, get) => {
@@ -212,7 +230,7 @@ export const useCartStore = create<CartStore>()(
         },
 
         hydrate: (items: CartItem[]) => {
-          set({ items });
+          set({ items: dedupeCartItems(items) });
         },
 
         setBackendEnabled: (enabled: boolean) => {
@@ -256,6 +274,16 @@ export const useCartStore = create<CartStore>()(
       name: "cart-storage",
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ items: state.items }),
+      merge: (persistedState, currentState) => {
+        const persisted = persistedState as { items?: CartItem[] };
+        return {
+          ...currentState,
+          ...persisted,
+          items: persisted?.items
+            ? dedupeCartItems(persisted.items)
+            : currentState.items,
+        };
+      },
     },
   ),
 );
