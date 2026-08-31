@@ -92,7 +92,7 @@ export function CheckoutForm() {
         if (response.success) {
           toast.success(response.message);
           cart.clearCart();
-          router.push(`/orders/${response.data.id}`);
+          router.push(`/orders/${response.data.orderId}`);
         } else {
           toast.error(response.message);
         }
