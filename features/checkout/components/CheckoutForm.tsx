@@ -18,11 +18,11 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/features/auth/hooks/useAuth";
+import { PAYMENT_METHOD_CONFIG } from "@/features/payments/config";
 import { useCartStore } from "@/stores/useCartStore";
-import { User } from "@/types/user";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import {
-  Banknote,
   CreditCard,
   Mail,
   MapPin,
@@ -36,8 +36,6 @@ import { Controller, useForm, useWatch } from "react-hook-form";
 import { toast } from "sonner";
 import { CheckoutFormValues, checkoutSchema } from "../types";
 import { CheckoutSummary } from "./CheckoutSummary";
-import { PAYMENT_METHOD_CONFIG } from "@/features/payments/config";
-import { useMutation } from "@tanstack/react-query";
 
 export function CheckoutForm() {
   const router = useRouter();
@@ -92,7 +90,7 @@ export function CheckoutForm() {
         if (response.success) {
           toast.success(response.message);
           cart.clearCart();
-          router.push(`/orders/${response.data.orderId}`);
+          router.push(`/account/orders/${response.data.orderId}`);
         } else {
           toast.error(response.message);
         }
@@ -110,6 +108,7 @@ export function CheckoutForm() {
         email: user.email ?? "",
         phoneNumber: user.phoneNumber ?? "",
         address: user.address ?? "",
+        paymentMethodId: PAYMENT_METHOD_CONFIG.CASH_ON_DELIVERY.id,
       });
     }
   }, [user, form]);
