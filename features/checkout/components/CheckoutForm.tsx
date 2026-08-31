@@ -37,6 +37,7 @@ import { toast } from "sonner";
 import { CheckoutFormValues, checkoutSchema } from "../types";
 import { CheckoutSummary } from "./CheckoutSummary";
 import { PAYMENT_METHOD_CONFIG } from "@/features/payments/config";
+import { useMutation } from "@tanstack/react-query";
 
 export function CheckoutForm() {
   const router = useRouter();
@@ -47,8 +48,13 @@ export function CheckoutForm() {
   } = useAuth();
   const cart = useCartStore((state) => state);
   const [couponCode, setCouponCode] = useState<string>("");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
+  const { mutate: createOrder, isPending: isSubmitting } = useMutation({
+    mutationKey: ["createOrder"],
+    mutationFn: createOrderAction,
+  });
+  const {} = useMutation({
+    mutationKey: ["applyCoode"],
+  });
   const form = useForm<CheckoutFormValues>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
@@ -69,52 +75,33 @@ export function CheckoutForm() {
     defaultValue: PAYMENT_METHOD_CONFIG.CASH_ON_DELIVERY.id,
   });
 
-  async function onSubmit(data: CheckoutFormValues) {
-    setIsSubmitting(true);
-    const toastId = toast.loading("جاري تنفيذ طلبك...");
-
-    try {
-      if (cart.items.length === 0) {
-        toast.error("سلة التسوق فارغة، أضف منتجات أولاً", { id: toastId });
-        return;
-      }
-
-      const shippingAddress = [data.city, data.address, data.postalCode]
-        .filter(Boolean)
-        .join("، ");
-
-      const result = await createOrderAction({
-        shippingAddress,
-        phoneNumber: data.phoneNumber,
-        paymentMethodId: data.paymentMethodId,
-        couponCode: couponCode || null,
-      });
-
-      if (!result.success) {
-        toast.error(result.message || "حدث خطأ أثناء إتمام الطلب", {
-          id: toastId,
-        });
-        return;
-      }
-
-      const order = result.data;
-      cart.clearCart();
-
-      toast.success("تم إنشاء الطلب بنجاح!", { id: toastId });
-
-      // Redirect to the payment gateway if provided (VISA), else the success page.
-      if (order.paymentUrl) {
-        window.location.href = order.paymentUrl;
-      } else {
-        router.push(`/payments/success?order=${order.orderId}`);
-      }
-    } catch {
-      toast.error("حدث خطأ أثناء إتمام الطلب، يرجى المحاولة مرة أخرى", {
-        id: toastId,
-      });
-    } finally {
-      setIsSubmitting(false);
+  function onSubmit(data: CheckoutFormValues) {
+    if (cart.items.length === 0) {
+      toast.error("سلة التسوق فارغة. يرجى إضافة منتجات قبل إتمام الشراء.");
+      return;
     }
+
+    const orderData = {
+      ...data,
+      couponCode: couponCode || null,
+      shippingAddress: `${data.address}, ${data.city}`,
+    };
+
+    createOrder(orderData, {
+      onSuccess: (response) => {
+        if (response.success) {
+          toast.success(response.message);
+          cart.clearCart();
+          router.push(`/orders/${response.data.id}`);
+        } else {
+          toast.error(response.message);
+        }
+      },
+      onError: (error) => {
+        console.error("Error creating order:", error);
+        toast.error("حدث خطأ أثناء إتمام الطلب، يرجى المحاولة مرة أخرى");
+      },
+    });
   }
   useEffect(() => {
     if (user) {

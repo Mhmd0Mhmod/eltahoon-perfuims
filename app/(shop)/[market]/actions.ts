@@ -12,9 +12,19 @@ export async function createOrderAction(
   try {
     const api = await getNextServerAPI();
     const response = await api.post("/orders", data);
-    return response.data;
-  } catch (error) {
+    return {
+      success: true,
+      data: response.data,
+      message: "تم إنشاء الطلب بنجاح",
+    };
+  } catch (error: unknown) {
     console.error("Error creating order:", error);
-    throw new Error("Failed to create order");
+    const message = (error as { response?: { data?: { message?: string } } })
+      ?.response?.data?.message;
+    return {
+      success: false,
+      data: null,
+      message: message || "حدث خطأ أثناء إتمام الطلب، يرجى المحاولة مرة أخرى",
+    };
   }
 }
