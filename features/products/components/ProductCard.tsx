@@ -10,6 +10,8 @@ import { Eye, Package, ShoppingBag, Sparkles } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
+import { markets } from "@/config/markets";
+import { useCartStore } from "@/stores/useCartStore";
 import { IProduct } from "../types";
 
 interface ProductCardProps {
@@ -18,6 +20,7 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
   const [imageError, setImageError] = useState(false);
+  const addItem = useCartStore((state) => state.addItem);
   const prices = product.variants?.map((v) => v.newPrice) || [];
   const minPrice = prices.length > 0 ? Math.min(...prices) : 0;
   const maxPrice = prices.length > 0 ? Math.max(...prices) : 0;
@@ -31,6 +34,19 @@ export function ProductCard({ product }: ProductCardProps) {
   const handleQuickAdd = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
+    const availableVariant = product.variants?.find((v) => v.isAvailable);
+    if (!availableVariant) {
+      toast.error("هذا المنتج غير متوفر حالياً");
+      return;
+    }
+    const market = markets[product.countryCode];
+    addItem({
+      productId: product.id,
+      countryCode: market?.key || "eg",
+      countryName: market?.name || "",
+      variantDetails: availableVariant,
+      quantity: 1,
+    });
     toast.success(`تمت إضافة ${product.name} إلى السلة`);
   };
   const productUrl = `/products/${product.id}`;

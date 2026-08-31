@@ -1,4 +1,5 @@
 import { markets } from "@/config/markets";
+import { CartBackendSync } from "@/features/cart/components/CartBackendSync";
 import Header from "./_components/Header";
 import PromoBanner from "./_components/PromoBanner";
 export async function generateStaticParams() {
@@ -12,6 +13,7 @@ function layout({ children }: { children: React.ReactNode }) {
       <PromoBanner />
       <Header />
       {children}
+      <CartBackendSync />
     </>
   );
 }

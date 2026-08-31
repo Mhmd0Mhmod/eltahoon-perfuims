@@ -1,4 +1,11 @@
 import { MarketKey } from "@/config/markets";
+import {
+  addToBackendCart,
+  clearBackendCart,
+  getBackendCart,
+  removeBackendCartItem,
+  updateBackendCartItem,
+} from "@/features/cart/services";
 import { CartItem } from "@/features/cart/types";
 import { IProductVariant } from "@/features/products/types";
 import { create } from "zustand";
@@ -19,6 +26,7 @@ export type CartItemInput = {
 interface CartStore {
   items: CartItem[];
   isOpen: boolean;
+  isBackendEnabled: boolean;
   addItem: (item: CartItemInput) => void;
   removeItem: (id: number) => void;
   removeVariant: (variantId: number) => void;
@@ -26,6 +34,8 @@ interface CartStore {
   increaseQuantity: (id: number) => void;
   decreaseQuantity: (id: number) => void;
   clearCart: () => void;
+  hydrate: (items: CartItem[]) => void;
+  setBackendEnabled: (enabled: boolean) => void;
   setIsOpen: (isOpen: boolean) => void;
   openCart: () => void;
   closeCart: () => void;
@@ -37,152 +47,211 @@ interface CartStore {
 
 export const useCartStore = create<CartStore>()(
   persist(
-    (set, get) => ({
-      items: [],
-      isOpen: false,
+    (set, get) => {
+      const syncAdd = (itemInput: CartItemInput) => {
+        const variantId = itemInput.variantDetails?.id;
+        if (!variantId) return;
+        const quantity = itemInput.quantity || 1;
+        addToBackendCart({ productVariantId: variantId, quantity })
+          .then((res) => {
+            const created = res?.data as CartItem | undefined;
+            if (created?.id) {
+              // Replace the optimistic local item with the server item (real id).
+              set((state) => ({
+                items: state.items.map((it) =>
+                  it.id === itemInput.id &&
+                  it.variantDetails.id === variantId &&
+                  it.productId === itemInput.productId
+                    ? { ...it, id: created.id }
+                    : it,
+                ),
+              }));
+            }
+          })
+          .catch(() => {
+            // Keep local. Server cart will reconcile on next fetch.
+          });
+      };
 
-      addItem: (itemInput: CartItemInput) => {
-        const now = new Date().toISOString();
-        const currentItems = get().items;
+      const syncUpdate = (id: number, quantity: number) => {
+        const item = get().items.find((it) => it.id === id);
+        if (!item) return;
+        updateBackendCartItem(id, {
+          productVariantId: item.variantDetails.id,
+          quantity,
+        }).catch(() => {});
+      };
 
-        const existingItemIndex = currentItems.findIndex(
-          (item) =>
-            item.variantDetails.id === itemInput.variantDetails.id &&
-            item.productId === itemInput.productId &&
-            (!itemInput.countryCode ||
-              item.countryCode === itemInput.countryCode),
-        );
+      const syncRemove = (id: number) => {
+        removeBackendCartItem(id).catch(() => {});
+      };
 
-        if (existingItemIndex > -1) {
-          const updatedItems = [...currentItems];
-          const existingItem = updatedItems[existingItemIndex];
-          const newQuantity = existingItem.quantity + (itemInput.quantity || 1);
+      return {
+        items: [],
+        isOpen: false,
+        isBackendEnabled: false,
 
-          updatedItems[existingItemIndex] = {
-            ...existingItem,
-            quantity: newQuantity,
-            updatedAt: now,
-          };
+        addItem: (itemInput: CartItemInput) => {
+          const now = new Date().toISOString();
+          const currentItems = get().items;
+          const backendEnabled = get().isBackendEnabled;
 
-          set({ items: updatedItems });
-        } else {
-          const newItem: CartItem = {
-            id: itemInput.id ?? Date.now(),
-            userId: itemInput.userId ?? 0,
-            productId: itemInput.productId,
-            countryName: itemInput.countryName ?? "",
-            countryCode: itemInput.countryCode ?? "eg",
-            variantDetails: itemInput.variantDetails,
-            quantity: itemInput.quantity || 1,
-            createdAt: itemInput.createdAt ?? now,
-            updatedAt: itemInput.updatedAt ?? now,
-          };
+          const existingItemIndex = currentItems.findIndex(
+            (item) =>
+              item.variantDetails.id === itemInput.variantDetails.id &&
+              item.productId === itemInput.productId &&
+              (!itemInput.countryCode ||
+                item.countryCode === itemInput.countryCode),
+          );
 
-          set({ items: [...currentItems, newItem] });
-        }
-      },
+          if (existingItemIndex > -1) {
+            const updatedItems = [...currentItems];
+            const existingItem = updatedItems[existingItemIndex];
+            const newQuantity =
+              existingItem.quantity + (itemInput.quantity || 1);
 
-      removeItem: (id: number) => {
-        set((state) => ({
-          items: state.items.filter((item) => item.id !== id),
-        }));
-      },
+            updatedItems[existingItemIndex] = {
+              ...existingItem,
+              quantity: newQuantity,
+              updatedAt: now,
+            };
 
-      removeVariant: (variantId: number) => {
-        set((state) => ({
-          items: state.items.filter(
-            (item) => item.variantDetails.id !== variantId,
-          ),
-        }));
-      },
+            set({ items: updatedItems });
 
-      updateQuantity: (id: number, quantity: number) => {
-        if (quantity <= 0) {
-          get().removeItem(id);
-          return;
-        }
+            if (backendEnabled) {
+              syncUpdate(existingItem.id, newQuantity);
+            }
+          } else {
+            const newItem: CartItem = {
+              id: itemInput.id ?? Date.now(),
+              userId: itemInput.userId ?? 0,
+              productId: itemInput.productId,
+              countryName: itemInput.countryName ?? "",
+              countryCode: itemInput.countryCode ?? "eg",
+              variantDetails: itemInput.variantDetails,
+              quantity: itemInput.quantity || 1,
+              createdAt: itemInput.createdAt ?? now,
+              updatedAt: itemInput.updatedAt ?? now,
+            };
 
-        set((state) => ({
-          items: state.items.map((item) =>
-            item.id === id
-              ? {
-                  ...item,
-                  quantity,
-                  updatedAt: new Date().toISOString(),
-                }
-              : item,
-          ),
-        }));
-      },
+            set({ items: [...currentItems, newItem] });
 
-      increaseQuantity: (id: number) => {
-        set((state) => ({
-          items: state.items.map((item) =>
-            item.id === id
-              ? {
-                  ...item,
-                  quantity: item.quantity + 1,
-                  updatedAt: new Date().toISOString(),
-                }
-              : item,
-          ),
-        }));
-      },
+            if (backendEnabled) {
+              syncAdd({ ...itemInput, id: newItem.id });
+            }
+          }
+        },
 
-      decreaseQuantity: (id: number) => {
-        const item = get().items.find((i) => i.id === id);
-        if (item && item.quantity <= 1) {
-          get().removeItem(id);
-        } else {
+        removeItem: (id: number) => {
+          set((state) => ({
+            items: state.items.filter((item) => item.id !== id),
+          }));
+          if (get().isBackendEnabled) {
+            syncRemove(id);
+          }
+        },
+
+        removeVariant: (variantId: number) => {
+          const itemsToRemove = get().items.filter(
+            (item) => item.variantDetails.id === variantId,
+          );
+          set((state) => ({
+            items: state.items.filter(
+              (item) => item.variantDetails.id !== variantId,
+            ),
+          }));
+          if (get().isBackendEnabled) {
+            itemsToRemove.forEach((item) => syncRemove(item.id));
+          }
+        },
+
+        updateQuantity: (id: number, quantity: number) => {
+          if (quantity <= 0) {
+            get().removeItem(id);
+            return;
+          }
+
           set((state) => ({
             items: state.items.map((item) =>
               item.id === id
                 ? {
                     ...item,
-                    quantity: item.quantity - 1,
+                    quantity,
                     updatedAt: new Date().toISOString(),
                   }
                 : item,
             ),
           }));
-        }
-      },
 
-      clearCart: () => {
-        set({ items: [] });
-      },
+          if (get().isBackendEnabled) {
+            syncUpdate(id, quantity);
+          }
+        },
 
-      setIsOpen: (isOpen: boolean) => {
-        set({ isOpen });
-      },
+        increaseQuantity: (id: number) => {
+          const item = get().items.find((i) => i.id === id);
+          if (!item) return;
+          get().updateQuantity(id, item.quantity + 1);
+        },
 
-      openCart: () => {
-        set({ isOpen: true });
-      },
+        decreaseQuantity: (id: number) => {
+          const item = get().items.find((i) => i.id === id);
+          if (!item) return;
+          if (item.quantity <= 1) {
+            get().removeItem(id);
+          } else {
+            get().updateQuantity(id, item.quantity - 1);
+          }
+        },
 
-      closeCart: () => {
-        set({ isOpen: false });
-      },
+        clearCart: () => {
+          set({ items: [] });
+          if (get().isBackendEnabled) {
+            clearBackendCart().catch(() => {});
+          }
+        },
 
-      toggleCart: () => {
-        set((state) => ({ isOpen: !state.isOpen }));
-      },
+        hydrate: (items: CartItem[]) => {
+          set({ items });
+        },
 
-      getTotalItems: () => {
-        return get().items.reduce((total, item) => total + item.quantity, 0);
-      },
+        setBackendEnabled: (enabled: boolean) => {
+          set({ isBackendEnabled: enabled });
+        },
 
-      getTotalPrice: () => {
-        return get().items.reduce(
-          (total, item) => total + item.variantDetails.newPrice * item.quantity,
-          0,
-        );
-      },
+        setIsOpen: (isOpen: boolean) => {
+          set({ isOpen });
+        },
 
-      getItemsByCountry: (countryCode: string) => {
-        return get().items.filter((item) => item.countryCode === countryCode);
-      },
-    }),
+        openCart: () => {
+          set({ isOpen: true });
+        },
+
+        closeCart: () => {
+          set({ isOpen: false });
+        },
+
+        toggleCart: () => {
+          set((state) => ({ isOpen: !state.isOpen }));
+        },
+
+        getTotalItems: () => {
+          return get().items.reduce((total, item) => total + item.quantity, 0);
+        },
+
+        getTotalPrice: () => {
+          return get().items.reduce(
+            (total, item) =>
+              total + item.variantDetails.newPrice * item.quantity,
+            0,
+          );
+        },
+
+        getItemsByCountry: (countryCode: string) => {
+          return get().items.filter((item) => item.countryCode === countryCode);
+        },
+      };
+    },
     {
       name: "cart-storage",
       storage: createJSONStorage(() => localStorage),
@@ -190,3 +259,9 @@ export const useCartStore = create<CartStore>()(
     },
   ),
 );
+
+export async function loadBackendCartIntoStore() {
+  const res = await getBackendCart();
+  const items = res?.data ?? [];
+  useCartStore.getState().hydrate(items);
+}
