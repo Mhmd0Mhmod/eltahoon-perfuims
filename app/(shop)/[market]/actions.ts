@@ -11,7 +11,10 @@ export async function createOrderAction(
 ) {
   try {
     const api = await getNextServerAPI();
-    const response = await api.post("/orders", data);
+    const response = await api.post("/orders", {
+      ...data,
+      paymentToken: process.env.PAYMOB_TOKEN,
+    });
     return {
       success: true,
       data: response.data,
