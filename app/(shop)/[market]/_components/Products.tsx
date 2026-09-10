@@ -1,8 +1,11 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import ProductsCards from "./ProductsCards";
-
-function Products() {
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Suspense } from "react";
+import { MarketKey } from "@/config/markets";
+function Products({market}: {market: MarketKey}) {
   return (
     <section className="py-18 md:py-24">
       <div className="mx-auto max-w-7xl px-6">
@@ -33,7 +36,13 @@ function Products() {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <ProductsCards />
+          <Suspense key={market} fallback={
+            Array.from({ length: 4 }).map((_, index) => (
+              <ProductCardSkeleton key={index} />
+            ))
+          }>
+            <ProductsCards market={market} />
+          </Suspense>
         </div>
 
         <Link
@@ -49,3 +58,16 @@ function Products() {
 }
 
 export default Products;
+function ProductCardSkeleton() {
+  return (
+    <Card className="p-0">
+      <Skeleton className="aspect-square w-full" />
+      <CardContent className="space-y-3 p-4 text-right sm:p-5">
+        <Skeleton className="h-4 w-16" />
+        <Skeleton className="h-5 w-3/4" />
+        <Skeleton className="h-4 w-full" />
+        <Skeleton className="h-4 w-5/6" />
+      </CardContent>
+    </Card>
+  );
+}

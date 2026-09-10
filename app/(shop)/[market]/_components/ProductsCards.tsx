@@ -1,44 +1,22 @@
-"use client";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
+import { MarketKey } from "@/config/markets";
 import { ProductCard } from "@/features/products/components/ProductCard";
-import { getProducts } from "@/features/products/services";
-import { useInfiniteQuery } from "@/hooks/useMarketQuery";
+import { IProduct } from "@/features/products/types";
+import { api } from "@/lib/springAPI";
+import { IPagination } from "@/types/pagination";
 
-function ProductCardSkeleton() {
-  return (
-    <Card className="p-0">
-      <Skeleton className="aspect-square w-full" />
-      <CardContent className="space-y-3 p-4 text-right sm:p-5">
-        <Skeleton className="h-4 w-16" />
-        <Skeleton className="h-5 w-3/4" />
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-5/6" />
-      </CardContent>
-    </Card>
-  );
-}
 
-function ProductsCards() {
-  const { data, isLoading } = useInfiniteQuery({
-    queryKey: ["products"],
-    queryFn: async ({ pageParam = 1 }) =>
-      getProducts({
-        page: pageParam,
-        params: {
-          size: 8,
-        },
-      }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => {
-      if (!lastPage.data.last) return lastPage.data.page + 1;
-    },
-  });
-  const products = data?.pages.flatMap((page) => page.data.content) || [];
-  if (isLoading) {
-    return Array.from({ length: 8 }).map((_, index) => (
-      <ProductCardSkeleton key={index} />
-    ));
+
+async function ProductsCards({ market }: { market: MarketKey }) {
+  let products: IProduct[] = [];
+  try {
+    const response = await api.get<IPagination<IProduct>>("/products", {
+      headers: {
+        "Cookie": `country_code=${market}`,
+      },
+    });
+    products = response.data.content;
+  } catch (error) {
+    console.error("Error fetching products:", error);
   }
   return products.map((product) => (
     <ProductCard key={product.id} product={product} />

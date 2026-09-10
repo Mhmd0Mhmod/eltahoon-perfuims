@@ -1,7 +1,10 @@
+import CardSkeleton from "@/components/CardSkeleton";
 import { Badge } from "@/components/ui/badge";
+import { Suspense } from "react";
 import CategoriesCards from "./CategoriesCards";
+import { MarketKey } from "@/config/markets";
 
-function Categories() {
+function Categories({ market }: { market: MarketKey }) {
   return (
     <section className="py-16 md:py-20">
       <div className="mx-auto max-w-7xl px-6">
@@ -20,7 +23,13 @@ function Categories() {
         </div>
 
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <CategoriesCards />
+          <Suspense
+            fallback={Array.from({ length: 4 }).map((_, index) => (
+              <CardSkeleton key={index} />
+            ))}
+          >
+            <CategoriesCards market={market} />
+          </Suspense>
         </div>
       </div>
     </section>

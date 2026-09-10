@@ -1,8 +1,20 @@
 import { Badge } from "@/components/ui/badge";
+import { MarketKey } from "@/config/markets";
 import ProductFilters from "@/features/products/components/ProductFilters";
 import { ProductsGrid } from "@/features/products/components/ProductsGrid";
-
-export default function ProductsPage() {
+interface ProductsPageProps {
+  params : Promise<{
+    market:MarketKey;
+  }>;
+  searchParams: Promise<{
+    q?: string;
+    categoiesIds?: string[];
+    offerIds?: string[];
+  }>
+}
+export default async function ProductsPage({ params  , searchParams}: ProductsPageProps) {
+  const { market } = await params;
+  const filters = await searchParams;
   return (
     <div className="container mx-auto px-4 py-8 md:px-6" dir="rtl">
       {/* Page Header */}

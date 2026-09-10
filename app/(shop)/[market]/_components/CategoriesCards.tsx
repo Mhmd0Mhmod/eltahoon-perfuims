@@ -1,22 +1,23 @@
-"use client";
 import MarketLink from "@/components/MarketLink";
-import { getCategories } from "@/features/category/services";
-import { useQuery } from "@/hooks/useMarketQuery";
+import { MarketKey } from "@/config/markets";
+import { ICategory } from "@/features/category/types";
+import { api } from "@/lib/springAPI";
 import { Droplets, Flower2, Leaf, Wind } from "lucide-react";
-import CardSkeleton from "./CardSkeleton";
 
 const categoryIcons = [Droplets, Flower2, Leaf, Wind];
 
-function CategoriesCards() {
-  const { data: categories = [], isLoading } = useQuery({
-    queryKey: ["categories"],
-    queryFn: getCategories,
-    select: (data) => data.data,
-  });
-  if (isLoading) {
-    return Array.from({ length: 8 }).map((_, index) => (
-      <CardSkeleton key={index} />
-    ));
+async function CategoriesCards({ market }: { market: MarketKey }) {
+  let categories: ICategory[] = [];
+  try {
+    const respone = await api.get<ICategory[]>("/categories", {
+      headers: {
+        "Cookie" : `country_code=${market}`,
+      }
+    });
+    categories = respone.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
   }
   return categories.map((category, index) => {
     const Icon = categoryIcons[index % categoryIcons.length];
